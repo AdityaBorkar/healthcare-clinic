@@ -1,0 +1,33 @@
+config:
+  # Infra
+  # PostgreSQL
+  healthcare-clinic:postgres.password:
+    secure: v1:PrYpkZJBky1J3+wC:A0Bp34FZEQrsOOqfYkVR6TvV/6yFYTJPveg=
+  healthcare-clinic:postgres.user:
+    secure: v1:Bo4etjr4VOej3AmT:RojfDUz1+r9AMZcd9ZsYgXz92gF+v+Tq4PY=
+  healthcare-clinic:postgres.ssl: "false"
+  healthcare-clinic:postgres.host: localhost
+  healthcare-clinic:postgres.port: "5432"
+  healthcare-clinic:postgres.db: healthcare
+  # App
+  healthcare-clinic:app.ssl: "false"
+  healthcare-clinic:app.domain: localhost
+  healthcare-clinic:app.port: "3000"
+  # Auth
+  healthcare-clinic:app.auth_secret:
+    secure: v1:f69GQpf5oWXSRV0R:bFxqwMgCSXp1CZWSirt8vBiAQn9A2s2jg/CZFNB3rfxOWL0ZFeydVgar3FVjn7EcLvDOzXx7MxcHukucO/tU4H4DUlGJ5+eSIna/+w==
+  # Google
+  healthcare-clinic:app.google_client_id:
+    secure: v1:shFmvbjjW2RvirBm:9o/pIj6irEtbymdsqiDohlAPNO8f6KdEaPYxl3mkNRqmosh5yBs+haS+07/ttkYMk5rJ+sZis7c+GLhuB0zuZYDnQN/fnTqZowKT7jqGcIYdX8Aze1Q/xA==
+  healthcare-clinic:app.google_client_secret:
+    secure: v1:3+5gPfOnsjwDTLQU:EXBJzImuj+PgX0kocowqRb1IWqb1VGOHsSz7dYjEkaldKFDLKneXETKkRjTq39Q5IKjcje8D2oh33dAn2tv/Fqdr3iRY5OfpQr3ojVo=
+  # Storage
+  healthcare-clinic:app.storage_access_key:
+    secure: v1:xmNrrAeMBAI6diGC:OsbJOp3AkteW+aXagNSoelp5q+5ygGeZkF2ZkyMjxxiCvs8MK+CxWXf+DOU=
+  healthcare-clinic:app.storage_secret_key:
+    secure: v1:X3b4NBe/R1kc+dO5:r1QYKWvVeeNXhB244e1Z29fz8PZDvw5/tZfX7g8BjmRiSs1wVITGFyKGZkyOp4HNp5v/mq420uWDbqi5YA2g83qZUt9p4s7v5XoThF5hVHc=
+  healthcare-clinic:app.storage_bucket: recruiter
+  healthcare-clinic:app.storage_endpoint: http://localhost:8333
+  healthcare-clinic:app.storage_force_path_style: "true"
+  healthcare-clinic:app.storage_region: us-east-1
+encryptionsalt: v1:S4H5guedLTU=:v1:2ubAHZEy9jFOqRkf:8T0gXWr5VTJxxXlzWiSw6Uk84ta/Tg==

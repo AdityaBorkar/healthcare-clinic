@@ -10,6 +10,7 @@
     "@orpc/zod": "^1.14.7",
     "@posthog/react": "^1.10.3",
     "@t3-oss/env-core": "^0.13.11",
+    "@tabler/icons-react": "^3.44.0",
     "@tailwindcss/vite": "^4.3.2",
     "@tanstack/react-devtools": "latest",
     "@tanstack/react-query": "latest",
@@ -37,6 +38,8 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.1",
+    "@pulumi/docker": "^5.1.0",
+    "@pulumi/pulumi": "^3.250.0",
     "@rolldown/plugin-babel": "^0.2.3",
     "@tailwindcss/typography": "^0.5.20",
     "@tanstack/devtools-event-client": "latest",
@@ -67,7 +70,9 @@
     "db:studio": "aspen db-studio --config=./src/aspen/server.ts",
     "dev": "vite dev --port 3000",
     "gen:routes": "tsr generate",
-    "preview": "vite preview",
+    "infra:down": "pulumi destroy --stack",
+    "infra:refresh": "pulumi refresh --stack",
+    "infra:up": "pulumi up --stack",
     "update:deps": "taze -w && bun install"
   },
   "type": "module"
