@@ -157,11 +157,11 @@ function LoginPage() {
             )}
           </div>
 
-          {error && (
+          {error ? (
             <p className="rounded-md bg-destructive/10 p-3 text-destructive text-sm">
               {error}
             </p>
-          )}
+          ) : null}
         </div>
       </div>
     </div>

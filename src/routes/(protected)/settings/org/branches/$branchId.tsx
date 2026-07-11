@@ -60,7 +60,7 @@ function RouteComponent() {
   );
 }
 
-function OverviewTab({ branchId }: { branchId: string }) {
+export function OverviewTab({ branchId }: { branchId: string }) {
   const queryClient = useQueryClient();
   const { data: branch, isLoading } = useQuery(
     rpc.branches.getById.queryOptions({ input: { id: branchId } }),
@@ -150,7 +150,7 @@ function OverviewTab({ branchId }: { branchId: string }) {
   );
 }
 
-function BranchEditForm({
+export function BranchEditForm({
   branch,
   onSave,
   isSaving,
@@ -215,7 +215,7 @@ function BranchEditForm({
   );
 }
 
-function AddressTab({ branchId }: { branchId: string }) {
+export function AddressTab({ branchId }: { branchId: string }) {
   const queryClient = useQueryClient();
   const { data: branch, isLoading } = useQuery(
     rpc.branches.getById.queryOptions({ input: { id: branchId } }),
@@ -259,7 +259,7 @@ function AddressTab({ branchId }: { branchId: string }) {
   );
 }
 
-function AddressEditForm({
+export function AddressEditForm({
   branch,
   onSave,
   isSaving,
@@ -342,7 +342,7 @@ function AddressEditForm({
   );
 }
 
-function BankAccountTab({ branchId: _branchId }: { branchId: string }) {
+export function BankAccountTab({ branchId: _branchId }: { branchId: string }) {
   const queryClient = useQueryClient();
   const { data: accounts = [], isLoading } = useQuery(
     rpc.bankAccounts.list.queryOptions(),
@@ -399,7 +399,7 @@ function BankAccountTab({ branchId: _branchId }: { branchId: string }) {
   );
 }
 
-function BankAccountForm({
+export function BankAccountForm({
   account,
   onSave,
   isSaving,
@@ -492,7 +492,7 @@ function BankAccountForm({
   );
 }
 
-function GSTNTab({ branchId }: { branchId: string }) {
+export function GSTNTab({ branchId }: { branchId: string }) {
   const queryClient = useQueryClient();
   const { data: compliance = [], isLoading } = useQuery(
     rpc.compliance.list.queryOptions({
@@ -564,7 +564,7 @@ function GSTNTab({ branchId }: { branchId: string }) {
   );
 }
 
-function GSTNForm({
+export function GSTNForm({
   document,
   branchId,
   onSave,

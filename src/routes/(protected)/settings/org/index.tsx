@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useId, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -73,7 +73,7 @@ function RouteComponent() {
   );
 }
 
-function GeneralSettingsCard({
+export function GeneralSettingsCard({
   org,
   onSave,
   isSaving,
@@ -82,6 +82,7 @@ function GeneralSettingsCard({
   onSave: (data: Record<string, unknown>) => Promise<unknown>;
   isSaving: boolean;
 }) {
+  const id = useId();
   const [form, setForm] = useState({
     address: (org?.address as string) ?? "",
     email: (org?.email as string) ?? "",
@@ -112,67 +113,67 @@ function GeneralSettingsCard({
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Organization Name</Label>
+              <Label htmlFor={`${id}-name`}>Organization Name</Label>
               <Input
-                id="name"
+                id={`${id}-name`}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 required
                 value={form.name}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor={`${id}-email`}>Email</Label>
               <Input
-                id="email"
+                id={`${id}-email`}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
                 type="email"
                 value={form.email}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone</Label>
+              <Label htmlFor={`${id}-phone`}>Phone</Label>
               <Input
-                id="phone"
+                id={`${id}-phone`}
                 onChange={(e) => setForm({ ...form, phone: e.target.value })}
                 value={form.phone}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="website">Website</Label>
+              <Label htmlFor={`${id}-website`}>Website</Label>
               <Input
-                id="website"
+                id={`${id}-website`}
                 onChange={(e) => setForm({ ...form, website: e.target.value })}
                 value={form.website}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="timezone">Timezone</Label>
+              <Label htmlFor={`${id}-timezone`}>Timezone</Label>
               <Input
-                id="timezone"
+                id={`${id}-timezone`}
                 onChange={(e) => setForm({ ...form, timezone: e.target.value })}
                 value={form.timezone}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="locale">Locale</Label>
+              <Label htmlFor={`${id}-locale`}>Locale</Label>
               <Input
-                id="locale"
+                id={`${id}-locale`}
                 onChange={(e) => setForm({ ...form, locale: e.target.value })}
                 value={form.locale}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="industry">Industry</Label>
+              <Label htmlFor={`${id}-industry`}>Industry</Label>
               <Input
-                id="industry"
+                id={`${id}-industry`}
                 onChange={(e) => setForm({ ...form, industry: e.target.value })}
                 value={form.industry}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="regNo">Registration Number</Label>
+              <Label htmlFor={`${id}-regNo`}>Registration Number</Label>
               <Input
-                id="regNo"
+                id={`${id}-regNo`}
                 onChange={(e) =>
                   setForm({ ...form, registrationNumber: e.target.value })
                 }
@@ -180,18 +181,18 @@ function GeneralSettingsCard({
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="taxId">Tax ID / PAN</Label>
+              <Label htmlFor={`${id}-taxId`}>Tax ID / PAN</Label>
               <Input
-                id="taxId"
+                id={`${id}-taxId`}
                 onChange={(e) => setForm({ ...form, taxId: e.target.value })}
                 value={form.taxId}
               />
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="address">Address</Label>
+            <Label htmlFor={`${id}-address`}>Address</Label>
             <Input
-              id="address"
+              id={`${id}-address`}
               onChange={(e) => setForm({ ...form, address: e.target.value })}
               value={form.address}
             />
@@ -205,7 +206,7 @@ function GeneralSettingsCard({
   );
 }
 
-function BrandingCard({
+export function BrandingCard({
   org,
   onSave,
   isSaving,
@@ -214,6 +215,7 @@ function BrandingCard({
   onSave: (data: Record<string, unknown>) => Promise<unknown>;
   isSaving: boolean;
 }) {
+  const id = useId();
   const [form, setForm] = useState({
     accentColor: (org?.accentColor as string) ?? "#3B82F6",
     logo: (org?.logo as string) ?? "",
@@ -237,19 +239,19 @@ function BrandingCard({
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="brandName">Display Name</Label>
+              <Label htmlFor={`${id}-brandName`}>Display Name</Label>
               <Input
-                id="brandName"
+                id={`${id}-brandName`}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 value={form.name}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="accentColor">Accent Color</Label>
+              <Label htmlFor={`${id}-accentColor`}>Accent Color</Label>
               <div className="flex items-center gap-2">
                 <input
                   className="h-10 w-10 cursor-pointer rounded border"
-                  id="accentColor"
+                  id={`${id}-accentColor`}
                   onChange={(e) =>
                     setForm({ ...form, accentColor: e.target.value })
                   }
@@ -267,9 +269,9 @@ function BrandingCard({
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="logo">Logo URL</Label>
+            <Label htmlFor={`${id}-logo`}>Logo URL</Label>
             <Input
-              id="logo"
+              id={`${id}-logo`}
               onChange={(e) => setForm({ ...form, logo: e.target.value })}
               placeholder="https://..."
               value={form.logo}

@@ -43,7 +43,7 @@ function RouteComponent() {
   );
 }
 
-function NavLink({
+export function NavLink({
   label,
   to,
   icon: Icon,

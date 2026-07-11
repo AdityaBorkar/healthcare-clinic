@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Archive, Pencil, Plus } from "lucide-react";
-import { useState } from "react";
+import { useId, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -204,7 +204,7 @@ function RouteComponent() {
       </Card>
 
       <Dialog onOpenChange={() => setEditId(null)} open={editId !== null}>
-        {editId && (
+        {editId ? (
           <ConnectionFormDialog
             description="Update connection details."
             isSaving={updateMutation.isPending}
@@ -213,13 +213,13 @@ function RouteComponent() {
             }
             title="Edit Connection"
           />
-        )}
+        ) : null}
       </Dialog>
     </div>
   );
 }
 
-function ConnectionFormDialog({
+export function ConnectionFormDialog({
   title,
   description,
   onSubmit,
@@ -231,6 +231,7 @@ function ConnectionFormDialog({
   onSubmit: (data: any) => Promise<unknown>;
   isSaving: boolean;
 }) {
+  const id = useId();
   const [form, setForm] = useState({
     contactEmail: "",
     contactPerson: "",
@@ -258,16 +259,16 @@ function ConnectionFormDialog({
       </DialogHeader>
       <form className="space-y-4" onSubmit={handleSubmit}>
         <div className="space-y-2">
-          <Label htmlFor="conn-name">Name</Label>
+          <Label htmlFor={`${id}-conn-name`}>Name</Label>
           <Input
-            id="conn-name"
+            id={`${id}-conn-name`}
             onChange={(e) => setForm({ ...form, name: e.target.value })}
             required
             value={form.name}
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="conn-type">Type</Label>
+          <Label htmlFor={`${id}-conn-type`}>Type</Label>
           <Select
             onValueChange={(value: string | null) =>
               setForm({ ...form, type: value ?? "vendor" })
@@ -288,9 +289,9 @@ function ConnectionFormDialog({
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="conn-contact">Contact Person</Label>
+            <Label htmlFor={`${id}-conn-contact`}>Contact Person</Label>
             <Input
-              id="conn-contact"
+              id={`${id}-conn-contact`}
               onChange={(e) =>
                 setForm({ ...form, contactPerson: e.target.value })
               }
@@ -298,9 +299,9 @@ function ConnectionFormDialog({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="conn-email">Contact Email</Label>
+            <Label htmlFor={`${id}-conn-email`}>Contact Email</Label>
             <Input
-              id="conn-email"
+              id={`${id}-conn-email`}
               onChange={(e) =>
                 setForm({ ...form, contactEmail: e.target.value })
               }
@@ -311,9 +312,9 @@ function ConnectionFormDialog({
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="conn-phone">Phone</Label>
+            <Label htmlFor={`${id}-conn-phone`}>Phone</Label>
             <Input
-              id="conn-phone"
+              id={`${id}-conn-phone`}
               onChange={(e) =>
                 setForm({ ...form, contactPhone: e.target.value })
               }
@@ -321,9 +322,9 @@ function ConnectionFormDialog({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="conn-website">Website</Label>
+            <Label htmlFor={`${id}-conn-website`}>Website</Label>
             <Input
-              id="conn-website"
+              id={`${id}-conn-website`}
               onChange={(e) => setForm({ ...form, website: e.target.value })}
               value={form.website}
             />

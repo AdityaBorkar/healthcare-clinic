@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
-import { useState } from "react";
+import { useId, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -163,7 +163,7 @@ function RouteComponent() {
   );
 }
 
-function BranchFormDialog({
+export function BranchFormDialog({
   onSubmit,
   isSaving,
 }: {
@@ -171,6 +171,7 @@ function BranchFormDialog({
   onSubmit: (data: any) => Promise<unknown>;
   isSaving: boolean;
 }) {
+  const id = useId();
   const [form, setForm] = useState({
     addressLine1: "",
     addressLine2: "",
@@ -201,18 +202,18 @@ function BranchFormDialog({
       <form className="space-y-4" onSubmit={handleSubmit}>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="branch-name">Branch Name</Label>
+            <Label htmlFor={`${id}-branch-name`}>Branch Name</Label>
             <Input
-              id="branch-name"
+              id={`${id}-branch-name`}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
               required
               value={form.name}
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="branch-code">Branch Code</Label>
+            <Label htmlFor={`${id}-branch-code`}>Branch Code</Label>
             <Input
-              id="branch-code"
+              id={`${id}-branch-code`}
               onChange={(e) =>
                 setForm({ ...form, code: e.target.value.toUpperCase() })
               }
@@ -222,7 +223,7 @@ function BranchFormDialog({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="branch-type">Type</Label>
+            <Label htmlFor={`${id}-branch-type`}>Type</Label>
             <Select
               onValueChange={(value: string | null) =>
                 setForm({ ...form, type: value ?? "office" })
@@ -242,9 +243,9 @@ function BranchFormDialog({
             </Select>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="branch-country">Country Code</Label>
+            <Label htmlFor={`${id}-branch-country`}>Country Code</Label>
             <Input
-              id="branch-country"
+              id={`${id}-branch-country`}
               maxLength={2}
               onChange={(e) =>
                 setForm({ ...form, country: e.target.value.toUpperCase() })
@@ -256,44 +257,44 @@ function BranchFormDialog({
           </div>
         </div>
         <div className="space-y-2">
-          <Label htmlFor="branch-addr1">Address Line 1</Label>
+          <Label htmlFor={`${id}-branch-addr1`}>Address Line 1</Label>
           <Input
-            id="branch-addr1"
+            id={`${id}-branch-addr1`}
             onChange={(e) => setForm({ ...form, addressLine1: e.target.value })}
             required
             value={form.addressLine1}
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="branch-addr2">Address Line 2</Label>
+          <Label htmlFor={`${id}-branch-addr2`}>Address Line 2</Label>
           <Input
-            id="branch-addr2"
+            id={`${id}-branch-addr2`}
             onChange={(e) => setForm({ ...form, addressLine2: e.target.value })}
             value={form.addressLine2}
           />
         </div>
         <div className="grid grid-cols-3 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="branch-city">City</Label>
+            <Label htmlFor={`${id}-branch-city`}>City</Label>
             <Input
-              id="branch-city"
+              id={`${id}-branch-city`}
               onChange={(e) => setForm({ ...form, city: e.target.value })}
               required
               value={form.city}
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="branch-state">State</Label>
+            <Label htmlFor={`${id}-branch-state`}>State</Label>
             <Input
-              id="branch-state"
+              id={`${id}-branch-state`}
               onChange={(e) => setForm({ ...form, state: e.target.value })}
               value={form.state}
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="branch-pin">Postal Code</Label>
+            <Label htmlFor={`${id}-branch-pin`}>Postal Code</Label>
             <Input
-              id="branch-pin"
+              id={`${id}-branch-pin`}
               onChange={(e) => setForm({ ...form, postalCode: e.target.value })}
               value={form.postalCode}
             />
@@ -301,18 +302,18 @@ function BranchFormDialog({
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <Label htmlFor="branch-email">Email</Label>
+            <Label htmlFor={`${id}-branch-email`}>Email</Label>
             <Input
-              id="branch-email"
+              id={`${id}-branch-email`}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
               type="email"
               value={form.email}
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="branch-phone">Phone</Label>
+            <Label htmlFor={`${id}-branch-phone`}>Phone</Label>
             <Input
-              id="branch-phone"
+              id={`${id}-branch-phone`}
               onChange={(e) => setForm({ ...form, phone: e.target.value })}
               value={form.phone}
             />

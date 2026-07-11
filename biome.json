@@ -78,6 +78,9 @@
           }
         }
       },
+      "performance": {
+        "noJsxPropsBind": "off"
+      },
       "preset": "recommended"
     }
   },
@@ -89,6 +92,16 @@
         "rules": {
           "correctness": {
             "noNestedComponentDefinitions": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["./src/routes/**"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useComponentExportOnlyModules": "off"
           }
         }
       }
