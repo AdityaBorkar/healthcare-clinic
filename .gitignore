@@ -8,5 +8,7 @@ node_modules
 .tanstack
 .wrangler
 .output
-
 *.gen.ts
+
+codedb.snapshot
+opencode.json

@@ -1,27 +1,35 @@
+# .gitignore
+
 node_modules
-.git
-.gitignore
-.tanstack
-.vscode
-.zed
-.nitro
-.output
-.wrangler
+.DS_Store
 
 .env*
 !.env.example
 
+.nitro
+.tanstack
+.wrangler
+.output
+*.gen.ts
+
+codedb.snapshot
+opencode.json
+
+# docs
+
+docs/
+AGENTS.md
+CONTEXT.md
+
+# others
+
+.git
+.gitignore
+.vscode
+.zed
+
 infra
 Pulumi*.yaml
-Pulumi.yaml
 
 Dockerfile
 .dockerignore
-opencode.json
-biome.json
-components.json
-tsr.config.json
-AGENTS.md
-
-codedb.snapshot
-*.gen.ts
