@@ -1,14 +1,12 @@
 import { Framework } from "@aspen-os/framework/client";
 
-import { env } from "../env";
+import { BASE_URL } from "../env";
 import { access_control, roles } from "./auth";
 
-const BASE_URL = `${env.PUBLIC_WEB_SSL ? "https" : "http"}://${env.PUBLIC_WEB_DOMAIN}:${env.PUBLIC_WEB_PORT}`;
-
 const auth = {
-	access_control,
-	baseURL: BASE_URL,
-	roles,
+  access_control,
+  baseURL: BASE_URL,
+  roles,
 };
 
 const logs = {}; // satisfies LogConfig;

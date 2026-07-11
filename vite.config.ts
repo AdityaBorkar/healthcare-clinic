@@ -7,24 +7,24 @@ import { nitro } from "nitro/vite";
 import { defineConfig } from "vite";
 
 const config = defineConfig({
-	envPrefix: "PUBLIC_",
-	resolve: { tsconfigPaths: true },
-	plugins: [
-		devtools(),
-		nitro(),
-		tailwindcss(),
-		tanstackStart(),
-		viteReact(),
-		babel({ presets: [reactCompilerPreset()] }),
-	],
-	server: {
-		fs: {
-			allow: [
-				"/home/aditya/projects/healthcare-clinic",
-				"/home/aditya/projects/aspen-os",
-			],
-		},
-	},
+  envPrefix: "PUBLIC_",
+  plugins: [
+    devtools(),
+    nitro(),
+    tailwindcss(),
+    tanstackStart(),
+    viteReact(),
+    babel({ presets: [reactCompilerPreset()] }),
+  ],
+  resolve: { tsconfigPaths: true },
+  server: {
+    fs: {
+      allow: [
+        "/home/aditya/projects/healthcare-clinic",
+        "/home/aditya/projects/aspen-os",
+      ],
+    },
+  },
 });
 
 export default config;
