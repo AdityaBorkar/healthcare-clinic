@@ -1,18 +1,20 @@
 encryptionsalt: v1:xM6v+lRArgA=:v1:356gtQ447Fniunqf:gxajsPvIgBFcpkIv1JdwwkBxi7qvyw==
 config:
-  healthcare-clinic:PUBLIC_WEB_DOMAIN: localhost
+# App
   app:PUBLIC_WEB_DOMAIN: localhost
   app:PUBLIC_WEB_PORT: "3000"
   app:PUBLIC_WEB_SSL: "false"
+  # App Auth
   app:AUTH_SECRET:
     secure: v1:KkqyWlEVn/oVmVYT:reQJXnuzWAScMRtCvit96WRqmU5LQyfi6qOmRDX31igPgsfwJ3UI4e6wh3+NiU+gFqllOG0iipAGL9RaNIEXChJhRyYGOuIKlh+J9w==
   app:GOOGLE_CLIENT_ID: 658267703810-5jg8rknr92a3g61tqbmuk2o1tj4cscve.apps.googleusercontent.com
   app:GOOGLE_CLIENT_SECRET:
     secure: v1:4jjz6krYmdjS9suI:0B2azxkVjGgyRCZnBUefxfHrZ4qOqjvmn1cljRmbUtlml/N9r96ECCNjn5l+oPNhtCX4
+  # Postgres
   postgres:DB_USER:
     secure: v1:xEpilvXvwi9XYMKh:SY2lZ3Vl9KVAdB83kZ+H0LySwZs=
   postgres:DB_PASSWORD:
     secure: v1:0keIi0g7ydET9GEe:2opag13ZjJjl2hGKrrC3AxjCujk=
   postgres:DB_HOST: localhost
   postgres:DB_SSL: "false"
-  postgres:DB_PORT: "5432"
+  postgres:DB_PORT: "5410"

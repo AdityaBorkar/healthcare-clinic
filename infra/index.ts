@@ -37,4 +37,4 @@ const postgres = PostgresContainer({ network, provider });
 
 // Outputs
 
-console.log(postgres.container);
+postgres.container;

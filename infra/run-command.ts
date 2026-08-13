@@ -1,6 +1,15 @@
-import { execFileSync, spawn } from "node:child_process";
 import { resolve } from "node:path";
+import { $ } from "bun";
 
+import {
+  cancel,
+  intro,
+  isCancel,
+  log,
+  outro,
+  password,
+  spinner,
+} from "@clack/prompts";
 import { Command } from "commander";
 
 const PROJECT_DIR = resolve(import.meta.dir, "..");
@@ -37,30 +46,35 @@ const command = program.args;
 type ConfigValue = { value?: string | object; secret?: boolean };
 type ConfigSection = Record<string, ConfigValue>;
 
-function loadConfig(stack: string, namespace: string): Record<string, string> {
-  let stdout: string;
+async function runConfig(stack: string, passphrase: string): Promise<string> {
+  const result = await $.cwd(PROJECT_DIR).env({
+    ...process.env,
+    PULUMI_CONFIG_PASSPHRASE: passphrase,
+  })`pulumi config --json --show-secrets --stack ${stack}`
+    .quiet()
+    .nothrow();
 
-  try {
-    stdout = execFileSync(
-      "pulumi",
-      ["config", "--json", "--show-secrets", "--stack", stack],
-      { cwd: PROJECT_DIR, encoding: "utf8" },
-    );
-  } catch (error) {
-    const err = error as NodeJS.ErrnoException & {
-      stderr?: Buffer | string;
-    };
+  if (result.exitCode !== 0) {
     const detail =
-      err.stderr?.toString().trim() || err.message || String(error);
+      result.stderr.toString().trim() ||
+      result.stdout.toString().trim() ||
+      `exited with code ${result.exitCode}`;
     throw new Error(
-      `Failed to read config for stack "${stack}": ${detail}` +
-        (err.code === "ENOENT"
-          ? ""
-          : ` (is it selected? try "pulumi stack select ${stack}")`),
+      `Failed to read config for stack "${stack}": ${detail} (is it selected? try "pulumi stack select ${stack}")`,
     );
   }
 
-  const config = JSON.parse(stdout) as ConfigSection;
+  return result.stdout.toString();
+}
+
+async function loadConfig(
+  stack: string,
+  namespace: string,
+  passphrase: string,
+): Promise<Record<string, string>> {
+  const config = JSON.parse(
+    await runConfig(stack, passphrase),
+  ) as ConfigSection;
 
   const env: Record<string, string> = {};
 
@@ -81,36 +95,62 @@ function loadConfig(stack: string, namespace: string): Record<string, string> {
   return env;
 }
 
-function main() {
-  const env = loadConfig(stack, namespace);
+async function main() {
+  intro(`Healthcare Clinic · stack "${stack}"`);
 
-  console.log(`[${stack}] ${command.join(" ")}`);
+  const passphrase =
+    process.env.PULUMI_CONFIG_PASSPHRASE ??
+    (await password({
+      mask: "*",
+      message: `Pulumi config passphrase for stack "${stack}"`,
+    }));
+  if (isCancel(passphrase)) {
+    cancel("Operation cancelled.");
+    process.exit(0);
+  }
+
+  const spin = spinner();
+  spin.start(`Reading config for stack "${stack}"`);
+
+  let env: Record<string, string>;
+  try {
+    env = await loadConfig(stack, namespace, passphrase);
+  } catch (error) {
+    spin.stop("Failed");
+    log.error(error instanceof Error ? error.message : String(error));
+    process.exit(1);
+  }
+  spin.stop(`Config loaded for stack "${stack}"`);
+
   if (verbose) {
-    console.log(`Env Injected:\n - ${Object.keys(env).sort().join("\n - ")}`);
+    log.info(`Env Injected:\n - ${Object.keys(env).sort().join("\n - ")}`);
   }
 
   const [commandName, ...commandArgs] = command;
   if (!commandName) throw new Error("No command to run");
 
-  const child = spawn(commandName, commandArgs, {
+  log.step(`${stack} $ ${command.join(" ")}`);
+
+  const child = Bun.spawn([commandName, ...commandArgs], {
     cwd: PROJECT_DIR,
     env: { ...process.env, ...env },
-    stdio: "inherit",
+    stdio: ["inherit", "inherit", "inherit"],
   });
 
   for (const signal of ["SIGINT", "SIGTERM"] as const) {
     process.on(signal, () => child.kill(signal));
   }
 
-  child.on("exit", (code, signal) => {
-    if (signal) process.kill(process.pid, signal);
-    else process.exit(code ?? 1);
-  });
+  await child.exited;
+  outro("Done");
+
+  if (child.signalCode) process.kill(process.pid, child.signalCode);
+  else process.exit(child.exitCode ?? 1);
 }
 
 try {
-  main();
+  await main();
 } catch (error) {
-  console.error(error instanceof Error ? error.message : error);
+  log.error(error instanceof Error ? error.message : String(error));
   process.exit(1);
 }

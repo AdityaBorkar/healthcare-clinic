@@ -10,6 +10,7 @@ app:STORAGE_FORCE_PATH_STYLE: true
 app:STORAGE_REGION: us-east-1
 app:STORAGE_SECRET_KEY: dms_password
 
+Speed: 2 modules per day for 5 days a week. Rest 2 days must be on review fo those modules.
 
 ---
 
