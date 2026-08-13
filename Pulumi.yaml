@@ -1,0 +1,4 @@
+name: healthcare-clinic
+runtime: nodejs
+description: Healthcare Clinic
+main: infra/index.ts

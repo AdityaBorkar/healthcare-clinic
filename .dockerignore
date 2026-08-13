@@ -1,0 +1,35 @@
+# .gitignore
+
+node_modules
+.DS_Store
+
+.env*
+!.env.example
+
+.nitro
+.tanstack
+.wrangler
+.output
+*.gen.ts
+
+codedb.snapshot
+opencode.json
+
+# docs
+
+docs/
+AGENTS.md
+CONTEXT.md
+
+# others
+
+.git
+.gitignore
+.vscode
+.zed
+
+infra
+Pulumi*.yaml
+
+Dockerfile
+.dockerignore

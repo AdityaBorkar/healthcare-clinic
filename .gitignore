@@ -1,0 +1,30 @@
+# dependencies (bun install)
+node_modules
+
+# build output
+.output
+.wrangler
+.tanstack
+*.gen.ts
+
+# dotenv environment variable files
+.env*
+*.local
+*.lcov
+*.log
+coverage
+logs
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# caches
+*.tgz
+*.tsbuildinfo
+.cache
+.DS_Store
+
+# AI
+.agents
+opencode.jsonc
+codedb.snapshot
+
+docs/routes

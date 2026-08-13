@@ -1,0 +1,4 @@
+encryptionsalt: v1:M+Kp/Hb0XlY=:v1:kxDbCVLCbIcotmiR:FdWzihpyNjjMoHQg0VRoa1ezCfi1oA==
+config:
+  shaun:postgresUser: username
+  shaun:postgresPassword: password
