@@ -1,8 +1,15 @@
 # TODO
 
-- Pulumi & Secrets
-- bun dev with Pulumi Secret Injection
+# PROPER ENV INJECTION, RUN COMMAND PROPER, ENV VALIDATION, DOCKER POSTGRES RUNNING, DONE
 - Script based onboarding
+
+app:STORAGE_ACCESS_KEY: dms
+app:STORAGE_BUCKET: dms-platform
+app:STORAGE_ENDPOINT: http://localhost:8333
+app:STORAGE_FORCE_PATH_STYLE: true
+app:STORAGE_REGION: us-east-1
+app:STORAGE_SECRET_KEY: dms_password
+
 
 ---
 

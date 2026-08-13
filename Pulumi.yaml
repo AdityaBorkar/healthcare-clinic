@@ -1,4 +1,7 @@
 name: healthcare-clinic
-runtime: nodejs
 description: Healthcare Clinic
 main: infra/index.ts
+runtime: bun
+options:
+  refresh: always
+config:
