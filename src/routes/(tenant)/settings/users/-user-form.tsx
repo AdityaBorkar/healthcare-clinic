@@ -1,10 +1,4 @@
-import {
-  type ChangeEvent,
-  type FormEvent,
-  useCallback,
-  useId,
-  useState,
-} from "react";
+import { type ChangeEvent, type FormEvent, useCallback, useId, useState } from "react";
 
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -50,26 +44,19 @@ export function UserForm({
   const passwordId = useId();
   const roleId = useId();
 
-  const handleNameChange = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      setValues((current) => ({ ...current, name: event.target.value }));
-    },
-    [],
-  );
-  const handleEmailChange = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      setValues((current) => ({ ...current, email: event.target.value }));
-    },
-    [],
-  );
-  const handlePasswordChange = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      setValues((current) => ({ ...current, password: event.target.value }));
-    },
-    [],
-  );
+  const handleNameChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    setValues((current) => ({ ...current, name: event.target.value }));
+  }, []);
+  const handleEmailChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    setValues((current) => ({ ...current, email: event.target.value }));
+  }, []);
+  const handlePasswordChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
+    setValues((current) => ({ ...current, password: event.target.value }));
+  }, []);
   const handleRoleChange = useCallback((role: UserRole | null) => {
-    if (!role) return;
+    if (!role) {
+      return;
+    }
     setValues((current) => ({
       ...current,
       role,
@@ -84,11 +71,7 @@ export function UserForm({
       try {
         await onSubmit(values);
       } catch (submitError) {
-        setError(
-          submitError instanceof Error
-            ? submitError.message
-            : "Unable to save user",
-        );
+        setError(submitError instanceof Error ? submitError.message : "Unable to save user");
       } finally {
         setIsSubmitting(false);
       }
@@ -99,7 +82,7 @@ export function UserForm({
   return (
     <form className="grid gap-4" onSubmit={handleSubmit}>
       <div className="grid gap-1.5">
-        <Label className="text-warm-gray text-xs" htmlFor={nameId}>
+        <Label className="text-xs text-warm-gray" htmlFor={nameId}>
           Full name
         </Label>
         <Input
@@ -113,7 +96,7 @@ export function UserForm({
       </div>
 
       <div className="grid gap-1.5">
-        <Label className="text-warm-gray text-xs" htmlFor={emailId}>
+        <Label className="text-xs text-warm-gray" htmlFor={emailId}>
           Email address
         </Label>
         <Input
@@ -127,15 +110,13 @@ export function UserForm({
           value={values.email}
         />
         {isEditing ? (
-          <p className="text-[11px] text-warm-gray">
-            Email addresses cannot be changed here.
-          </p>
+          <p className="text-[11px] text-warm-gray">Email addresses cannot be changed here.</p>
         ) : null}
       </div>
 
       {!isEditing ? (
         <div className="grid gap-1.5">
-          <Label className="text-warm-gray text-xs" htmlFor={passwordId}>
+          <Label className="text-xs text-warm-gray" htmlFor={passwordId}>
             Temporary password
           </Label>
           <Input
@@ -156,7 +137,7 @@ export function UserForm({
       ) : null}
 
       <div className="grid gap-1.5">
-        <Label className="text-warm-gray text-xs" htmlFor={roleId}>
+        <Label className="text-xs text-warm-gray" htmlFor={roleId}>
           Workspace role
         </Label>
         {isOwner ? (
@@ -167,18 +148,9 @@ export function UserForm({
             Owner
           </div>
         ) : (
-          <Select
-            name="role"
-            onValueChange={handleRoleChange}
-            value={values.role}
-          >
-            <SelectTrigger
-              className="h-9 w-full border-stone-muted bg-white text-sm"
-              id={roleId}
-            >
-              <SelectValue>
-                {values.role === "admin" ? "Administrator" : "Member"}
-              </SelectValue>
+          <Select name="role" onValueChange={handleRoleChange} value={values.role}>
+            <SelectTrigger className="h-9 w-full border-stone-muted bg-white text-sm" id={roleId}>
+              <SelectValue>{values.role === "admin" ? "Administrator" : "Member"}</SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="member">Member</SelectItem>
@@ -193,22 +165,16 @@ export function UserForm({
 
       {error ? (
         <Alert variant="destructive">
-          <AlertDescription className="text-destructive">
-            {error}
-          </AlertDescription>
+          <AlertDescription className="text-destructive">{error}</AlertDescription>
         </Alert>
       ) : null}
 
-      <div className="flex flex-col-reverse justify-end gap-2 border-stone-border border-t pt-4 sm:flex-row">
+      <div className="flex flex-col-reverse justify-end gap-2 border-t border-stone-border pt-4 sm:flex-row">
         <Button onClick={onCancel} type="button" variant="outline">
           Cancel
         </Button>
         <Button disabled={isSubmitting} type="submit">
-          {isSubmitting
-            ? "Saving..."
-            : isEditing
-              ? "Save changes"
-              : "Create user"}
+          {isSubmitting ? "Saving..." : isEditing ? "Save changes" : "Create user"}
         </Button>
       </div>
     </form>

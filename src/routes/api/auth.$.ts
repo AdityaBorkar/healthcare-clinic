@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { isTrustedWebOrigin, p } from "@/aspen/server";
+import { isTrustedWebOrigin, pm } from "@/aspen/server";
 
 function corsHeaders(request: Request): Headers {
   const origin = request.headers.get("origin");
@@ -11,13 +11,9 @@ function corsHeaders(request: Request): Headers {
   headers.set("Access-Control-Allow-Credentials", "true");
   headers.set(
     "Access-Control-Allow-Headers",
-    request.headers.get("access-control-request-headers") ??
-      "Content-Type, Authorization",
+    request.headers.get("access-control-request-headers") ?? "Content-Type, Authorization",
   );
-  headers.set(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PUT, PATCH, DELETE, OPTIONS",
-  );
+  headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
   headers.set("Access-Control-Allow-Origin", origin);
   headers.set("Vary", "Origin");
   return headers;
@@ -32,9 +28,7 @@ export const Route = createFileRoute("/api/auth/$")({
         if (request.method === "OPTIONS") {
           return new Response(null, { headers, status: 204 });
         }
-        const response = await p.run("$global", () =>
-          p.auth.fetchHandler(request),
-        );
+        const response = await pm.run("$global", () => pm.auth.fetchHandler(request));
         for (const [key, value] of headers) {
           response.headers.set(key, value);
         }

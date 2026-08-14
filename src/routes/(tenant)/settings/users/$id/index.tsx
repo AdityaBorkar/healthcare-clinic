@@ -1,12 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import {
-  AlertCircle,
-  ArrowLeft,
-  Mail,
-  Pencil,
-  ShieldCheck,
-  Trash2,
-} from "lucide-react";
+import { AlertCircle, ArrowLeft, Mail, Pencil, ShieldCheck, Trash2 } from "lucide-react";
 import { useCallback, useState } from "react";
 
 import { PageHeader } from "@/components/page-header";
@@ -25,13 +18,7 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { orpc } from "@/lib/orpc";
 
 export const Route = createFileRoute("/(tenant)/settings/users/$id/")({
@@ -60,7 +47,9 @@ function UserDetailsPage() {
   const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false);
 
   const handleRemove = useCallback(async () => {
-    if (!user) return;
+    if (!user) {
+      return;
+    }
 
     setRemoveError(null);
     setIsRemoving(true);
@@ -68,9 +57,7 @@ function UserDetailsPage() {
       await orpc.users.remove({ id: user.id });
       await navigate({ to: "/settings/users" });
     } catch (error) {
-      setRemoveError(
-        error instanceof Error ? error.message : "Unable to remove user",
-      );
+      setRemoveError(error instanceof Error ? error.message : "Unable to remove user");
       setIsRemoving(false);
       setIsRemoveDialogOpen(false);
     }
@@ -82,11 +69,7 @@ function UserDetailsPage() {
         <div className="mx-auto max-w-4xl space-y-6">
           <PageHeader
             actions={
-              <Button
-                nativeButton={false}
-                render={<Link to="/settings/users" />}
-                variant="outline"
-              >
+              <Button nativeButton={false} render={<Link to="/settings/users" />} variant="outline">
                 <ArrowLeft />
                 Back to users
               </Button>
@@ -96,10 +79,8 @@ function UserDetailsPage() {
           />
           <Card>
             <CardContent className="py-16 text-center">
-              <p className="font-medium text-ink-black text-sm">
-                We could not find this user
-              </p>
-              <p className="mt-2 text-warm-gray text-xs">
+              <p className="text-sm font-medium text-ink-black">We could not find this user</p>
+              <p className="mt-2 text-xs text-warm-gray">
                 Return to the users list to see the current workspace members.
               </p>
             </CardContent>
@@ -117,12 +98,7 @@ function UserDetailsPage() {
             <div className="flex items-center gap-2">
               <Button
                 nativeButton={false}
-                render={
-                  <Link
-                    params={{ id: user.id }}
-                    to="/settings/users/$id/edit"
-                  />
-                }
+                render={<Link params={{ id: user.id }} to="/settings/users/$id/edit" />}
                 variant="outline"
               >
                 <Pencil />
@@ -138,18 +114,14 @@ function UserDetailsPage() {
           <Card>
             <CardHeader className="border-b">
               <CardTitle>Profile</CardTitle>
-              <CardDescription>
-                Account details for this workspace member.
-              </CardDescription>
+              <CardDescription>Account details for this workspace member.</CardDescription>
             </CardHeader>
             <CardContent className="grid gap-6 p-6 sm:grid-cols-[auto_minmax(0,1fr)] sm:items-center">
               <UserAvatar name={user.name} />
               <div className="min-w-0 space-y-3">
                 <div>
-                  <p className="font-medium text-base text-ink-black">
-                    {user.name}
-                  </p>
-                  <p className="mt-1 flex items-center gap-1.5 break-all text-sm text-warm-gray">
+                  <p className="text-base font-medium text-ink-black">{user.name}</p>
+                  <p className="mt-1 flex items-center gap-1.5 text-sm break-all text-warm-gray">
                     <Mail className="size-3.5 shrink-0" />
                     {user.email}
                   </p>
@@ -174,30 +146,20 @@ function UserDetailsPage() {
             <CardHeader>
               <CardTitle>Remove access</CardTitle>
               <CardDescription>
-                This removes the user from this workspace. Their account is not
-                deleted.
+                This removes the user from this workspace. Their account is not deleted.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               {removeError ? (
                 <Alert variant="destructive">
                   <AlertCircle className="size-4 shrink-0" />
-                  <AlertDescription className="text-destructive">
-                    {removeError}
-                  </AlertDescription>
+                  <AlertDescription className="text-destructive">{removeError}</AlertDescription>
                 </Alert>
               ) : null}
-              <AlertDialog
-                onOpenChange={setIsRemoveDialogOpen}
-                open={isRemoveDialogOpen}
-              >
+              <AlertDialog onOpenChange={setIsRemoveDialogOpen} open={isRemoveDialogOpen}>
                 <AlertDialogTrigger
                   render={
-                    <Button
-                      className="w-full"
-                      disabled={isRemoving}
-                      variant="destructive"
-                    >
+                    <Button className="w-full" disabled={isRemoving} variant="destructive">
                       <Trash2 />
                       {isRemoving ? "Removing..." : "Remove from workspace"}
                     </Button>
@@ -207,14 +169,12 @@ function UserDetailsPage() {
                   <AlertDialogHeader>
                     <AlertDialogTitle>Remove {user.name}?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      This removes the user from this workspace. Their account
-                      is not deleted, and they can be added back at any time.
+                      This removes the user from this workspace. Their account is not deleted, and
+                      they can be added back at any time.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
-                    <AlertDialogCancel disabled={isRemoving}>
-                      Cancel
-                    </AlertDialogCancel>
+                    <AlertDialogCancel disabled={isRemoving}>Cancel</AlertDialogCancel>
                     <AlertDialogAction
                       disabled={isRemoving}
                       onClick={handleRemove}
@@ -232,9 +192,7 @@ function UserDetailsPage() {
         <Card>
           <CardContent className="grid gap-2 px-6 py-4 text-xs sm:grid-cols-[auto_1fr]">
             <span className="font-medium text-warm-gray">User ID</span>
-            <code className="break-all font-mono text-ink-black">
-              {user.userId}
-            </code>
+            <code className="font-mono break-all text-ink-black">{user.userId}</code>
           </CardContent>
         </Card>
       </div>
@@ -242,7 +200,7 @@ function UserDetailsPage() {
   );
 }
 
-// biome-ignore lint/style/useComponentExportOnlyModules: route modules export a Route config alongside render helpers
+// Biome-ignore lint/style/useComponentExportOnlyModules: route modules export a Route config alongside render helpers
 function UserAvatar({ name }: { name: string }) {
   const initials = name
     .split(/\s+/)
@@ -253,7 +211,7 @@ function UserAvatar({ name }: { name: string }) {
 
   return (
     <Avatar className="size-16 rounded-2xl bg-stone-muted/40">
-      <AvatarFallback className="rounded-2xl bg-stone-muted/40 font-medium text-warm-gray text-xl">
+      <AvatarFallback className="rounded-2xl bg-stone-muted/40 text-xl font-medium text-warm-gray">
         {initials || "?"}
       </AvatarFallback>
     </Avatar>
@@ -261,7 +219,9 @@ function UserAvatar({ name }: { name: string }) {
 }
 
 function formatDate(value: Date | string | null | undefined) {
-  if (!value) return "—";
+  if (!value) {
+    return "—";
+  }
   return new Intl.DateTimeFormat(undefined, {
     day: "numeric",
     month: "short",

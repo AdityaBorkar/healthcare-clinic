@@ -2,7 +2,7 @@ import { Platform } from "@aspen-os/platform/client";
 
 import { env } from "../env";
 
-export const p = Platform.create(
+export const pm = Platform.create(
   {
     auth: {
       baseURL:

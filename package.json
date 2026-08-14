@@ -1,4 +1,25 @@
 {
+  "name": "healthcare-clinic",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "check:lint": "oxlint --fix . ; oxfmt .",
+    "check:types": "tsc --noEmit",
+    "clean": "bunx rimraf --glob \"**/{node_modules,.output,.local,.tanstack,bun.lockb}\"",
+    "db:studio": "bun infra:dev-run -- bun aspen db-studio --config=./src/aspen/server.ts",
+    "dev": "bun infra:dev-run -- vite dev --port 4020",
+    "gen:routes": "tsr generate",
+    "infra:dev-run": "bun ./infra/run-command.ts --verbose --stack dev --",
+    "infra:down": "pulumi destroy --stack",
+    "infra:preview": "pulumi preview --stack",
+    "infra:refresh": "pulumi refresh --stack",
+    "infra:up": "pulumi up --stack",
+    "prepare": "husky",
+    "preview": "bun infra:dev-run -- vite preview",
+    "test": "bun infra:dev-run -- vitest run",
+    "update:deps": "bun update --latest && bun install"
+  },
   "dependencies": {
     "@aspen-os/management": "link:@aspen-os/management",
     "@aspen-os/organization": "link:@aspen-os/organization",
@@ -27,9 +48,11 @@
     "clsx": "^2.1.1",
     "cnfast": "^0.1.0",
     "lucide-react": "^1.31.0",
-    "motion": "^13.0.0",
+    "motion": "^13.1.0",
     "nitro": "^3.0.260610-beta",
-    "posthog-js": "^1.414.0",
+    "oxfmt": "^0.63.0",
+    "oxlint": "^1.78.0",
+    "posthog-js": "^1.415.1",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-grab": "^0.1.50",
@@ -70,36 +93,12 @@
     "vite": "^8.2.1",
     "vitest": "^4.1.10"
   },
-  "lint-staged": {
-    "*": "biome format --fix --no-errors-on-unmatched"
-  },
-  "name": "healthcare-clinic",
   "overrides": {
     "@opentelemetry/api": "1.9.0",
     "@opentelemetry/core": "1.28.0",
     "@opentelemetry/sdk-trace-base": "1.28.0"
   },
-  "pnpm": {
-    "onlyBuiltDependencies": ["esbuild", "lightningcss"]
-  },
-  "private": true,
-  "scripts": {
-    "build": "vite build",
-    "check:lint": "biome check --fix .",
-    "check:types": "tsc --noEmit",
-    "clean": "bunx rimraf --glob \"**/{node_modules,.output,.local,.tanstack,bun.lockb}\"",
-    "db:studio": "bun infra:dev-run -- bun aspen db-studio --config=./src/aspen/server.ts",
-    "dev": "bun infra:dev-run -- vite dev --port 4020",
-    "gen:routes": "tsr generate",
-    "infra:dev-run": "bun ./infra/run-command.ts --verbose --stack dev --",
-    "infra:down": "pulumi destroy --stack",
-    "infra:preview": "pulumi preview --stack",
-    "infra:refresh": "pulumi refresh --stack",
-    "infra:up": "pulumi up --stack",
-    "prepare": "husky",
-    "preview": "bun infra:dev-run -- vite preview",
-    "test": "bun infra:dev-run -- vitest run",
-    "update:deps": "bun update --latest && bun install"
-  },
-  "type": "module"
+  "lint-staged": {
+    "*": "oxfmt --no-errors-on-unmatched"
+  }
 }

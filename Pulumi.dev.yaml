@@ -1,6 +1,6 @@
 encryptionsalt: v1:xM6v+lRArgA=:v1:356gtQ447Fniunqf:gxajsPvIgBFcpkIv1JdwwkBxi7qvyw==
 config:
-# App
+  # App
   app:PUBLIC_WEB_DOMAIN: localhost
   app:PUBLIC_WEB_PORT: "3000"
   app:PUBLIC_WEB_SSL: "false"

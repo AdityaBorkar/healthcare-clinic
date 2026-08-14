@@ -8,7 +8,7 @@ export function LoadingPage() {
       <Card className="shadow-subtle">
         <CardContent className="flex items-center gap-3 px-8 py-6">
           <Loader2 className="size-5 animate-spin text-primary" />
-          <span className="font-medium text-ink-black text-sm">Loading…</span>
+          <span className="text-sm font-medium text-ink-black">Loading…</span>
         </CardContent>
       </Card>
     </div>

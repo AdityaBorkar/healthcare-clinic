@@ -1,7 +1,7 @@
 import * as docker from "@pulumi/docker";
 
-// import { MinioContainer } from "./docker/minio";
-import { PostgresContainer } from "./docker/postgres";
+// Import { MinioContainer } from "./docker/minio";
+import { postgresContainer } from "./docker/postgres";
 import { GROUP_LABELS } from "./docker/utils";
 
 // Provisioning
@@ -20,13 +20,13 @@ const network = new docker.Network(
   { provider },
 );
 
-const postgres = PostgresContainer({ network, provider });
+const postgres = postgresContainer({ network, provider });
 
 // TODO: Replace using SeaweedFS
-// const minio = await MinioContainer({
-//   dependsOn: [postgres.container],
-//   network,
-//   provider,
+// Const minio = await MinioContainer({
+//   DependsOn: [postgres.container],
+//   Network,
+//   Provider,
 // });
 
 // TODO: Run Database Migrations
@@ -37,4 +37,4 @@ const postgres = PostgresContainer({ network, provider });
 
 // Outputs
 
-postgres.container;
+console.log(postgres.container.wait);

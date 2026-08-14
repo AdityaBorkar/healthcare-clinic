@@ -5,18 +5,9 @@ import {
   listOrganizations,
   updateCurrentOrganization,
 } from "./procedures/organizations";
-import {
-  createServiceProvider,
-  listServiceProviders,
-} from "./procedures/service-providers";
+import { createServiceProvider, listServiceProviders } from "./procedures/service-providers";
 import { listTenants, onboardTenant } from "./procedures/tenants";
-import {
-  createUser,
-  getUser,
-  listUsers,
-  removeUser,
-  updateUser,
-} from "./procedures/users";
+import { createUser, getUser, listUsers, removeUser, updateUser } from "./procedures/users";
 
 export const router = {
   auth: {

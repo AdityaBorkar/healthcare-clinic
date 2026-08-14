@@ -1,18 +1,8 @@
 import { Link } from "@tanstack/react-router";
-import {
-  Building2,
-  ChevronDown,
-  ExternalLink,
-  Settings,
-  UserRound,
-} from "lucide-react";
+import { Building2, ChevronDown, ExternalLink, Settings, UserRound } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { BASE_URL } from "@/lib/utils";
 
 type Organization = {
@@ -20,18 +10,12 @@ type Organization = {
   name: string;
 };
 
-export function WorkspaceSelector({
-  organization,
-}: {
-  organization: Organization | null;
-}) {
-  const organizationName = organization
-    ? organization.name
-    : "Your organization";
+export function WorkspaceSelector({ organization }: { organization: Organization | null }) {
+  const organizationName = organization ? organization.name : "Your organization";
 
   return (
     <Popover>
-      <PopoverTrigger className="flex w-full min-w-0 items-center gap-3 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cyan-signal/30">
+      <PopoverTrigger className="flex w-full min-w-0 items-center gap-3 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-cyan-signal/30 focus-visible:outline-none">
         {organization?.logo ? (
           <Avatar className="size-9 rounded-lg">
             <AvatarImage
@@ -39,24 +23,22 @@ export function WorkspaceSelector({
               className="rounded-lg object-cover"
               src={organization.logo}
             />
-            <AvatarFallback className="rounded-lg bg-cyan-signal font-medium text-sm text-white uppercase">
+            <AvatarFallback className="rounded-lg bg-cyan-signal text-sm font-medium text-white uppercase">
               {organizationName.slice(0, 1)}
             </AvatarFallback>
           </Avatar>
         ) : (
           <Avatar className="size-9">
-            <AvatarFallback className="bg-cyan-signal font-medium text-sm text-white uppercase">
+            <AvatarFallback className="bg-cyan-signal text-sm font-medium text-white uppercase">
               {organizationName.slice(0, 1)}
             </AvatarFallback>
           </Avatar>
         )}
         <span className="min-w-0 flex-1">
-          <span className="block truncate font-medium text-ink-black text-sm">
+          <span className="block truncate text-sm font-medium text-ink-black">
             {organizationName}
           </span>
-          <span className="mt-0.5 block truncate text-warm-gray text-xs">
-            Workspace
-          </span>
+          <span className="mt-0.5 block truncate text-xs text-warm-gray">Workspace</span>
         </span>
         <ChevronDown className="size-4 shrink-0 text-warm-gray" />
       </PopoverTrigger>

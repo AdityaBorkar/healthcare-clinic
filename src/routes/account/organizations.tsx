@@ -24,9 +24,7 @@ function RouteComponent() {
   const getOrganizationUrl = (slug: string) => {
     const protocol = env.PUBLIC_WEB_SSL ? "https" : "http";
     const port = env.PUBLIC_WEB_PORT ? `:${env.PUBLIC_WEB_PORT}` : "";
-    const url = new URL(
-      `${protocol}://${slug}.${env.PUBLIC_WEB_DOMAIN}${port}/dashboard`,
-    );
+    const url = new URL(`${protocol}://${slug}.${env.PUBLIC_WEB_DOMAIN}${port}/dashboard`);
 
     return url.toString();
   };
@@ -38,10 +36,10 @@ function RouteComponent() {
           <span className="flex size-10 items-center justify-center rounded-full bg-ink-black text-white">
             <Building2 className="size-5" />
           </span>
-          <p className="mt-6 font-medium text-warm-gray text-xs uppercase tracking-[0.18em]">
+          <p className="mt-6 text-xs font-medium tracking-[0.18em] text-warm-gray uppercase">
             Tenant Application
           </p>
-          <h1 className="mt-3 font-medium font-roobert text-2xl text-ink-black tracking-[-0.8px]">
+          <h1 className="mt-3 font-roobert text-2xl font-medium tracking-[-0.8px] text-ink-black">
             Choose your organization
           </h1>
           <p className="mt-2 max-w-sm text-sm text-warm-gray">
@@ -57,16 +55,17 @@ function RouteComponent() {
                 key={organization.id}
                 render={
                   <a
+                    aria-label={organization.name}
                     className="group flex min-h-16 items-center justify-between rounded-lg px-4 py-3 transition-colors hover:border-cyan-edge/60 hover:bg-muted"
                     href={getOrganizationUrl(organization.slug)}
                   />
                 }
               >
                 <span className="min-w-0">
-                  <span className="block truncate font-medium text-ink-black text-sm">
+                  <span className="block truncate text-sm font-medium text-ink-black">
                     {organization.name}
                   </span>
-                  <span className="mt-1 block truncate text-warm-gray text-xs">
+                  <span className="mt-1 block truncate text-xs text-warm-gray">
                     {organization.slug}
                   </span>
                 </span>
@@ -77,12 +76,9 @@ function RouteComponent() {
         ) : (
           <Card className="shadow-[var(--shadow-md)]">
             <CardHeader className="items-center pt-8 text-center">
-              <CardTitle className="text-sm">
-                No organizations available
-              </CardTitle>
+              <CardTitle className="text-sm">No organizations available</CardTitle>
               <p className="mt-1 text-sm text-warm-gray">
-                Contact your administrator if you need access to an
-                organization.
+                Contact your administrator if you need access to an organization.
               </p>
             </CardHeader>
           </Card>

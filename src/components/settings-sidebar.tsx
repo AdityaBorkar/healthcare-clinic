@@ -1,7 +1,7 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import type { LucideIcon } from "lucide-react";
 import {
   ArrowLeft,
+  type LucideIcon,
   BookOpen,
   ClipboardList,
   FileBarChart,
@@ -84,12 +84,12 @@ export function SettingsSidebar({
   user: User;
 }) {
   return (
-    <aside className="flex w-full shrink-0 flex-col border-stone-border border-b bg-white text-ink-black md:sticky md:top-0 md:h-svh md:w-64 md:border-r md:border-b-0">
-      <div className="border-stone-border border-b px-4 py-4">
+    <aside className="flex w-full shrink-0 flex-col border-b border-stone-border bg-white text-ink-black md:sticky md:top-0 md:h-svh md:w-64 md:border-r md:border-b-0">
+      <div className="border-b border-stone-border px-4 py-4">
         <WorkspaceSelector organization={organization} />
       </div>
 
-      <div className="border-stone-border border-b px-4 py-3">
+      <div className="border-b border-stone-border px-4 py-3">
         <Button
           className="w-full justify-start rounded-md px-3 text-warm-gray"
           nativeButton={false}
@@ -102,10 +102,7 @@ export function SettingsSidebar({
         </Button>
       </div>
 
-      <nav
-        aria-label="Settings navigation"
-        className="min-h-0 flex-1 overflow-y-auto px-4 py-4"
-      >
+      <nav aria-label="Settings navigation" className="min-h-0 flex-1 overflow-y-auto px-4 py-4">
         <LayoutGroup>
           {sections.map((section) => (
             <SidebarSection key={section.label} label={section.label}>
@@ -122,20 +119,16 @@ export function SettingsSidebar({
         </LayoutGroup>
       </nav>
 
-      <div className="border-stone-border border-t px-4 py-3">
+      <div className="border-t border-stone-border px-4 py-3">
         <div className="flex items-center gap-3 rounded-md px-2 py-2">
           <Avatar className="bg-stone-muted/40">
-            <AvatarFallback className="bg-stone-muted/40 font-medium text-warm-gray text-xs uppercase">
+            <AvatarFallback className="bg-stone-muted/40 text-xs font-medium text-warm-gray uppercase">
               {user.name.slice(0, 1)}
             </AvatarFallback>
           </Avatar>
           <span className="min-w-0 flex-1">
-            <span className="block truncate font-medium text-ink-black text-sm">
-              {user.name}
-            </span>
-            <span className="block truncate text-warm-gray text-xs">
-              Signed in
-            </span>
+            <span className="block truncate text-sm font-medium text-ink-black">{user.name}</span>
+            <span className="block truncate text-xs text-warm-gray">Signed in</span>
           </span>
           <Button
             aria-label="Sign out"
@@ -152,16 +145,10 @@ export function SettingsSidebar({
   );
 }
 
-function SidebarSection({
-  children,
-  label,
-}: {
-  children: React.ReactNode;
-  label: string;
-}) {
+function SidebarSection({ children, label }: { children: React.ReactNode; label: string }) {
   return (
     <section className="mb-5 last:mb-0">
-      <h2 className="mb-2 px-3 font-medium text-[10px] text-warm-gray uppercase tracking-[0.14em]">
+      <h2 className="mb-2 px-3 text-[10px] font-medium tracking-[0.14em] text-warm-gray uppercase">
         {label}
       </h2>
       <div className="space-y-0.5">{children}</div>

@@ -3,7 +3,7 @@ import * as pulumi from "@pulumi/pulumi";
 
 import { GROUP_LABELS } from "./utils";
 
-export function PostgresContainer({
+export function postgresContainer({
   network,
   provider,
 }: {
@@ -23,11 +23,7 @@ export function PostgresContainer({
     { provider },
   );
 
-  const volume = new docker.Volume(
-    "postgres-data",
-    { labels: GROUP_LABELS },
-    { provider },
-  );
+  const volume = new docker.Volume("postgres-data", { labels: GROUP_LABELS }, { provider });
 
   const container = new docker.Container(
     "postgres-container",

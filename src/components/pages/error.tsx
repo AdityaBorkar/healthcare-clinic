@@ -3,13 +3,7 @@ import { useCallback } from "react";
 
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function ErrorPage() {
   const reload = useCallback(() => window.location.reload(), []);
@@ -24,8 +18,7 @@ export function ErrorPage() {
           </span>
           <CardTitle className="text-lg">Something went wrong</CardTitle>
           <CardDescription className="max-w-sm text-sm">
-            An unexpected error occurred while loading this page. Please try
-            again.
+            An unexpected error occurred while loading this page. Please try again.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex justify-center pb-10">

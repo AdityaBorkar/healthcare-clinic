@@ -14,13 +14,7 @@ import {
 } from "lucide-react";
 
 import { PageHeader } from "@/components/page-header";
-import {
-  Card,
-  CardAction,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardAction, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const Route = createFileRoute("/(tenant)/settings/")({
   component: SettingsPage,
@@ -123,7 +117,7 @@ function SettingsPage() {
         <div className="space-y-8">
           {sections.map((section) => (
             <section key={section.label}>
-              <h2 className="mb-3 font-medium text-[10px] text-warm-gray uppercase tracking-[0.14em]">
+              <h2 className="mb-3 text-[10px] font-medium tracking-[0.14em] text-warm-gray uppercase">
                 {section.label}
               </h2>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -139,7 +133,7 @@ function SettingsPage() {
   );
 }
 
-// biome-ignore lint/style/useComponentExportOnlyModules: route modules export a Route config alongside render helpers
+// Biome-ignore lint/style/useComponentExportOnlyModules: route modules export a Route config alongside render helpers
 function ServiceCard({ item }: { item: Service }) {
   const Icon = item.icon;
 

@@ -27,11 +27,7 @@ export function NewEntityPage({
     <div className="mx-auto max-w-2xl space-y-6">
       <PageHeader
         actions={
-          <Button
-            nativeButton={false}
-            render={<Link to={backHref} />}
-            variant="outline"
-          >
+          <Button nativeButton={false} render={<Link to={backHref} />} variant="outline">
             <ArrowLeft /> Back
           </Button>
         }
@@ -42,9 +38,7 @@ export function NewEntityPage({
         <CardContent className="p-6">
           <div className="mb-4 flex items-center gap-2">
             <Icon className="size-5 text-warm-gray" />
-            <Badge className="bg-sky-wash/40 text-cyan-edge uppercase">
-              {domain}
-            </Badge>
+            <Badge className="bg-sky-wash/40 text-cyan-edge uppercase">{domain}</Badge>
           </div>
           {children}
         </CardContent>

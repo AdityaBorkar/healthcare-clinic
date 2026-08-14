@@ -1,6 +1,6 @@
+import { authed, base } from "../middlewares/auth";
 import { env } from "@/env";
 import { UpdateOrganizationInputSchema } from "@/schemas/organizations";
-import { authed, base } from "../middlewares/auth";
 
 const SUBDOMAIN_PATTERN = /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
 
@@ -15,30 +15,31 @@ const SUBDOMAIN_PATTERN = /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
  *   ("acme.example.com", "example.com")   => "acme"
  *   ("example.com", "example.com")        => null
  */
-export function extractSubdomain(
-  host: string,
-  appDomain: string,
-): string | null {
+export function extractSubdomain(host: string, appDomain: string): string | null {
   const hostname = host.split(":")[0]?.toLowerCase() ?? "";
   const suffix = `.${appDomain.toLowerCase()}`;
-  if (!hostname.endsWith(suffix)) return null;
+  if (!hostname.endsWith(suffix)) {
+    return null;
+  }
   const subdomain = hostname.slice(0, -suffix.length);
-  return subdomain.length > 0 && SUBDOMAIN_PATTERN.test(subdomain)
-    ? subdomain
-    : null;
+  return subdomain.length > 0 && SUBDOMAIN_PATTERN.test(subdomain) ? subdomain : null;
 }
 
 export const getOrganizationBySubdomain = base.handler(async ({ context }) => {
   const host = context.headers.get("host");
-  if (!host) return { organization: null, subdomain: null };
+  if (!host) {
+    return { organization: null, subdomain: null };
+  }
 
   const subdomain = extractSubdomain(host, env.PUBLIC_WEB_DOMAIN);
-  if (!subdomain) return { organization: null, subdomain: null };
+  if (!subdomain) {
+    return { organization: null, subdomain: null };
+  }
 
-  const { p } = await import("@/aspen/server");
+  const { pm } = await import("@/aspen/server");
 
-  return p.run("$global", async () => {
-    const result = await p.db.pool.query<{
+  return pm.run("$global", async () => {
+    const result = await pm.db.pool.query<{
       created_at: Date;
       id: string;
       logo: string | null;
@@ -53,8 +54,10 @@ export const getOrganizationBySubdomain = base.handler(async ({ context }) => {
       [subdomain],
     );
 
-    const row = result.rows[0];
-    if (!row) return { organization: null, subdomain };
+    const [row] = result.rows;
+    if (!row) {
+      return { organization: null, subdomain };
+    }
 
     return {
       organization: {
@@ -71,10 +74,10 @@ export const getOrganizationBySubdomain = base.handler(async ({ context }) => {
 });
 
 export const listOrganizations = base.handler(async () => {
-  const { p } = await import("@/aspen/server");
+  const { pm } = await import("@/aspen/server");
 
-  return p.run("$global", async () => {
-    const result = await p.db.pool.query<{
+  return pm.run("$global", async () => {
+    const result = await pm.db.pool.query<{
       id: string;
       logo: string | null;
       name: string;
@@ -93,9 +96,7 @@ export const listOrganizations = base.handler(async () => {
 
 function getOrganizationSlug(headers: Headers) {
   const host = headers.get("host");
-  const organizationSlug = host
-    ? extractSubdomain(host, env.PUBLIC_WEB_DOMAIN)
-    : null;
+  const organizationSlug = host ? extractSubdomain(host, env.PUBLIC_WEB_DOMAIN) : null;
 
   if (!organizationSlug) {
     throw new Error("This request is not associated with a workspace");
@@ -112,17 +113,19 @@ function getOrganizationSlug(headers: Headers) {
 async function resolveTenantDatabaseName(headers: Headers): Promise<string> {
   const organizationSlug = getOrganizationSlug(headers);
 
-  const { p } = await import("@/aspen/server");
+  const { pm } = await import("@/aspen/server");
 
-  return p.run("$global", async () => {
-    const organization = await p.auth.service.api.getFullOrganization({
+  return pm.run("$global", async () => {
+    const organization = await pm.auth.service.api.getFullOrganization({
       headers,
       query: { organizationSlug },
     });
 
-    if (!organization) throw new Error("Workspace not found");
+    if (!organization) {
+      throw new Error("Workspace not found");
+    }
 
-    const tenant = await p.management.tenants.get.run({
+    const tenant = await pm.management.tenants.get.run({
       id: organization.id,
     });
     if (!tenant.databaseName) {
@@ -182,13 +185,15 @@ function toOrganizationDto(org: OrganizationModuleRow) {
 export const getCurrentOrganization = authed.handler(async ({ context }) => {
   const tenantDatabaseName = await resolveTenantDatabaseName(context.headers);
 
-  const { p } = await import("@/aspen/server");
+  const { pm } = await import("@/aspen/server");
 
-  const organization = await p.run(tenantDatabaseName, () =>
-    p.organization.organizations.get.run({}),
+  const organization = await pm.run(tenantDatabaseName, () =>
+    pm.organization.organizations.get.run({}),
   );
 
-  if (!organization) throw new Error("Workspace organization not found");
+  if (!organization) {
+    throw new Error("Workspace organization not found");
+  }
 
   return toOrganizationDto(organization);
 });
@@ -198,16 +203,14 @@ export const updateCurrentOrganization = authed
   .handler(async ({ context, input }) => {
     const tenantDatabaseName = await resolveTenantDatabaseName(context.headers);
 
-    const { p } = await import("@/aspen/server");
+    const { pm } = await import("@/aspen/server");
 
-    const organization = await p.run(tenantDatabaseName, () =>
-      p.organization.organizations.update.run({
+    const organization = await pm.run(tenantDatabaseName, () =>
+      pm.organization.organizations.update.run({
         accentColor: input.accentColor,
         address: input.address,
         email: input.email,
-        foundedDate: input.foundedDate
-          ? new Date(`${input.foundedDate}T00:00:00Z`)
-          : undefined,
+        foundedDate: input.foundedDate ? new Date(`${input.foundedDate}T00:00:00Z`) : undefined,
         industry: input.industry,
         locale: input.locale,
         name: input.name,

@@ -7,10 +7,5 @@ export const Route = createFileRoute("/(tenant)/(app)/tasks")({
 });
 
 function TasksPage() {
-  return (
-    <TodoPage
-      tabs={["Diary", "Tasks", "Reminders", "Requests"]}
-      title="Tasks"
-    />
-  );
+  return <TodoPage tabs={["Diary", "Tasks", "Reminders", "Requests"]} title="Tasks" />;
 }

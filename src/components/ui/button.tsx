@@ -4,7 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center rounded-full border border-transparent bg-clip-padding font-medium text-[0.8125rem]/[1.4] whitespace-nowrap transition-all outline-none select-none focus-visible:ring-2 focus-visible:ring-cyan-signal/30 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/20 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button inline-flex shrink-0 items-center justify-center rounded-full border border-transparent bg-clip-padding text-[0.8125rem]/[1.4] font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:ring-2 focus-visible:ring-cyan-signal/30 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/20 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     defaultVariants: {
       size: "default",
@@ -29,7 +29,7 @@ const buttonVariants = cva(
           "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:ring-destructive/20",
         ghost:
           "text-ink-black hover:bg-muted hover:text-ink-black aria-expanded:bg-muted aria-expanded:text-ink-black",
-        link: "text-cyan-signal underline-offset-4 hover:underline hover:text-cyan-edge",
+        link: "text-cyan-signal underline-offset-4 hover:text-cyan-edge hover:underline",
         outline:
           "border-stone-border bg-pure-white text-ink-black shadow-[var(--shadow-subtle)] hover:bg-muted hover:text-ink-black aria-expanded:bg-muted",
         secondary:

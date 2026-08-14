@@ -1,12 +1,7 @@
 "use client";
 
 import { Select as SelectPrimitive } from "@base-ui/react/select";
-import {
-  IconCheck,
-  IconChevronDown,
-  IconChevronUp,
-  IconSelector,
-} from "@tabler/icons-react";
+import { IconCheck, IconChevronDown, IconChevronUp, IconSelector } from "@tabler/icons-react";
 import * as React from "react";
 
 import { cn } from "@/lib/utils";
@@ -53,9 +48,7 @@ function SelectTrigger({
     >
       {children}
       <SelectPrimitive.Icon
-        render={
-          <IconSelector className="pointer-events-none size-3.5 text-muted-foreground" />
-        }
+        render={<IconSelector className="pointer-events-none size-3.5 text-muted-foreground" />}
       />
     </SelectPrimitive.Trigger>
   );
@@ -103,10 +96,7 @@ function SelectContent({
   );
 }
 
-function SelectLabel({
-  className,
-  ...props
-}: SelectPrimitive.GroupLabel.Props) {
+function SelectLabel({ className, ...props }: SelectPrimitive.GroupLabel.Props) {
   return (
     <SelectPrimitive.GroupLabel
       className={cn("px-2 py-1.5 text-xs text-muted-foreground", className)}
@@ -116,11 +106,7 @@ function SelectLabel({
   );
 }
 
-function SelectItem({
-  className,
-  children,
-  ...props
-}: SelectPrimitive.Item.Props) {
+function SelectItem({ className, children, ...props }: SelectPrimitive.Item.Props) {
   return (
     <SelectPrimitive.Item
       className={cn(
@@ -144,16 +130,10 @@ function SelectItem({
   );
 }
 
-function SelectSeparator({
-  className,
-  ...props
-}: SelectPrimitive.Separator.Props) {
+function SelectSeparator({ className, ...props }: SelectPrimitive.Separator.Props) {
   return (
     <SelectPrimitive.Separator
-      className={cn(
-        "pointer-events-none -mx-1 my-1 h-px bg-border/50",
-        className,
-      )}
+      className={cn("pointer-events-none -mx-1 my-1 h-px bg-border/50", className)}
       data-slot="select-separator"
       {...props}
     />

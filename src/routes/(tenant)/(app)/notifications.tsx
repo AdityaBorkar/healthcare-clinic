@@ -7,10 +7,5 @@ export const Route = createFileRoute("/(tenant)/(app)/notifications")({
 });
 
 function NotificationsPage() {
-  return (
-    <TodoPage
-      tabs={["Announcements", "Reminders", "Events"]}
-      title="Notifications"
-    />
-  );
+  return <TodoPage tabs={["Announcements", "Reminders", "Events"]} title="Notifications" />;
 }

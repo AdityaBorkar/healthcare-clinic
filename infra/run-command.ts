@@ -1,24 +1,14 @@
 import { resolve } from "node:path";
-import { $ } from "bun";
 
-import {
-  cancel,
-  intro,
-  isCancel,
-  log,
-  outro,
-  password,
-  spinner,
-} from "@clack/prompts";
+import { cancel, intro, isCancel, log, outro, password, spinner } from "@clack/prompts";
+import { $ } from "bun";
 import { Command } from "commander";
 
 const PROJECT_DIR = resolve(import.meta.dir, "..");
 
 const program = new Command()
   .name("run-command")
-  .description(
-    "Start a command with env vars sourced from the active Pulumi stack config",
-  )
+  .description("Start a command with env vars sourced from the active Pulumi stack config")
   .argument("[command...]", "command to run instead of the default vite dev")
   .allowExcessArguments(true)
   .option(
@@ -40,7 +30,6 @@ const options = program.opts<{
   namespace: string;
   verbose: boolean;
 }>();
-const { stack, namespace, verbose } = options;
 const command = program.args;
 
 type ConfigValue = { value?: string | object; secret?: boolean };
@@ -72,37 +61,36 @@ async function loadConfig(
   namespace: string,
   passphrase: string,
 ): Promise<Record<string, string>> {
-  const config = JSON.parse(
-    await runConfig(stack, passphrase),
-  ) as ConfigSection;
+  const config = JSON.parse(await runConfig(stack, passphrase)) as ConfigSection;
 
   const env: Record<string, string> = {};
 
   for (const [key, entry] of Object.entries(config)) {
     const separator = key.indexOf(":");
     const keyNamespace = separator === -1 ? "" : key.slice(0, separator);
-    if (keyNamespace !== namespace) continue;
+    if (keyNamespace !== namespace) {
+      continue;
+    }
 
     const name = separator === -1 ? key : key.slice(separator + 1);
-    if (!name || entry.value === undefined) continue;
+    if (!name || entry.value === undefined) {
+      continue;
+    }
 
-    env[name] =
-      typeof entry.value === "string"
-        ? entry.value
-        : JSON.stringify(entry.value);
+    env[name] = typeof entry.value === "string" ? entry.value : JSON.stringify(entry.value);
   }
 
   return env;
 }
 
 async function main() {
-  intro(`Healthcare Clinic · stack "${stack}"`);
+  intro(`Healthcare Clinic · stack "${options.stack}"`);
 
   const passphrase =
     process.env.PULUMI_CONFIG_PASSPHRASE ??
     (await password({
       mask: "*",
-      message: `Pulumi config passphrase for stack "${stack}"`,
+      message: `Pulumi config passphrase for stack "${options.stack}"`,
     }));
   if (isCancel(passphrase)) {
     cancel("Operation cancelled.");
@@ -110,26 +98,25 @@ async function main() {
   }
 
   const spin = spinner();
-  spin.start(`Reading config for stack "${stack}"`);
+  spin.start(`Reading config for stack "${options.stack}"`);
 
-  let env: Record<string, string>;
-  try {
-    env = await loadConfig(stack, namespace, passphrase);
-  } catch (error) {
-    spin.stop("Failed");
+  const env = await loadConfig(options.stack, options.namespace, passphrase).catch((error) => {
     log.error(error instanceof Error ? error.message : String(error));
+    spin.stop("Failed");
     process.exit(1);
-  }
-  spin.stop(`Config loaded for stack "${stack}"`);
+  });
+  spin.stop(`Config loaded for stack "${options.stack}"`);
 
-  if (verbose) {
+  if (options.verbose) {
     log.info(`Env Injected:\n - ${Object.keys(env).sort().join("\n - ")}`);
   }
 
   const [commandName, ...commandArgs] = command;
-  if (!commandName) throw new Error("No command to run");
+  if (!commandName) {
+    throw new Error("No command to run");
+  }
 
-  log.step(`${stack} $ ${command.join(" ")}`);
+  log.step(`${options.stack} $ ${command.join(" ")}`);
 
   const child = Bun.spawn([commandName, ...commandArgs], {
     cwd: PROJECT_DIR,
@@ -144,8 +131,11 @@ async function main() {
   await child.exited;
   outro("Done");
 
-  if (child.signalCode) process.kill(process.pid, child.signalCode);
-  else process.exit(child.exitCode ?? 1);
+  if (child.signalCode) {
+    process.kill(process.pid, child.signalCode);
+  } else {
+    process.exit(child.exitCode ?? 1);
+  }
 }
 
 try {

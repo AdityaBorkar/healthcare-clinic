@@ -1,13 +1,4 @@
-import {
-  boolean,
-  integer,
-  nullable,
-  number,
-  object,
-  optional,
-  pipe,
-  string,
-} from "valibot";
+import { boolean, integer, nullable, number, object, optional, pipe, string } from "valibot";
 
 import { NameSchema, SlugSchema } from "./common";
 

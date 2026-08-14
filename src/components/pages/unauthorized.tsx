@@ -1,12 +1,6 @@
 import { ShieldX } from "lucide-react";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export function UnauthorizedPage() {
   return (
@@ -18,8 +12,8 @@ export function UnauthorizedPage() {
           </span>
           <CardTitle className="text-lg">Access denied</CardTitle>
           <CardDescription className="max-w-sm text-sm">
-            You don&apos;t have permission to view this resource. Contact your
-            administrator if you believe this is a mistake.
+            You don&apos;t have permission to view this resource. Contact your administrator if you
+            believe this is a mistake.
           </CardDescription>
         </CardHeader>
         <CardContent className="pb-10" />

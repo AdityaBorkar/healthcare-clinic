@@ -1,10 +1,4 @@
-import {
-  type ChangeEvent,
-  type FormEvent,
-  useCallback,
-  useId,
-  useState,
-} from "react";
+import { type ChangeEvent, type FormEvent, useCallback, useId, useState } from "react";
 
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -33,11 +27,7 @@ type OrganizationFormProps = {
   onSubmit: (values: OrganizationFormValues) => Promise<void>;
 };
 
-export function OrganizationForm({
-  initialValues,
-  onCancel,
-  onSubmit,
-}: OrganizationFormProps) {
+export function OrganizationForm({ initialValues, onCancel, onSubmit }: OrganizationFormProps) {
   const [values, setValues] = useState(initialValues);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -47,10 +37,9 @@ export function OrganizationForm({
   const accentColorId = useId();
 
   const handleChange = useCallback(
-    (key: keyof OrganizationFormValues) =>
-      (event: ChangeEvent<HTMLInputElement>) => {
-        setValues((current) => ({ ...current, [key]: event.target.value }));
-      },
+    (key: keyof OrganizationFormValues) => (event: ChangeEvent<HTMLInputElement>) => {
+      setValues((current) => ({ ...current, [key]: event.target.value }));
+    },
     [],
   );
 
@@ -64,9 +53,7 @@ export function OrganizationForm({
         await onSubmit(values);
       } catch (submitError) {
         setError(
-          submitError instanceof Error
-            ? submitError.message
-            : "Unable to save organization",
+          submitError instanceof Error ? submitError.message : "Unable to save organization",
         );
       } finally {
         setIsSubmitting(false);
@@ -79,7 +66,7 @@ export function OrganizationForm({
     <form className="grid gap-4" onSubmit={handleSubmit}>
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="grid gap-1.5">
-          <Label className="text-warm-gray text-xs" htmlFor={nameId}>
+          <Label className="text-xs text-warm-gray" htmlFor={nameId}>
             Organization name
           </Label>
           <Input
@@ -92,7 +79,7 @@ export function OrganizationForm({
         </div>
 
         <div className="grid gap-1.5">
-          <Label className="text-warm-gray text-xs" htmlFor={slugId}>
+          <Label className="text-xs text-warm-gray" htmlFor={slugId}>
             Slug
           </Label>
           <Input
@@ -153,7 +140,7 @@ export function OrganizationForm({
           value={values.taxId}
         />
         <div className="grid gap-1.5">
-          <Label className="text-warm-gray text-xs" htmlFor={foundedDateId}>
+          <Label className="text-xs text-warm-gray" htmlFor={foundedDateId}>
             Founded date
           </Label>
           <Input
@@ -177,7 +164,7 @@ export function OrganizationForm({
         />
 
         <div className="grid gap-1.5">
-          <Label className="text-warm-gray text-xs" htmlFor={accentColorId}>
+          <Label className="text-xs text-warm-gray" htmlFor={accentColorId}>
             Accent color
           </Label>
           <Input
@@ -191,13 +178,11 @@ export function OrganizationForm({
 
       {error ? (
         <Alert variant="destructive">
-          <AlertDescription className="text-destructive">
-            {error}
-          </AlertDescription>
+          <AlertDescription className="text-destructive">{error}</AlertDescription>
         </Alert>
       ) : null}
 
-      <div className="flex flex-col-reverse justify-end gap-2 border-stone-border border-t pt-4 sm:flex-row">
+      <div className="flex flex-col-reverse justify-end gap-2 border-t border-stone-border pt-4 sm:flex-row">
         <Button onClick={onCancel} type="button" variant="outline">
           Cancel
         </Button>
@@ -225,16 +210,10 @@ function TextField({
   const id = useId();
   return (
     <div className="grid gap-1.5">
-      <Label className="text-warm-gray text-xs" htmlFor={id}>
+      <Label className="text-xs text-warm-gray" htmlFor={id}>
         {label}
       </Label>
-      <Input
-        id={id}
-        onChange={onChange}
-        placeholder={placeholder}
-        type={type}
-        value={value}
-      />
+      <Input id={id} onChange={onChange} placeholder={placeholder} type={type} value={value} />
     </div>
   );
 }
