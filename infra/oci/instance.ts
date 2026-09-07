@@ -33,7 +33,7 @@ export function createInstance({ subnet }: { subnet: oci.core.Subnet }) {
 		user: sshUser,
 	};
 
-	const image = oci.core
+	const imageId = oci.core
 		.getImagesOutput({
 			compartmentId,
 			operatingSystem: "Canonical Ubuntu",
@@ -42,7 +42,13 @@ export function createInstance({ subnet }: { subnet: oci.core.Subnet }) {
 			sortBy: "TIMECREATED",
 			sortOrder: "DESC",
 		})
-		.apply((images) => images.images[0]);
+		.apply((images) => {
+			const first = images.images[0];
+			if (!first) {
+				throw new Error("No matching OCI image found for Ubuntu 26.04");
+			}
+			return first.id;
+		});
 
 	const instance = new oci.core.Instance(
 		"vps-instance",
@@ -71,7 +77,7 @@ export function createInstance({ subnet }: { subnet: oci.core.Subnet }) {
 			},
 			sourceDetails: {
 				bootVolumeSizeInGbs: String(100),
-				sourceId: image.id,
+				sourceId: imageId,
 				sourceType: "image",
 			},
 		},

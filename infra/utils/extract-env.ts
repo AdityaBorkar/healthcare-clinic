@@ -66,12 +66,18 @@ export const APP_ENV_VARS: AppEnvVar[] = [
 export function appBuildArgs(
 	envValues: Record<string, pulumi.Input<string>>,
 ): Record<string, pulumi.Input<string>> {
-	return Object.fromEntries(
-		APP_ENV_VARS.filter(({ build }) => build).map(({ name }) => [
-			name,
-			envValues[name],
-		]),
-	);
+	const args: Record<string, pulumi.Input<string>> = {};
+	for (const { build, name } of APP_ENV_VARS) {
+		if (!build) {
+			continue;
+		}
+		const value = envValues[name];
+		if (value === undefined) {
+			throw new Error(`Missing env value for build arg ${name}`);
+		}
+		args[name] = value;
+	}
+	return args;
 }
 
 /** Runtime `envs` entries (`NAME=value`) for every manifest var. */

@@ -11,6 +11,6 @@ export const createServiceProvider = authed
 	.handler(async ({ input }) => {
 		const { pm } = await import("#/aspen/server");
 		return pm.run("$global", () =>
-			pm.management.serviceProviders.create.run({ input }),
+			pm.management.serviceProviders.create.run(input),
 		);
 	});

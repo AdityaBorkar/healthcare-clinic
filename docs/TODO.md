@@ -1,6 +1,5 @@
 # TODO
 
-- bun check:types
 - Script based onboarding
 
 Speed: 2 modules per day for 5 days a week. Rest 2 days must be on review fo those modules.

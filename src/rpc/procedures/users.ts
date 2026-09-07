@@ -160,7 +160,7 @@ export const updateUser = authed
 			}
 
 			if (input.patch.name !== undefined) {
-				await pm.auth._.user.update({
+				await pm.auth.rest.user.update({
 					data: { name: input.patch.name },
 					id: member.userId,
 				});

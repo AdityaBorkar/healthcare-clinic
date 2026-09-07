@@ -3,6 +3,7 @@ import { Organization } from "@aspen-os/organization";
 import {
 	type IsolatedTenantConfig,
 	IsolatedTenantPlatform,
+	type IsolatedTenantPlatformInstance,
 } from "@aspen-os/platform/server";
 
 import { env } from "../env";
@@ -99,7 +100,9 @@ const organization = Organization.create({ country: "INDIA" });
 
 // Platform
 
-export const pm = IsolatedTenantPlatform.create(
+export const pm: IsolatedTenantPlatformInstance<
+	[ManagementPlane, Organization]
+> = IsolatedTenantPlatform.create(
 	{ auth, db, kvStore, logs, pubsub, rpc, storage },
 	[management_plane, organization],
 );

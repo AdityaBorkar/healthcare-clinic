@@ -21,6 +21,7 @@ export const env = createEnv({
 		DB_USER: z.string().min(1),
 		GOOGLE_CLIENT_ID: z.string().min(1),
 		GOOGLE_CLIENT_SECRET: z.string().min(1),
+		OTEL_SERVICE_NAME: z.string().min(1),
 		STORAGE_ACCESS_KEY: z.string().min(1),
 		STORAGE_BUCKET: z.string().min(1),
 		STORAGE_ENDPOINT: z.string().min(1),

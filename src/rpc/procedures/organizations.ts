@@ -44,14 +44,16 @@ export const getOrganizationBySubdomain = base.handler(async ({ context }) => {
 	const { pm } = await import("#/aspen/server");
 
 	return pm.run("$global", async () => {
-		const result = await pm.db.pool.query<{
-			created_at: Date;
-			id: string;
-			logo: string | null;
-			metadata: unknown;
-			name: string;
-			slug: string;
-		}>(
+		const rows = await pm.db.pool.unsafe<
+			{
+				created_at: Date;
+				id: string;
+				logo: string | null;
+				metadata: unknown;
+				name: string;
+				slug: string;
+			}[]
+		>(
 			`SELECT id, name, slug, logo, metadata, created_at
          FROM organization
          WHERE slug = $1
@@ -59,7 +61,7 @@ export const getOrganizationBySubdomain = base.handler(async ({ context }) => {
 			[subdomain],
 		);
 
-		const [row] = result.rows;
+		const [row] = rows;
 		if (!row) {
 			return { organization: null, subdomain };
 		}
@@ -82,19 +84,21 @@ export const listOrganizations = base.handler(async () => {
 	const { pm } = await import("#/aspen/server");
 
 	return pm.run("$global", async () => {
-		const result = await pm.db.pool.query<{
-			id: string;
-			logo: string | null;
-			name: string;
-			slug: string;
-		}>(
+		const rows = await pm.db.pool.unsafe<
+			{
+				id: string;
+				logo: string | null;
+				name: string;
+				slug: string;
+			}[]
+		>(
 			`SELECT id, name, slug, logo
          FROM organization
          ORDER BY name ASC`,
 		);
 
 		return {
-			organizations: result.rows,
+			organizations: rows,
 		};
 	});
 });
