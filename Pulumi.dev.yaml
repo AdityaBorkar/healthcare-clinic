@@ -18,3 +18,9 @@ config:
   postgres:DB_HOST: localhost
   postgres:DB_SSL: "false"
   postgres:DB_PORT: "5410"
+# app:STORAGE_ACCESS_KEY: dms
+# app:STORAGE_BUCKET: dms-platform
+# app:STORAGE_ENDPOINT: http://localhost:8333
+# app:STORAGE_FORCE_PATH_STYLE: true
+# app:STORAGE_REGION: us-east-1
+# app:STORAGE_SECRET_KEY: dms_password
