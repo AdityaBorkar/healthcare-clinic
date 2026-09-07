@@ -32,7 +32,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "#/components/ui/card";
-import { orpc } from "#/lib/orpc";
+import { orpc } from "#/lib/rpc";
 
 export const Route = createFileRoute("/(tenant)/settings/users/$id/")({
 	component: UserDetailsPage,
@@ -244,7 +244,7 @@ function UserDetailsPage() {
 	);
 }
 
-// Biome-ignore lint/style/useComponentExportOnlyModules: route modules export a Route config alongside render helpers
+// biome-ignore lint/style/useComponentExportOnlyModules: route modules export a Route config alongside render helpers
 function UserAvatar({ name }: { name: string }) {
 	const initials = name
 		.split(/\s+/)

@@ -14,7 +14,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "#/components/ui/table";
-import { orpc } from "#/lib/orpc";
+import { orpc } from "#/lib/rpc";
 
 export const Route = createFileRoute("/(tenant)/settings/users/")({
 	component: UsersPage,
@@ -150,7 +150,7 @@ function UsersPage() {
 	);
 }
 
-// Biome-ignore lint/style/useComponentExportOnlyModules: route modules export a Route config alongside render helpers
+// biome-ignore lint/style/useComponentExportOnlyModules: route modules export a Route config alongside render helpers
 function EmptyState({
 	description,
 	title,
@@ -168,7 +168,7 @@ function EmptyState({
 	);
 }
 
-// Biome-ignore lint/style/useComponentExportOnlyModules: route modules export a Route config alongside render helpers
+// biome-ignore lint/style/useComponentExportOnlyModules: route modules export a Route config alongside render helpers
 function UserAvatar({ name }: { name: string }) {
 	const initials = name
 		.split(/\s+/)

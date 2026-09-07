@@ -4,7 +4,7 @@ import { object, optional, string } from "valibot";
 
 import { Card, CardHeader, CardTitle } from "#/components/ui/card";
 import { env } from "#/env";
-import { orpc } from "#/lib/orpc";
+import { orpc } from "#/lib/rpc";
 
 export const Route = createFileRoute("/account/organizations")({
 	component: RouteComponent,

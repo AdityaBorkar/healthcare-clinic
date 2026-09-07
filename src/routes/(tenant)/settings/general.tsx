@@ -12,7 +12,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "#/components/ui/card";
-import { orpc } from "#/lib/orpc";
+import { orpc } from "#/lib/rpc";
 import {
 	OrganizationForm,
 	type OrganizationFormValues,
@@ -239,7 +239,7 @@ function toFormValues(
 	};
 }
 
-// Biome-ignore lint/style/useComponentExportOnlyModules: route modules export a Route config alongside render helpers
+// biome-ignore lint/style/useComponentExportOnlyModules: route modules export a Route config alongside render helpers
 function Detail({ label, value }: { label: string; value: ReactNode }) {
 	return (
 		<div>
@@ -251,7 +251,7 @@ function Detail({ label, value }: { label: string; value: ReactNode }) {
 	);
 }
 
-// Biome-ignore lint/style/useComponentExportOnlyModules: route modules export a Route config alongside render helpers
+// biome-ignore lint/style/useComponentExportOnlyModules: route modules export a Route config alongside render helpers
 function StatusBadge({ status }: { status: string }) {
 	const variant =
 		status === "active"

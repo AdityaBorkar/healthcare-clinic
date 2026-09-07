@@ -16,7 +16,7 @@ import { Card } from "#/components/ui/card";
 import { Input } from "#/components/ui/input";
 import { Label } from "#/components/ui/label";
 import { env } from "#/env";
-import { orpc } from "#/lib/orpc";
+import { orpc } from "#/lib/rpc";
 
 export const Route = createFileRoute("/")({
 	beforeLoad: async () => {

@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 
-import { orpc } from "#/lib/orpc";
+import { orpc } from "#/lib/rpc";
 
 export const Route = createFileRoute("/(tenant)")({
 	beforeLoad: async ({ location }) => {

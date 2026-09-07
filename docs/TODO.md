@@ -1,7 +1,6 @@
 # TODO
 
-# PROPER ENV INJECTION, RUN COMMAND PROPER, ENV VALIDATION, DOCKER POSTGRES RUNNING, DONE
-
+- bun check:types
 - Script based onboarding
 
 app:STORAGE_ACCESS_KEY: dms

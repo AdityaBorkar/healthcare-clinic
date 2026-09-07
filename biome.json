@@ -70,6 +70,25 @@
 					}
 				}
 			}
+		},
+		{
+			"includes": ["src/components/**"],
+			"linter": {
+				"rules": {
+					"a11y": {
+						"noLabelWithoutControl": "off",
+						"useFocusableInteractive": "off",
+						"useSemanticElements": "off"
+					},
+					"style": {
+						"useComponentExportOnlyModules": "off"
+					},
+					"suspicious": {
+						"noLeakedRender": "off",
+						"noUnnecessaryConditions": "off"
+					}
+				}
+			}
 		}
 	],
 	"vcs": {

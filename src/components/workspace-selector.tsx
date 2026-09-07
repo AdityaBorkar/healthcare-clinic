@@ -13,7 +13,7 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "#/components/ui/popover";
-import { BASE_URL } from "#/lib/utils";
+import { BASE_URL } from "#/env";
 
 type Organization = {
 	logo: string | null;

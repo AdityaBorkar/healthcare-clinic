@@ -5,7 +5,7 @@ import { useCallback } from "react";
 import { NewEntityPage } from "#/components/pages/new-entity";
 import { Button } from "#/components/ui/button";
 import { Card, CardContent } from "#/components/ui/card";
-import { orpc } from "#/lib/orpc";
+import { orpc } from "#/lib/rpc";
 import { UserForm, type UserFormValues } from "../-user-form";
 
 export const Route = createFileRoute("/(tenant)/settings/users/$id/edit")({

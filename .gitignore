@@ -11,3 +11,5 @@ node_modules
 
 .agents/skills
 codedb.snapshot
+
+.archive

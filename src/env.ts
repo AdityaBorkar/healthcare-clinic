@@ -29,3 +29,5 @@ export const env = createEnv({
 		STORAGE_SECRET_KEY: z.string().min(1),
 	},
 });
+
+export const BASE_URL = `${env.PUBLIC_WEB_SSL ? "https://" : "http://"}${env.PUBLIC_WEB_DOMAIN}${env.PUBLIC_WEB_PORT ? `:${env.PUBLIC_WEB_PORT}` : ""}`;
