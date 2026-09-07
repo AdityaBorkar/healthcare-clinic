@@ -4,5 +4,5 @@
  * the session is resolved from them by the auth middleware at runtime.
  */
 export interface RpcContext {
-  headers: Headers;
+	headers: Headers;
 }

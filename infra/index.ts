@@ -15,9 +15,9 @@ const server_host = "unix:///var/run/docker.sock";
 const provider = new docker.Provider("docker", { host: server_host });
 
 const network = new docker.Network(
-  "docker-network",
-  { driver: "bridge", labels: GROUP_LABELS },
-  { provider },
+	"docker-network",
+	{ driver: "bridge", labels: GROUP_LABELS },
+	{ provider },
 );
 
 const postgres = postgresContainer({ network, provider });

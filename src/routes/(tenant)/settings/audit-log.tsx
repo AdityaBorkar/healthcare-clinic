@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { TodoPage } from "@/components/pages/todo";
+import { TodoPage } from "#/components/pages/todo";
 
 export const Route = createFileRoute("/(tenant)/settings/audit-log")({
-  component: AuditLogPage,
+	component: AuditLogPage,
 });
 
 function AuditLogPage() {
-  return <TodoPage title="Audit Log" />;
+	return <TodoPage title="Audit Log" />;
 }

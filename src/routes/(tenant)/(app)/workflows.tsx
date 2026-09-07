@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { TodoPage } from "@/components/pages/todo";
+import { TodoPage } from "#/components/pages/todo";
 
 export const Route = createFileRoute("/(tenant)/(app)/workflows")({
-  component: WorkflowsPage,
+	component: WorkflowsPage,
 });
 
 function WorkflowsPage() {
-  return <TodoPage title="Workflows" />;
+	return <TodoPage title="Workflows" />;
 }

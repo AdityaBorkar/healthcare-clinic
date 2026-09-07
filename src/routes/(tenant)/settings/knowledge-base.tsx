@@ -1,11 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { TodoPage } from "@/components/pages/todo";
+import { TodoPage } from "#/components/pages/todo";
 
 export const Route = createFileRoute("/(tenant)/settings/knowledge-base")({
-  component: KnowledgeBasePage,
+	component: KnowledgeBasePage,
 });
 
 function KnowledgeBasePage() {
-  return <TodoPage title="Knowledge Base" />;
+	return <TodoPage title="Knowledge Base" />;
 }

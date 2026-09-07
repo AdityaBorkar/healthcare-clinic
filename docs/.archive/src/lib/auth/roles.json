@@ -1,0 +1,76 @@
+{
+	"roles": [
+		{
+			"canManageSettings": true,
+			"canManageUsers": true,
+			"department": "administration",
+			"description": "Full system access and administrative privileges",
+			"id": "admin-dept",
+			"level": 1,
+			"name": "Admin Department"
+		},
+		{
+			"canManageSettings": false,
+			"canManageUsers": false,
+			"department": "frontdesk",
+			"description": "Front desk operations and patient registration",
+			"id": "receptionist",
+			"level": 2,
+			"name": "Receptionist / Admin"
+		},
+		{
+			"canManageSettings": false,
+			"canManageUsers": false,
+			"department": "finance",
+			"description": "Financial advisory and billing management",
+			"id": "financial-counsellor",
+			"level": 2,
+			"name": "Financial Counseller"
+		},
+		{
+			"canManageSettings": false,
+			"canManageUsers": false,
+			"department": "medical",
+			"description": "Medical practitioner with patient care privileges",
+			"id": "doctor",
+			"level": 3,
+			"name": "Doctor"
+		},
+		{
+			"canManageSettings": false,
+			"canManageUsers": false,
+			"department": "medical",
+			"description": "Assists doctors with clinical procedures",
+			"id": "medical-assistant",
+			"level": 3,
+			"name": "Medical Assistant"
+		},
+		{
+			"canManageSettings": false,
+			"canManageUsers": false,
+			"department": "medical",
+			"description": "Patient care and medical assistance",
+			"id": "nurse",
+			"level": 3,
+			"name": "Nurse"
+		},
+		{
+			"canManageSettings": false,
+			"canManageUsers": false,
+			"department": "operations",
+			"description": "Ward maintenance and patient transport",
+			"id": "wardboy",
+			"level": 4,
+			"name": "Wardboy"
+		},
+		{
+			"canManageSettings": false,
+			"canManageUsers": false,
+			"department": "operations",
+			"description": "Security and facility access control",
+			"id": "security",
+			"level": 4,
+			"name": "Security"
+		}
+	]
+}

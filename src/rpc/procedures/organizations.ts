@@ -1,6 +1,6 @@
+import { env } from "#/env";
+import { UpdateOrganizationInputSchema } from "#/schemas/organizations";
 import { authed, base } from "../middlewares/auth";
-import { env } from "@/env";
-import { UpdateOrganizationInputSchema } from "@/schemas/organizations";
 
 const SUBDOMAIN_PATTERN = /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
 
@@ -15,94 +15,101 @@ const SUBDOMAIN_PATTERN = /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
  *   ("acme.example.com", "example.com")   => "acme"
  *   ("example.com", "example.com")        => null
  */
-export function extractSubdomain(host: string, appDomain: string): string | null {
-  const hostname = host.split(":")[0]?.toLowerCase() ?? "";
-  const suffix = `.${appDomain.toLowerCase()}`;
-  if (!hostname.endsWith(suffix)) {
-    return null;
-  }
-  const subdomain = hostname.slice(0, -suffix.length);
-  return subdomain.length > 0 && SUBDOMAIN_PATTERN.test(subdomain) ? subdomain : null;
+export function extractSubdomain(
+	host: string,
+	appDomain: string,
+): string | null {
+	const hostname = host.split(":")[0]?.toLowerCase() ?? "";
+	const suffix = `.${appDomain.toLowerCase()}`;
+	if (!hostname.endsWith(suffix)) {
+		return null;
+	}
+	const subdomain = hostname.slice(0, -suffix.length);
+	return subdomain.length > 0 && SUBDOMAIN_PATTERN.test(subdomain)
+		? subdomain
+		: null;
 }
 
 export const getOrganizationBySubdomain = base.handler(async ({ context }) => {
-  const host = context.headers.get("host");
-  if (!host) {
-    return { organization: null, subdomain: null };
-  }
+	const host = context.headers.get("host");
+	if (!host) {
+		return { organization: null, subdomain: null };
+	}
 
-  const subdomain = extractSubdomain(host, env.PUBLIC_WEB_DOMAIN);
-  if (!subdomain) {
-    return { organization: null, subdomain: null };
-  }
+	const subdomain = extractSubdomain(host, env.PUBLIC_WEB_DOMAIN);
+	if (!subdomain) {
+		return { organization: null, subdomain: null };
+	}
 
-  const { pm } = await import("@/aspen/server");
+	const { pm } = await import("#/aspen/server");
 
-  return pm.run("$global", async () => {
-    const result = await pm.db.pool.query<{
-      created_at: Date;
-      id: string;
-      logo: string | null;
-      metadata: unknown;
-      name: string;
-      slug: string;
-    }>(
-      `SELECT id, name, slug, logo, metadata, created_at
+	return pm.run("$global", async () => {
+		const result = await pm.db.pool.query<{
+			created_at: Date;
+			id: string;
+			logo: string | null;
+			metadata: unknown;
+			name: string;
+			slug: string;
+		}>(
+			`SELECT id, name, slug, logo, metadata, created_at
          FROM organization
          WHERE slug = $1
          LIMIT 1`,
-      [subdomain],
-    );
+			[subdomain],
+		);
 
-    const [row] = result.rows;
-    if (!row) {
-      return { organization: null, subdomain };
-    }
+		const [row] = result.rows;
+		if (!row) {
+			return { organization: null, subdomain };
+		}
 
-    return {
-      organization: {
-        createdAt: row.created_at.toISOString(),
-        id: row.id,
-        logo: row.logo,
-        metadata: row.metadata,
-        name: row.name,
-        slug: row.slug,
-      },
-      subdomain,
-    };
-  });
+		return {
+			organization: {
+				createdAt: row.created_at.toISOString(),
+				id: row.id,
+				logo: row.logo,
+				metadata: row.metadata,
+				name: row.name,
+				slug: row.slug,
+			},
+			subdomain,
+		};
+	});
 });
 
 export const listOrganizations = base.handler(async () => {
-  const { pm } = await import("@/aspen/server");
+	const { pm } = await import("#/aspen/server");
 
-  return pm.run("$global", async () => {
-    const result = await pm.db.pool.query<{
-      id: string;
-      logo: string | null;
-      name: string;
-      slug: string;
-    }>(
-      `SELECT id, name, slug, logo
+	return pm.run("$global", async () => {
+		const result = await pm.db.pool.query<{
+			id: string;
+			logo: string | null;
+			name: string;
+			slug: string;
+		}>(
+			`SELECT id, name, slug, logo
          FROM organization
          ORDER BY name ASC`,
-    );
+		);
 
-    return {
-      organizations: result.rows,
-    };
-  });
+		return {
+			organizations: result.rows,
+		};
+	});
 });
 
 function getOrganizationSlug(headers: Headers) {
-  const host = headers.get("host");
-  const organizationSlug = host ? extractSubdomain(host, env.PUBLIC_WEB_DOMAIN) : null;
+	const host = headers.get("host");
+	const organizationSlug = host
+		? extractSubdomain(host, env.PUBLIC_WEB_DOMAIN)
+		: null;
 
-  if (!organizationSlug) {
-    throw new Error("This request is not associated with a workspace");
-  }
+	if (!organizationSlug) {
+		throw new Error("This request is not associated with a workspace");
+	}
 
-  return organizationSlug;
+	return organizationSlug;
 }
 
 /**
@@ -111,117 +118,119 @@ function getOrganizationSlug(headers: Headers) {
  * database context.
  */
 async function resolveTenantDatabaseName(headers: Headers): Promise<string> {
-  const organizationSlug = getOrganizationSlug(headers);
+	const organizationSlug = getOrganizationSlug(headers);
 
-  const { pm } = await import("@/aspen/server");
+	const { pm } = await import("#/aspen/server");
 
-  return pm.run("$global", async () => {
-    const organization = await pm.auth.service.api.getFullOrganization({
-      headers,
-      query: { organizationSlug },
-    });
+	return pm.run("$global", async () => {
+		const organization = await pm.auth.service.api.getFullOrganization({
+			headers,
+			query: { organizationSlug },
+		});
 
-    if (!organization) {
-      throw new Error("Workspace not found");
-    }
+		if (!organization) {
+			throw new Error("Workspace not found");
+		}
 
-    const tenant = await pm.management.tenants.get.run({
-      id: organization.id,
-    });
-    if (!tenant.databaseName) {
-      throw new Error("Workspace database is not configured");
-    }
+		const tenant = await pm.management.tenants.get.run({
+			id: organization.id,
+		});
+		if (!tenant.databaseName) {
+			throw new Error("Workspace database is not configured");
+		}
 
-    return tenant.databaseName;
-  });
+		return tenant.databaseName;
+	});
 }
 
 type OrganizationModuleRow = {
-  accentColor: string;
-  address: string | null;
-  createdAt: Date;
-  email: string | null;
-  foundedDate: string | null;
-  id: string;
-  industry: string | null;
-  locale: string;
-  logo: string | null;
-  metadata: unknown;
-  name: string;
-  phone: string | null;
-  registrationNumber: string | null;
-  slug: string;
-  status: string;
-  taxId: string | null;
-  timezone: string;
-  updatedAt: Date;
-  website: string | null;
+	accentColor: string;
+	address: string | null;
+	createdAt: Date;
+	email: string | null;
+	foundedDate: string | null;
+	id: string;
+	industry: string | null;
+	locale: string;
+	logo: string | null;
+	metadata: unknown;
+	name: string;
+	phone: string | null;
+	registrationNumber: string | null;
+	slug: string;
+	status: string;
+	taxId: string | null;
+	timezone: string;
+	updatedAt: Date;
+	website: string | null;
 };
 
 function toOrganizationDto(org: OrganizationModuleRow) {
-  return {
-    accentColor: org.accentColor,
-    address: org.address,
-    createdAt: org.createdAt.toISOString(),
-    email: org.email,
-    foundedDate: org.foundedDate,
-    id: org.id,
-    industry: org.industry,
-    locale: org.locale,
-    logo: org.logo,
-    metadata: org.metadata,
-    name: org.name,
-    phone: org.phone,
-    registrationNumber: org.registrationNumber,
-    slug: org.slug,
-    status: org.status,
-    taxId: org.taxId,
-    timezone: org.timezone,
-    updatedAt: org.updatedAt.toISOString(),
-    website: org.website,
-  };
+	return {
+		accentColor: org.accentColor,
+		address: org.address,
+		createdAt: org.createdAt.toISOString(),
+		email: org.email,
+		foundedDate: org.foundedDate,
+		id: org.id,
+		industry: org.industry,
+		locale: org.locale,
+		logo: org.logo,
+		metadata: org.metadata,
+		name: org.name,
+		phone: org.phone,
+		registrationNumber: org.registrationNumber,
+		slug: org.slug,
+		status: org.status,
+		taxId: org.taxId,
+		timezone: org.timezone,
+		updatedAt: org.updatedAt.toISOString(),
+		website: org.website,
+	};
 }
 
 export const getCurrentOrganization = authed.handler(async ({ context }) => {
-  const tenantDatabaseName = await resolveTenantDatabaseName(context.headers);
+	const tenantDatabaseName = await resolveTenantDatabaseName(context.headers);
 
-  const { pm } = await import("@/aspen/server");
+	const { pm } = await import("#/aspen/server");
 
-  const organization = await pm.run(tenantDatabaseName, () =>
-    pm.organization.organizations.get.run({}),
-  );
+	const organization = await pm.run(tenantDatabaseName, () =>
+		pm.organization.organizations.get.run({}),
+	);
 
-  if (!organization) {
-    throw new Error("Workspace organization not found");
-  }
+	if (!organization) {
+		throw new Error("Workspace organization not found");
+	}
 
-  return toOrganizationDto(organization);
+	return toOrganizationDto(organization);
 });
 
 export const updateCurrentOrganization = authed
-  .input(UpdateOrganizationInputSchema)
-  .handler(async ({ context, input }) => {
-    const tenantDatabaseName = await resolveTenantDatabaseName(context.headers);
+	.input(UpdateOrganizationInputSchema)
+	.handler(async ({ context, input }) => {
+		const tenantDatabaseName = await resolveTenantDatabaseName(context.headers);
 
-    const { pm } = await import("@/aspen/server");
+		const { pm } = await import("#/aspen/server");
 
-    const organization = await pm.run(tenantDatabaseName, () =>
-      pm.organization.organizations.update.run({
-        accentColor: input.accentColor,
-        address: input.address,
-        email: input.email,
-        foundedDate: input.foundedDate ? new Date(`${input.foundedDate}T00:00:00Z`) : undefined,
-        industry: input.industry,
-        locale: input.locale,
-        name: input.name,
-        phone: input.phone,
-        registrationNumber: input.registrationNumber,
-        slug: input.slug,
-        taxId: input.taxId,
-        timezone: input.timezone,
-        website: input.website,
-      }),
-    );
+		const organization = await pm.run(tenantDatabaseName, () =>
+			pm.organization.organizations.update.run({
+				accentColor: input.accentColor,
+				address: input.address,
+				email: input.email,
+				foundedDate: input.foundedDate
+					? new Date(`${input.foundedDate}T00:00:00Z`)
+					: undefined,
+				industry: input.industry,
+				locale: input.locale,
+				name: input.name,
+				phone: input.phone,
+				registrationNumber: input.registrationNumber,
+				slug: input.slug,
+				taxId: input.taxId,
+				timezone: input.timezone,
+				website: input.website,
+			}),
+		);
 
-    return toOrganizationDto(organization);
-  });
+		return toOrganizationDto(organization);
+	});

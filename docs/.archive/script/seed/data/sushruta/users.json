@@ -1,0 +1,99 @@
+[
+	{
+		"email": "admin@sushruta.com",
+		"emailVerified": true,
+		"image": "https://api.dicebear.com/10.x/avataaars/svg?eyesVariant=confident,happy&seed=arjun",
+		"name": "Dr. Arjun Mehta",
+		"password": "admin123",
+		"role": "admin",
+		"staff": {
+			"branchAccess": "all",
+			"branchName": "Sushruta Hospital Mumbai",
+			"department": "administration",
+			"designation": "Hospital Administrator",
+			"employeeId": "SUSH-001",
+			"employmentType": "full-time",
+			"roleId": "admin-dept"
+		}
+	},
+	{
+		"email": "receptionist@sushruta.com",
+		"emailVerified": true,
+		"image": "https://api.dicebear.com/10.x/avataaars/svg?eyesVariant=confident,happy&seed=priya",
+		"name": "Priya Sharma",
+		"password": "receptionist123",
+		"role": "staff",
+		"staff": {
+			"branchName": "Sushruta Hospital Mumbai",
+			"department": "frontdesk",
+			"designation": "Front Desk Manager",
+			"employeeId": "SUSH-002",
+			"employmentType": "full-time",
+			"roleId": "receptionist"
+		}
+	},
+	{
+		"email": "nurse@sushruta.com",
+		"emailVerified": true,
+		"image": "https://api.dicebear.com/10.x/avataaars/svg?eyesVariant=confident,happy&seed=kavita",
+		"name": "Kavita Deshmukh",
+		"password": "nurse123",
+		"role": "staff",
+		"staff": {
+			"branchName": "Sushruta Hospital Mumbai",
+			"department": "medical",
+			"designation": "Head Nurse",
+			"employeeId": "SUSH-003",
+			"employmentType": "full-time",
+			"roleId": "nurse"
+		}
+	},
+	{
+		"email": "doctor@sushruta.com",
+		"emailVerified": true,
+		"image": "https://api.dicebear.com/10.x/avataaars/svg?eyesVariant=confident,happy&seed=ravi",
+		"name": "Dr. Ravi Kulkarni",
+		"password": "doctor123",
+		"role": "staff",
+		"staff": {
+			"branchName": "Sushruta Hospital Mumbai",
+			"department": "medical",
+			"designation": "Senior Physician",
+			"employeeId": "SUSH-004",
+			"employmentType": "full-time",
+			"roleId": "doctor"
+		}
+	},
+	{
+		"email": "finance@sushruta.com",
+		"emailVerified": true,
+		"image": "https://api.dicebear.com/10.x/avataaars/svg?eyesVariant=confident,happy&seed=amit",
+		"name": "Amit Joshi",
+		"password": "finance123",
+		"role": "staff",
+		"staff": {
+			"branchName": "Sushruta Hospital Pune",
+			"department": "finance",
+			"designation": "Financial Counsellor",
+			"employeeId": "SUSH-005",
+			"employmentType": "full-time",
+			"roleId": "financial-counsellor"
+		}
+	},
+	{
+		"email": "medassist@sushruta.com",
+		"emailVerified": true,
+		"image": "https://api.dicebear.com/10.x/avataaars/svg?eyesVariant=confident,happy&seed=sneha",
+		"name": "Sneha Patil",
+		"password": "medassist123",
+		"role": "staff",
+		"staff": {
+			"branchName": "Sushruta Hospital Bangalore",
+			"department": "medical",
+			"designation": "Medical Assistant",
+			"employeeId": "SUSH-006",
+			"employmentType": "full-time",
+			"roleId": "medical-assistant"
+		}
+	}
+]
