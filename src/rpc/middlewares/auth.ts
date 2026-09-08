@@ -14,8 +14,3 @@ export const authed = base.use(async ({ context, next }) => {
 	}
 	return next({ context: { ...context, session } });
 });
-
-export async function resolveUser(headers: Headers) {
-	const { pm } = await import("#/aspen/server");
-	return pm.run("$global", () => pm.auth.service.api.getSession({ headers }));
-}

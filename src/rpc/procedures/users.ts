@@ -1,106 +1,44 @@
-import { env } from "#/env";
 import {
 	CreateTenantUserSchema,
 	TenantUserIdSchema,
 	UpdateTenantUserInputSchema,
 } from "#/schemas/users";
 import { authed } from "../middlewares/auth";
-import { extractSubdomain } from "./organizations";
-
-function getOrganizationSlug(headers: Headers) {
-	const host = headers.get("host");
-	const organizationSlug = host
-		? extractSubdomain(host, env.PUBLIC_WEB_DOMAIN)
-		: null;
-
-	if (!organizationSlug) {
-		throw new Error("This request is not associated with a workspace");
-	}
-
-	return organizationSlug;
-}
-
-function toWorkspaceUser(member: {
-	createdAt: Date;
-	id: string;
-	role: string;
-	user: { email: string; id: string; name: string };
-}) {
-	return {
-		createdAt: member.createdAt,
-		email: member.user.email,
-		id: member.id,
-		memberId: member.id,
-		name: member.user.name,
-		role: member.role,
-		userId: member.user.id,
-	};
-}
+import {
+	findWorkspaceMember,
+	getWorkspaceOrganization,
+	listWorkspaceMembers,
+	renameAuthUser,
+	requireOrganizationSlug,
+	requireWorkspaceAdmin,
+	toWorkspaceUser,
+} from "../workspace";
 
 export const listUsers = authed.handler(async ({ context }) => {
-	const organizationSlug = getOrganizationSlug(context.headers);
-
-	const { pm } = await import("#/aspen/server");
-
-	const result = await pm.run("$global", () =>
-		pm.auth.service.api.listMembers({
-			headers: context.headers,
-			query: { organizationSlug },
-		}),
-	);
-
-	return result.members.map(toWorkspaceUser);
+	const organizationSlug = requireOrganizationSlug(context.headers);
+	return listWorkspaceMembers(context.headers, organizationSlug);
 });
 
 export const getUser = authed
 	.input(TenantUserIdSchema)
 	.handler(async ({ context, input }) => {
-		const organizationSlug = getOrganizationSlug(context.headers);
-
-		const { pm } = await import("#/aspen/server");
-
-		const result = await pm.run("$global", () =>
-			pm.auth.service.api.listMembers({
-				headers: context.headers,
-				query: { organizationSlug },
-			}),
-		);
-		const member = result.members.find(({ id }) => id === input.id);
-
-		if (!member) {
-			throw new Error("User not found in this workspace");
-		}
-
-		return toWorkspaceUser(member);
+		const organizationSlug = requireOrganizationSlug(context.headers);
+		return findWorkspaceMember(context.headers, organizationSlug, input.id);
 	});
 
 export const createUser = authed
 	.input(CreateTenantUserSchema)
 	.handler(async ({ context, input }) => {
-		const organizationSlug = getOrganizationSlug(context.headers);
+		const organizationSlug = requireOrganizationSlug(context.headers);
+		const organization = await getWorkspaceOrganization(
+			context.headers,
+			organizationSlug,
+		);
+		requireWorkspaceAdmin(organization, context.session, "add users");
 
 		const { pm } = await import("#/aspen/server");
 
 		return pm.run("$global", async () => {
-			const organization = await pm.auth.service.api.getFullOrganization({
-				headers: context.headers,
-				query: { organizationSlug },
-			});
-
-			if (!organization) {
-				throw new Error("Workspace not found");
-			}
-
-			const session = await pm.auth.service.api.getSession({
-				headers: context.headers,
-			});
-			const currentMember = organization.members.find(
-				({ user }) => user.id === session?.user.id,
-			);
-			if (!currentMember || !["owner", "admin"].includes(currentMember.role)) {
-				throw new Error("Only workspace administrators can add users");
-			}
-
 			const created = await pm.management.users.create.run({
 				email: input.email,
 				name: input.name,
@@ -109,8 +47,12 @@ export const createUser = authed
 				spId: null,
 			});
 
+			// Auth-account creation and workspace membership are separate systems
+			// with no shared transaction, so a failed addMember compensates by
+			// deleting the orphaned account. Rollback failures are logged without
+			// masking the original error.
 			try {
-				await pm.auth.service.api.addMember({
+				const member = await pm.auth.service.api.addMember({
 					body: {
 						organizationId: organization.id,
 						role: input.role,
@@ -118,107 +60,86 @@ export const createUser = authed
 					},
 					headers: context.headers,
 				});
+				return toWorkspaceUser({
+					createdAt: member.createdAt,
+					id: member.id,
+					role: member.role,
+					user: { email: input.email, id: created.id, name: input.name },
+				});
 			} catch (error) {
-				await pm.management.users.delete.run({ id: created.id });
+				await pm.management.users.delete
+					.run({ id: created.id })
+					.catch((rollbackError) => {
+						console.error(
+							"Failed to roll back partially created workspace user",
+							{ rollbackError, userId: created.id },
+						);
+					});
 				throw error;
 			}
-
-			return { ...created, role: input.role };
 		});
 	});
 
 export const updateUser = authed
 	.input(UpdateTenantUserInputSchema)
 	.handler(async ({ context, input }) => {
-		const organizationSlug = getOrganizationSlug(context.headers);
+		const organizationSlug = requireOrganizationSlug(context.headers);
+		const organization = await getWorkspaceOrganization(
+			context.headers,
+			organizationSlug,
+		);
+		requireWorkspaceAdmin(organization, context.session, "edit users");
 
-		const { pm } = await import("#/aspen/server");
+		const member = organization.members.find(({ id }) => id === input.id);
+		if (!member) {
+			throw new Error("User not found in this workspace");
+		}
 
-		return pm.run("$global", async () => {
-			const organization = await pm.auth.service.api.getFullOrganization({
-				headers: context.headers,
-				query: { organizationSlug },
-			});
+		const { name, role } = input.patch;
+		if (name !== undefined) {
+			await renameAuthUser(member.userId, name);
+		}
 
-			if (!organization) {
-				throw new Error("Workspace not found");
-			}
-
-			const member = organization.members.find(({ id }) => id === input.id);
-			if (!member) {
-				throw new Error("User not found in this workspace");
-			}
-
-			const session = await pm.auth.service.api.getSession({
-				headers: context.headers,
-			});
-			const currentMember = organization.members.find(
-				({ user }) => user.id === session?.user.id,
-			);
-			if (!currentMember || !["owner", "admin"].includes(currentMember.role)) {
-				throw new Error("Only workspace administrators can edit users");
-			}
-
-			if (input.patch.name !== undefined) {
-				await pm.auth.rest.user.update({
-					data: { name: input.patch.name },
-					id: member.userId,
-				});
-			}
-
-			if (input.patch.role !== undefined) {
-				await pm.auth.service.api.updateMemberRole({
+		if (role !== undefined) {
+			const { pm } = await import("#/aspen/server");
+			await pm.run("$global", () =>
+				pm.auth.service.api.updateMemberRole({
 					body: {
 						memberId: member.id,
 						organizationId: organization.id,
-						role: input.patch.role,
+						role,
 					},
 					headers: context.headers,
-				});
-			}
+				}),
+			);
+		}
 
-			const updated = await pm.auth.service.api.listMembers({
-				headers: context.headers,
-				query: { organizationSlug },
-			});
-			const updatedMember = updated.members.find(({ id }) => id === input.id);
-
-			if (!updatedMember) {
-				throw new Error("User was not returned after update");
-			}
-
-			return toWorkspaceUser(updatedMember);
-		});
+		return findWorkspaceMember(context.headers, organizationSlug, input.id);
 	});
 
 export const removeUser = authed
 	.input(TenantUserIdSchema)
 	.handler(async ({ context, input }) => {
-		const organizationSlug = getOrganizationSlug(context.headers);
+		const organizationSlug = requireOrganizationSlug(context.headers);
+		const organization = await getWorkspaceOrganization(
+			context.headers,
+			organizationSlug,
+		);
+
+		const member = organization.members.find(({ id }) => id === input.id);
+		if (!member) {
+			throw new Error("User not found in this workspace");
+		}
 
 		const { pm } = await import("#/aspen/server");
 
-		return pm.run("$global", async () => {
-			const organization = await pm.auth.service.api.getFullOrganization({
-				headers: context.headers,
-				query: { organizationSlug },
-			});
-
-			if (!organization) {
-				throw new Error("Workspace not found");
-			}
-
-			const member = organization.members.find(({ id }) => id === input.id);
-			if (!member) {
-				throw new Error("User not found in this workspace");
-			}
-
-			await pm.auth.service.api.removeMember({
+		return pm.run("$global", () =>
+			pm.auth.service.api.removeMember({
 				body: {
 					memberIdOrEmail: member.id,
 					organizationId: organization.id,
 				},
 				headers: context.headers,
-			});
-		});
+			}),
+		);
 	});

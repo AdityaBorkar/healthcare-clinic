@@ -1,151 +1,27 @@
 import { env } from "#/env";
 import { UpdateOrganizationInputSchema } from "#/schemas/organizations";
 import { authed, base } from "../middlewares/auth";
-
-const SUBDOMAIN_PATTERN = /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/;
-
-/**
- * Extracts the tenant subdomain from a request Host header by stripping the
- * app's apex domain (PUBLIC_WEB_DOMAIN). Returns null when the request is
- * hitting the apex domain itself or a host we don't serve.
- *
- * @example
- *   ("acme.localhost:3000", "localhost") => "acme"
- *   ("localhost:3000", "localhost")       => null
- *   ("acme.example.com", "example.com")   => "acme"
- *   ("example.com", "example.com")        => null
- */
-export function extractSubdomain(
-	host: string,
-	appDomain: string,
-): string | null {
-	const hostname = host.split(":")[0]?.toLowerCase() ?? "";
-	const suffix = `.${appDomain.toLowerCase()}`;
-	if (!hostname.endsWith(suffix)) {
-		return null;
-	}
-	const subdomain = hostname.slice(0, -suffix.length);
-	return subdomain.length > 0 && SUBDOMAIN_PATTERN.test(subdomain)
-		? subdomain
-		: null;
-}
+import {
+	findOrganizationBrandingBySlug,
+	listOrganizationBranding,
+} from "../organization-branding";
+import { extractSubdomain, resolveTenantDatabaseName } from "../workspace";
 
 export const getOrganizationBySubdomain = base.handler(async ({ context }) => {
 	const host = context.headers.get("host");
-	if (!host) {
-		return { organization: null, subdomain: null };
-	}
-
-	const subdomain = extractSubdomain(host, env.PUBLIC_WEB_DOMAIN);
+	const subdomain = host ? extractSubdomain(host, env.PUBLIC_WEB_DOMAIN) : null;
 	if (!subdomain) {
 		return { organization: null, subdomain: null };
 	}
 
-	const { pm } = await import("#/aspen/server");
-
-	return pm.run("$global", async () => {
-		const rows = await pm.db.pool.unsafe<
-			{
-				created_at: Date;
-				id: string;
-				logo: string | null;
-				metadata: unknown;
-				name: string;
-				slug: string;
-			}[]
-		>(
-			`SELECT id, name, slug, logo, metadata, created_at
-         FROM organization
-         WHERE slug = $1
-         LIMIT 1`,
-			[subdomain],
-		);
-
-		const [row] = rows;
-		if (!row) {
-			return { organization: null, subdomain };
-		}
-
-		return {
-			organization: {
-				createdAt: row.created_at.toISOString(),
-				id: row.id,
-				logo: row.logo,
-				metadata: row.metadata,
-				name: row.name,
-				slug: row.slug,
-			},
-			subdomain,
-		};
-	});
+	const organization = await findOrganizationBrandingBySlug(subdomain);
+	return { organization, subdomain };
 });
 
 export const listOrganizations = base.handler(async () => {
-	const { pm } = await import("#/aspen/server");
-
-	return pm.run("$global", async () => {
-		const rows = await pm.db.pool.unsafe<
-			{
-				id: string;
-				logo: string | null;
-				name: string;
-				slug: string;
-			}[]
-		>(
-			`SELECT id, name, slug, logo
-         FROM organization
-         ORDER BY name ASC`,
-		);
-
-		return {
-			organizations: rows,
-		};
-	});
+	const organizations = await listOrganizationBranding();
+	return { organizations };
 });
-
-function getOrganizationSlug(headers: Headers) {
-	const host = headers.get("host");
-	const organizationSlug = host
-		? extractSubdomain(host, env.PUBLIC_WEB_DOMAIN)
-		: null;
-
-	if (!organizationSlug) {
-		throw new Error("This request is not associated with a workspace");
-	}
-
-	return organizationSlug;
-}
-
-/**
- * Resolves the tenant database name for the organization behind the current
- * request so organization module workflows can run inside that tenant's
- * database context.
- */
-async function resolveTenantDatabaseName(headers: Headers): Promise<string> {
-	const organizationSlug = getOrganizationSlug(headers);
-
-	const { pm } = await import("#/aspen/server");
-
-	return pm.run("$global", async () => {
-		const organization = await pm.auth.service.api.getFullOrganization({
-			headers,
-			query: { organizationSlug },
-		});
-
-		if (!organization) {
-			throw new Error("Workspace not found");
-		}
-
-		const tenant = await pm.management.tenants.get.run({
-			id: organization.id,
-		});
-		if (!tenant.databaseName) {
-			throw new Error("Workspace database is not configured");
-		}
-
-		return tenant.databaseName;
-	});
-}
 
 type OrganizationModuleRow = {
 	accentColor: string;

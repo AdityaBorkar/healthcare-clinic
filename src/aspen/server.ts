@@ -100,6 +100,8 @@ const organization = Organization.create({ country: "INDIA" });
 
 // Platform
 
+// Explicit annotation: the inferred type is not portable (references
+// non-exported MergedSchemas), so tsc requires it on the export.
 export const pm: IsolatedTenantPlatformInstance<
 	[ManagementPlane, Organization]
 > = IsolatedTenantPlatform.create(
