@@ -12,9 +12,7 @@ const config = defineConfig({
 	envPrefix: ["PUBLIC_"],
 	plugins: [
 		devtools(),
-		nitro({
-			preset: "bun",
-		}),
+		nitro({ preset: "bun" }),
 		tailwindcss(),
 		tanstackStart(),
 		viteReact(),

@@ -4,13 +4,7 @@ import {
 	useNavigate,
 	useRouter,
 } from "@tanstack/react-router";
-import {
-	AlertCircle,
-	ArrowRight,
-	Building2,
-	Loader2,
-	LogOut,
-} from "lucide-react";
+import { AlertCircle, Building2, Loader2 } from "lucide-react";
 import {
 	type ChangeEvent,
 	type FormEvent,
@@ -23,67 +17,56 @@ import { object, optional, string } from "valibot";
 import { pm } from "#/aspen/client";
 import { Alert, AlertDescription } from "#/components/ui/alert";
 import { Button } from "#/components/ui/button";
-import { Card, CardHeader, CardTitle } from "#/components/ui/card";
+import { Card } from "#/components/ui/card";
 import { Input } from "#/components/ui/input";
 import { Label } from "#/components/ui/label";
-import { env } from "#/env";
+import { BASE_URL } from "#/env";
 import { orpc } from "#/lib/rpc";
 
 export const Route = createFileRoute("/")({
-	beforeLoad: async ({ location }) => {
-		const data = await orpc.auth.getSession();
-		if (data) {
-			throw redirect({
-				search: { redirect: location.href },
-				to: "/",
-			});
+	beforeLoad: async ({ search }) => {
+		const result = await orpc.organizations.bySubdomain().catch(() => ({
+			organization: null,
+			subdomain: null,
+		}));
+		// Narrow to serializable branding fields (TanStack Start validates
+		// beforeLoad return values; metadata: unknown is not serializable).
+		const organization = result.organization
+			? {
+					logo: result.organization.logo,
+					name: result.organization.name,
+					slug: result.organization.slug,
+				}
+			: null;
+		const subdomain = result.subdomain;
+
+		const session = await orpc.auth.getSession();
+		if (session) {
+			const redirectTo = search?.redirect;
+			const safeRedirect =
+				redirectTo?.startsWith("/") && !redirectTo.startsWith("//")
+					? redirectTo
+					: null;
+			if (subdomain && organization) {
+				throw redirect({ to: safeRedirect ?? "/dashboard" });
+			}
+			throw redirect({ to: "/account/organizations" });
 		}
 
-		const { organization } = await orpc.organizations
-			.bySubdomain()
-			.catch(() => ({
-				organization: null,
-				subdomain: null,
-			}));
-		return { organization };
+		return { organization, subdomain };
 	},
 	component: IndexPage,
 	validateSearch: object({ redirect: optional(string()) }),
 });
 
 function IndexPage() {
-	const { organization } = Route.useRouteContext();
+	const { organization, subdomain } = Route.useRouteContext();
 	const { redirect: redirectTo } = Route.useSearch();
 	const navigate = useNavigate();
 	const router = useRouter();
 
 	if (subdomain && !organization) {
-		const apexUrl = `${env.PUBLIC_WEB_SSL ? "https" : "http"}://${env.PUBLIC_WEB_DOMAIN}${env.PUBLIC_WEB_PORT ? `:${env.PUBLIC_WEB_PORT}` : ""}`;
-		return (
-			<main className="flex min-h-svh items-center justify-center bg-stone-canvas px-4 py-12 font-sans text-ink-black">
-				<Card className="w-full max-w-sm p-6 text-center shadow-[var(--shadow-md)]">
-					<span className="mx-auto mb-5 flex size-10 items-center justify-center rounded-full bg-stone-muted/40 text-ink-black">
-						<Building2 className="size-5" />
-					</span>
-					<h1 className="font-roobert text-lg font-medium tracking-[-0.8px] text-ink-black">
-						Organization: {subdomain}
-					</h1>
-					<p className="mt-2 text-sm text-warm-gray">
-						This organization does not exist or is no longer active.
-					</p>
-					<Button
-						className="mt-6 w-full"
-						nativeButton={false}
-						render={
-							<a aria-label="Return to Global Sign-In Page" href={apexUrl} />
-						}
-						size="lg"
-					>
-						Return to Global Sign-In Page
-					</Button>
-				</Card>
-			</main>
-		);
+		return <OrganizationNotExists subdomain={subdomain} />;
 	}
 
 	return (
@@ -97,6 +80,40 @@ function IndexPage() {
 	);
 }
 
+function OrganizationNotExists({ subdomain }: { subdomain: string }) {
+	return (
+		<main className="flex min-h-svh items-center justify-center bg-stone-canvas px-4 py-12 font-sans text-ink-black">
+			<Card className="w-full max-w-sm p-6 text-center shadow-shadow-md">
+				<span className="mx-auto mb-5 flex size-10 items-center justify-center rounded-full bg-stone-muted/40 text-ink-black">
+					<Building2 className="size-5" />
+				</span>
+				<h1 className="font-roobert text-lg font-medium tracking-[-0.8px] text-ink-black">
+					Organization: {subdomain}
+				</h1>
+				<p className="mt-2 text-sm text-warm-gray">
+					This organization does not exist or is no longer active.
+				</p>
+				<Button
+					className="mt-6 w-full"
+					nativeButton={false}
+					render={
+						<a aria-label="Return to Global Sign-In Page" href={BASE_URL} />
+					}
+					size="lg"
+				>
+					Return to Global Sign-In Page
+				</Button>
+			</Card>
+		</main>
+	);
+}
+
+type LoginOrganization = {
+	logo: string | null;
+	name: string;
+	slug: string;
+} | null;
+
 function LoginView({
 	organization,
 	subdomain,
@@ -104,7 +121,7 @@ function LoginView({
 	navigate,
 	router,
 }: {
-	organization: { name: string } | null;
+	organization: LoginOrganization;
 	subdomain: string | null;
 	redirectTo: string | undefined;
 	navigate: ReturnType<typeof useNavigate>;
@@ -122,7 +139,9 @@ function LoginView({
 	const title = isOrgContext
 		? `Log in to ${organization?.name}`
 		: "Sign in to your workspace";
-	const subtitle = isOrgContext ? null : "Enter your credentials to continue";
+	const subtitle = isOrgContext
+		? `Enter your credentials to continue to ${organization?.name}`
+		: "Enter your credentials to continue";
 
 	const handleEmailChange = useCallback(
 		(ev: ChangeEvent<HTMLInputElement>) => setEmail(ev.target.value),
@@ -147,15 +166,18 @@ function LoginView({
 			}
 
 			setLoading(false);
+			await router.invalidate();
 
-			if (isOrgContext) {
-				const target =
-					redirectTo?.startsWith("/") && !redirectTo.startsWith("//")
-						? redirectTo
-						: "/dashboard";
-				navigate({ to: target });
+			const safeRedirect =
+				redirectTo?.startsWith("/") && !redirectTo.startsWith("//")
+					? redirectTo
+					: null;
+			if (safeRedirect) {
+				navigate({ to: safeRedirect });
+			} else if (isOrgContext) {
+				navigate({ to: "/dashboard" });
 			} else {
-				await router.invalidate();
+				navigate({ to: "/account/organizations" });
 			}
 		},
 		[email, password, navigate, redirectTo, isOrgContext, router],
@@ -189,17 +211,21 @@ function LoginView({
 		<main className="flex min-h-svh items-center justify-center bg-stone-canvas px-4 py-12 font-sans text-ink-black">
 			<div className="w-full max-w-72">
 				<div className="flex flex-col items-center">
-					<span className="flex size-10 items-center justify-center overflow-hidden rounded-full bg-ink-black text-white">
-						<Building2 className="size-5" />
-					</span>
+					{organization?.logo ? (
+						<img
+							alt={`${organization.name} logo`}
+							className="size-10 rounded-full object-cover"
+							src={organization.logo}
+						/>
+					) : (
+						<span className="flex size-10 items-center justify-center overflow-hidden rounded-full bg-ink-black text-white">
+							<Building2 className="size-5" />
+						</span>
+					)}
 					<h1 className="mt-9 font-roobert text-center text-lg font-medium tracking-[-0.8px] text-ink-black">
 						{title}
 					</h1>
-					{subtitle ? (
-						<p className="mt-2 text-center text-sm text-warm-gray">
-							{subtitle}
-						</p>
-					) : null}
+					<p className="mt-2 text-center text-sm text-warm-gray">{subtitle}</p>
 				</div>
 
 				{showEmailForm ? (

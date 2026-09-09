@@ -1,4 +1,4 @@
-import { pm } from "../src/aspen/server";
+import { pm } from "../../src/aspen/server";
 
 await pm
 	.$prepareInfra()

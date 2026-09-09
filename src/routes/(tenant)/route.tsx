@@ -18,8 +18,8 @@ export const Route = createFileRoute("/(tenant)")({
 		if (!organization) {
 			throw redirect({ to: "/account/organizations" });
 		}
-
-		return { ...data, organization };
+		const { logo, name, slug } = organization;
+		return { ...data, organization: { logo, name, slug } };
 	},
 	component: AppLayout,
 });
