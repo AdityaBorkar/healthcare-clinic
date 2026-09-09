@@ -10,6 +10,7 @@
 		"db:studio": "bun infra:dev-run -- bun aspen db-studio --config=./src/aspen/server.ts",
 		"dev": "bun infra:dev-run -- vite dev --port 4020",
 		"dev:prepare": "bun infra:dev-run -- bun scripts/local-only/prepare.ts",
+		"dev:seed": "bun infra:dev-run -- bun scripts/local-only/seed.ts",
 		"gen:routes": "tsr generate",
 		"infra:dev-run": "bun infra/utils/run-command.ts --verbose --stack dev --",
 		"infra:down": "pulumi destroy --stack",
