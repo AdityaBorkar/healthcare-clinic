@@ -72,3 +72,19 @@ export async function listOrganizationBranding(): Promise<
 		),
 	);
 }
+
+export async function listMyOrganizationBranding(
+	userId: string,
+): Promise<OrganizationListItem[]> {
+	const { pm } = await import("#/aspen/server");
+	return pm.run("$global", () =>
+		pm.db.pool.unsafe<OrganizationListItem[]>(
+			`SELECT o.id, o.name, o.slug, o.logo
+         FROM organization o
+         JOIN member m ON m.organization_id = o.id
+         WHERE m.user_id = $1
+         ORDER BY o.name ASC`,
+			[userId],
+		),
+	);
+}

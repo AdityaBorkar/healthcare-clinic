@@ -1,6 +1,18 @@
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+
+import { orpc } from "#/lib/rpc";
 
 export const Route = createFileRoute("/account")({
+	beforeLoad: async ({ location }) => {
+		const data = await orpc.auth.getSession();
+		if (!data) {
+			throw redirect({
+				search: { redirect: location.href },
+				to: "/",
+			});
+		}
+		return data;
+	},
 	component: RouteComponent,
 });
 

@@ -3,6 +3,7 @@ import { UpdateOrganizationInputSchema } from "#/schemas/organizations";
 import { authed, base } from "../middlewares/auth";
 import {
 	findOrganizationBrandingBySlug,
+	listMyOrganizationBranding,
 	listOrganizationBranding,
 } from "../organization-branding";
 import {
@@ -24,6 +25,13 @@ export const getOrganizationBySubdomain = base.handler(async ({ context }) => {
 
 export const listOrganizations = base.handler(async () => {
 	const organizations = await listOrganizationBranding();
+	return { organizations };
+});
+
+export const listMyOrganizations = authed.handler(async ({ context }) => {
+	const organizations = await listMyOrganizationBranding(
+		context.session.user.id,
+	);
 	return { organizations };
 });
 

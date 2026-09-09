@@ -2,6 +2,7 @@ import { getSession } from "./procedures/auth";
 import {
 	getCurrentOrganization,
 	getOrganizationBySubdomain,
+	listMyOrganizations,
 	listOrganizations,
 	updateCurrentOrganization,
 } from "./procedures/organizations";
@@ -26,6 +27,7 @@ export const router = {
 		bySubdomain: getOrganizationBySubdomain,
 		current: getCurrentOrganization,
 		list: listOrganizations,
+		listMine: listMyOrganizations,
 		update: updateCurrentOrganization,
 	},
 	serviceProviders: {

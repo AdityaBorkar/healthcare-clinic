@@ -12,19 +12,14 @@ export const Route = createFileRoute("/(tenant)")({
 			});
 		}
 
-		const organizationData = await orpc.organizations
+		const { organization } = await orpc.organizations
 			.bySubdomain()
 			.catch(() => ({ organization: null }));
+		if (!organization) {
+			throw redirect({ to: "/account/organizations" });
+		}
 
-		return {
-			...data,
-			organization: organizationData.organization
-				? {
-						logo: organizationData.organization.logo,
-						name: organizationData.organization.name,
-					}
-				: null,
-		};
+		return { ...data, organization };
 	},
 	component: AppLayout,
 });

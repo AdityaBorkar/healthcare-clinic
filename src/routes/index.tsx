@@ -1,5 +1,16 @@
-import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
-import { AlertCircle, Building2, Loader2 } from "lucide-react";
+import {
+	createFileRoute,
+	redirect,
+	useNavigate,
+	useRouter,
+} from "@tanstack/react-router";
+import {
+	AlertCircle,
+	ArrowRight,
+	Building2,
+	Loader2,
+	LogOut,
+} from "lucide-react";
 import {
 	type ChangeEvent,
 	type FormEvent,
@@ -12,109 +23,42 @@ import { object, optional, string } from "valibot";
 import { pm } from "#/aspen/client";
 import { Alert, AlertDescription } from "#/components/ui/alert";
 import { Button } from "#/components/ui/button";
-import { Card } from "#/components/ui/card";
+import { Card, CardHeader, CardTitle } from "#/components/ui/card";
 import { Input } from "#/components/ui/input";
 import { Label } from "#/components/ui/label";
 import { env } from "#/env";
 import { orpc } from "#/lib/rpc";
 
 export const Route = createFileRoute("/")({
-	beforeLoad: async () => {
+	beforeLoad: async ({ location }) => {
 		const data = await orpc.auth.getSession();
-		if (data?.session && data?.user) {
-			throw redirect({ to: "/dashboard" });
-		}
-		return data;
-	},
-	component: LoginPage,
-	loader: async ({ location }) => {
-		const redirectTo = new URL(location.href).searchParams.get("redirect");
-		const data = await orpc.organizations.bySubdomain().catch(() => ({
-			organization: null,
-			subdomain: null,
-		}));
-		if (!data.subdomain) {
+		if (data) {
 			throw redirect({
-				search: redirectTo ? { redirect: redirectTo } : {},
-				to: "/account/organizations",
+				search: { redirect: location.href },
+				to: "/",
 			});
 		}
-		return data;
+
+		const { organization } = await orpc.organizations
+			.bySubdomain()
+			.catch(() => ({
+				organization: null,
+				subdomain: null,
+			}));
+		return { organization };
 	},
+	component: IndexPage,
 	validateSearch: object({ redirect: optional(string()) }),
 });
 
-function LoginPage() {
-	const navigate = useNavigate();
-	const data = Route.useLoaderData();
+function IndexPage() {
+	const { organization } = Route.useRouteContext();
 	const { redirect: redirectTo } = Route.useSearch();
-	const { organization, subdomain } = data;
-	const [email, setEmail] = useState("");
-	const [password, setPassword] = useState("");
-	const [err, setErr] = useState<string | null>(null);
-	const [loading, setLoading] = useState(false);
-	const [showEmailForm, setShowEmailForm] = useState(false);
-	const emailId = useId();
-	const passwordId = useId();
-
-	const handleEmailChange = useCallback(
-		(ev: ChangeEvent<HTMLInputElement>) => setEmail(ev.target.value),
-		[],
-	);
-	const handlePasswordChange = useCallback(
-		(ev: ChangeEvent<HTMLInputElement>) => setPassword(ev.target.value),
-		[],
-	);
-
-	const onSubmit = useCallback(
-		async (ev: FormEvent) => {
-			ev.preventDefault();
-			setErr(null);
-			setLoading(true);
-
-			const { error } = await pm.auth.client.signIn.email({ email, password });
-			if (error) {
-				setErr(error.message ?? "Login failed");
-			} else {
-				const target =
-					redirectTo?.startsWith("/") && !redirectTo.startsWith("//")
-						? redirectTo
-						: "/dashboard";
-				navigate({ to: target });
-			}
-
-			setLoading(false);
-		},
-		[email, password, navigate, redirectTo],
-	);
-
-	const showUnavailableMethod = useCallback((method: string) => {
-		setErr(`${method} sign-in is not configured for this workspace.`);
-	}, []);
-	const handleBackToOptions = useCallback(() => {
-		setErr(null);
-		setShowEmailForm(false);
-	}, []);
-	const handleEmailOption = useCallback(() => {
-		setErr(null);
-		setShowEmailForm(true);
-	}, []);
-	const handleGoogleOption = useCallback(
-		() => showUnavailableMethod("Google"),
-		[showUnavailableMethod],
-	);
-	const handleSamlOption = useCallback(
-		() => showUnavailableMethod("SAML SSO"),
-		[showUnavailableMethod],
-	);
-	const handlePasskeyOption = useCallback(
-		() => showUnavailableMethod("Passkey"),
-		[showUnavailableMethod],
-	);
+	const navigate = useNavigate();
+	const router = useRouter();
 
 	if (subdomain && !organization) {
 		const apexUrl = `${env.PUBLIC_WEB_SSL ? "https" : "http"}://${env.PUBLIC_WEB_DOMAIN}${env.PUBLIC_WEB_PORT ? `:${env.PUBLIC_WEB_PORT}` : ""}`;
-
 		return (
 			<main className="flex min-h-svh items-center justify-center bg-stone-canvas px-4 py-12 font-sans text-ink-black">
 				<Card className="w-full max-w-sm p-6 text-center shadow-[var(--shadow-md)]">
@@ -143,15 +87,119 @@ function LoginPage() {
 	}
 
 	return (
+		<LoginView
+			navigate={navigate}
+			organization={organization}
+			redirectTo={redirectTo}
+			router={router}
+			subdomain={subdomain}
+		/>
+	);
+}
+
+function LoginView({
+	organization,
+	subdomain,
+	redirectTo,
+	navigate,
+	router,
+}: {
+	organization: { name: string } | null;
+	subdomain: string | null;
+	redirectTo: string | undefined;
+	navigate: ReturnType<typeof useNavigate>;
+	router: ReturnType<typeof useRouter>;
+}) {
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
+	const [err, setErr] = useState<string | null>(null);
+	const [loading, setLoading] = useState(false);
+	const [showEmailForm, setShowEmailForm] = useState(false);
+	const emailId = useId();
+	const passwordId = useId();
+
+	const isOrgContext = Boolean(subdomain && organization);
+	const title = isOrgContext
+		? `Log in to ${organization?.name}`
+		: "Sign in to your workspace";
+	const subtitle = isOrgContext ? null : "Enter your credentials to continue";
+
+	const handleEmailChange = useCallback(
+		(ev: ChangeEvent<HTMLInputElement>) => setEmail(ev.target.value),
+		[],
+	);
+	const handlePasswordChange = useCallback(
+		(ev: ChangeEvent<HTMLInputElement>) => setPassword(ev.target.value),
+		[],
+	);
+
+	const onSubmit = useCallback(
+		async (ev: FormEvent) => {
+			ev.preventDefault();
+			setErr(null);
+			setLoading(true);
+
+			const { error } = await pm.auth.client.signIn.email({ email, password });
+			if (error) {
+				setErr(error.message ?? "Login failed");
+				setLoading(false);
+				return;
+			}
+
+			setLoading(false);
+
+			if (isOrgContext) {
+				const target =
+					redirectTo?.startsWith("/") && !redirectTo.startsWith("//")
+						? redirectTo
+						: "/dashboard";
+				navigate({ to: target });
+			} else {
+				await router.invalidate();
+			}
+		},
+		[email, password, navigate, redirectTo, isOrgContext, router],
+	);
+
+	const showUnavailableMethod = useCallback((method: string) => {
+		setErr(`${method} sign-in is not configured for this workspace.`);
+	}, []);
+	const handleBackToOptions = useCallback(() => {
+		setErr(null);
+		setShowEmailForm(false);
+	}, []);
+	const handleEmailOption = useCallback(() => {
+		setErr(null);
+		setShowEmailForm(true);
+	}, []);
+	const handleGoogleOption = useCallback(
+		() => showUnavailableMethod("Google"),
+		[showUnavailableMethod],
+	);
+	const handleSamlOption = useCallback(
+		() => showUnavailableMethod("SAML SSO"),
+		[showUnavailableMethod],
+	);
+	const handlePasskeyOption = useCallback(
+		() => showUnavailableMethod("Passkey"),
+		[showUnavailableMethod],
+	);
+
+	return (
 		<main className="flex min-h-svh items-center justify-center bg-stone-canvas px-4 py-12 font-sans text-ink-black">
 			<div className="w-full max-w-72">
 				<div className="flex flex-col items-center">
 					<span className="flex size-10 items-center justify-center overflow-hidden rounded-full bg-ink-black text-white">
 						<Building2 className="size-5" />
 					</span>
-					<h1 className="mt-9 font-roobert text-lg font-medium tracking-[-0.8px] text-ink-black">
-						Log in to {organization?.name ?? "Tenant Application"}
+					<h1 className="mt-9 font-roobert text-center text-lg font-medium tracking-[-0.8px] text-ink-black">
+						{title}
 					</h1>
+					{subtitle ? (
+						<p className="mt-2 text-center text-sm text-warm-gray">
+							{subtitle}
+						</p>
+					) : null}
 				</div>
 
 				{showEmailForm ? (
