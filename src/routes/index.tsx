@@ -28,10 +28,7 @@ export const Route = createFileRoute("/")({
 	},
 	component: LoginPage,
 	loader: async ({ location }) => {
-		const redirectTo = new URL(
-			location.href,
-			"http://tenant-application.local",
-		).searchParams.get("redirect");
+		const redirectTo = new URL(location.href).searchParams.get("redirect");
 		const data = await orpc.organizations.bySubdomain().catch(() => ({
 			organization: null,
 			subdomain: null,

@@ -1,35 +1,28 @@
-# .gitignore
-
+# Code
 node_modules
 .DS_Store
-
 .env*
-!.env.example
-
 .nitro
 .tanstack
 .wrangler
 .output
 *.gen.ts
 
-codedb.snapshot
-opencode.json
-
-# docs
-
-docs/
+# AI
+docs
 AGENTS.md
 CONTEXT.md
+codedb.snapshot
 
-# others
-
+# Dev Tooling
 .git
 .gitignore
-.vscode
+.husky
 .zed
+.vscode
 
+# CI/CD
 infra
 Pulumi*.yaml
-
 Dockerfile
 .dockerignore

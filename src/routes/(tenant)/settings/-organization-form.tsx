@@ -12,19 +12,9 @@ import { Input } from "#/components/ui/input";
 import { Label } from "#/components/ui/label";
 
 export type OrganizationFormValues = {
-	accentColor: string;
-	address: string;
-	email: string;
-	foundedDate: string;
-	industry: string;
-	locale: string;
+	logo: string;
 	name: string;
-	phone: string;
-	registrationNumber: string;
 	slug: string;
-	taxId: string;
-	timezone: string;
-	website: string;
 };
 
 type OrganizationFormProps = {
@@ -43,8 +33,7 @@ export function OrganizationForm({
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const nameId = useId();
 	const slugId = useId();
-	const foundedDateId = useId();
-	const accentColorId = useId();
+	const logoId = useId();
 
 	const handleChange = useCallback(
 		(key: keyof OrganizationFormValues) =>
@@ -107,84 +96,16 @@ export function OrganizationForm({
 					</p>
 				</div>
 
-				<TextField
-					label="Email"
-					onChange={handleChange("email")}
-					placeholder="legal@acme.com"
-					type="email"
-					value={values.email}
-				/>
-				<TextField
-					label="Phone"
-					onChange={handleChange("phone")}
-					placeholder="+1 555 000 0000"
-					type="tel"
-					value={values.phone}
-				/>
-				<TextField
-					label="Website"
-					onChange={handleChange("website")}
-					placeholder="https://acme.com"
-					type="url"
-					value={values.website}
-				/>
-				<TextField
-					label="Address"
-					onChange={handleChange("address")}
-					placeholder="123 Main Street, Springfield"
-					value={values.address}
-				/>
-				<TextField
-					label="Industry"
-					onChange={handleChange("industry")}
-					placeholder="Manufacturing"
-					value={values.industry}
-				/>
-				<TextField
-					label="Registration number"
-					onChange={handleChange("registrationNumber")}
-					placeholder="Optional"
-					value={values.registrationNumber}
-				/>
-				<TextField
-					label="Tax ID"
-					onChange={handleChange("taxId")}
-					placeholder="Optional"
-					value={values.taxId}
-				/>
-				<div className="grid gap-1.5">
-					<Label className="text-xs text-warm-gray" htmlFor={foundedDateId}>
-						Founded date
+				<div className="grid gap-1.5 sm:col-span-2">
+					<Label className="text-xs text-warm-gray" htmlFor={logoId}>
+						Logo URL
 					</Label>
 					<Input
-						id={foundedDateId}
-						onChange={handleChange("foundedDate")}
-						type="date"
-						value={values.foundedDate}
-					/>
-				</div>
-				<TextField
-					label="Locale"
-					onChange={handleChange("locale")}
-					placeholder="en-US"
-					value={values.locale}
-				/>
-				<TextField
-					label="Timezone"
-					onChange={handleChange("timezone")}
-					placeholder="UTC"
-					value={values.timezone}
-				/>
-
-				<div className="grid gap-1.5">
-					<Label className="text-xs text-warm-gray" htmlFor={accentColorId}>
-						Accent color
-					</Label>
-					<Input
-						id={accentColorId}
-						onChange={handleChange("accentColor")}
-						type="color"
-						value={values.accentColor}
+						id={logoId}
+						onChange={handleChange("logo")}
+						placeholder="https://example.com/logo.png"
+						type="url"
+						value={values.logo}
 					/>
 				</div>
 			</div>
@@ -206,35 +127,5 @@ export function OrganizationForm({
 				</Button>
 			</div>
 		</form>
-	);
-}
-
-function TextField({
-	label,
-	type,
-	value,
-	placeholder,
-	onChange,
-}: {
-	label: string;
-	type?: string;
-	value: string;
-	placeholder?: string;
-	onChange: (event: ChangeEvent<HTMLInputElement>) => void;
-}) {
-	const id = useId();
-	return (
-		<div className="grid gap-1.5">
-			<Label className="text-xs text-warm-gray" htmlFor={id}>
-				{label}
-			</Label>
-			<Input
-				id={id}
-				onChange={onChange}
-				placeholder={placeholder}
-				type={type}
-				value={value}
-			/>
-		</div>
 	);
 }

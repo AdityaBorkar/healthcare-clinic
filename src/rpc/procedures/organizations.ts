@@ -5,7 +5,11 @@ import {
 	findOrganizationBrandingBySlug,
 	listOrganizationBranding,
 } from "../organization-branding";
-import { extractSubdomain, resolveTenantDatabaseName } from "../workspace";
+import {
+	extractSubdomain,
+	getWorkspaceOrganization,
+	requireOrganizationSlug,
+} from "../workspace";
 
 export const getOrganizationBySubdomain = base.handler(async ({ context }) => {
 	const host = context.headers.get("host");
@@ -23,94 +27,91 @@ export const listOrganizations = base.handler(async () => {
 	return { organizations };
 });
 
-type OrganizationModuleRow = {
-	accentColor: string;
-	address: string | null;
+type TenantOrganizationRow = {
 	createdAt: Date;
-	email: string | null;
-	foundedDate: string | null;
 	id: string;
-	industry: string | null;
-	locale: string;
 	logo: string | null;
 	metadata: unknown;
 	name: string;
-	phone: string | null;
-	registrationNumber: string | null;
+	plan: string | null;
+	serviceProviderId: string | null;
 	slug: string;
-	status: string;
-	taxId: string | null;
-	timezone: string;
-	updatedAt: Date;
-	website: string | null;
+	status: string | null;
 };
 
-function toOrganizationDto(org: OrganizationModuleRow) {
+function toOrganizationDto(org: TenantOrganizationRow) {
 	return {
-		accentColor: org.accentColor,
-		address: org.address,
 		createdAt: org.createdAt.toISOString(),
-		email: org.email,
-		foundedDate: org.foundedDate,
 		id: org.id,
-		industry: org.industry,
-		locale: org.locale,
 		logo: org.logo,
 		metadata: org.metadata,
 		name: org.name,
-		phone: org.phone,
-		registrationNumber: org.registrationNumber,
+		plan: org.plan,
+		serviceProviderId: org.serviceProviderId,
 		slug: org.slug,
 		status: org.status,
-		taxId: org.taxId,
-		timezone: org.timezone,
-		updatedAt: org.updatedAt.toISOString(),
-		website: org.website,
 	};
 }
 
 export const getCurrentOrganization = authed.handler(async ({ context }) => {
-	const tenantDatabaseName = await resolveTenantDatabaseName(context.headers);
+	const organizationSlug = requireOrganizationSlug(context.headers);
+	const workspaceOrg = await getWorkspaceOrganization(
+		context.headers,
+		organizationSlug,
+	);
 
 	const { pm } = await import("#/aspen/server");
 
-	const organization = await pm.run(tenantDatabaseName, () =>
-		pm.organization.organizations.get.run({}),
+	const tenant = await pm.run("$global", () =>
+		pm.management.tenants.get.run({ id: workspaceOrg.id }),
 	);
 
-	if (!organization) {
-		throw new Error("Workspace organization not found");
-	}
-
-	return toOrganizationDto(organization);
+	return toOrganizationDto({
+		createdAt: tenant.createdAt,
+		id: tenant.id,
+		logo: tenant.logo,
+		metadata: tenant.metadata,
+		name: tenant.name,
+		plan: tenant.plan,
+		serviceProviderId: tenant.serviceProviderId,
+		slug: tenant.slug,
+		status: tenant.status,
+	});
 });
 
 export const updateCurrentOrganization = authed
 	.input(UpdateOrganizationInputSchema)
 	.handler(async ({ context, input }) => {
-		const tenantDatabaseName = await resolveTenantDatabaseName(context.headers);
+		const organizationSlug = requireOrganizationSlug(context.headers);
+		const workspaceOrg = await getWorkspaceOrganization(
+			context.headers,
+			organizationSlug,
+		);
 
 		const { pm } = await import("#/aspen/server");
 
-		const organization = await pm.run(tenantDatabaseName, () =>
-			pm.organization.organizations.update.run({
-				accentColor: input.accentColor,
-				address: input.address,
-				email: input.email,
-				foundedDate: input.foundedDate
-					? new Date(`${input.foundedDate}T00:00:00Z`)
-					: undefined,
-				industry: input.industry,
-				locale: input.locale,
-				name: input.name,
-				phone: input.phone,
-				registrationNumber: input.registrationNumber,
-				slug: input.slug,
-				taxId: input.taxId,
-				timezone: input.timezone,
-				website: input.website,
+		const profile: Record<string, unknown> = {};
+		if (input.name !== undefined) profile.name = input.name;
+		if (input.slug !== undefined) profile.slug = input.slug;
+		if (input.logo !== undefined) profile.logo = input.logo;
+
+		const tenant = await pm.run("$global", () =>
+			pm.management.tenants.update.run({
+				id: workspaceOrg.id,
+				profile:
+					Object.keys(profile).length > 0 ? (profile as never) : undefined,
 			}),
 		);
 
-		return toOrganizationDto(organization);
+		return toOrganizationDto({
+			createdAt: tenant.createdAt,
+			id: tenant.id,
+			logo: tenant.logo,
+			metadata: tenant.metadata,
+			name: tenant.name,
+			plan: tenant.plan,
+			serviceProviderId: tenant.serviceProviderId,
+			slug: tenant.slug,
+			status: tenant.status,
+		});
 	});

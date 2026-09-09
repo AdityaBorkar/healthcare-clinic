@@ -41,19 +41,9 @@ function GeneralPage() {
 	const handleSubmit = useCallback(
 		async (values: OrganizationFormValues) => {
 			await orpc.organizations.update({
-				accentColor: values.accentColor,
-				address: values.address || null,
-				email: values.email || null,
-				foundedDate: values.foundedDate || undefined,
-				industry: values.industry || null,
-				locale: values.locale,
+				logo: values.logo || null,
 				name: values.name,
-				phone: values.phone || null,
-				registrationNumber: values.registrationNumber || null,
 				slug: values.slug,
-				taxId: values.taxId || null,
-				timezone: values.timezone,
-				website: values.website || null,
 			});
 			await router.invalidate();
 			setIsEditing(false);
@@ -135,47 +125,7 @@ function GeneralPage() {
 						<dl className="grid gap-x-8 gap-y-5 sm:grid-cols-2">
 							<Detail label="Name" value={organization.name} />
 							<Detail label="Slug" value={organization.slug} />
-							<Detail label="Email" value={organization.email} />
-							<Detail label="Phone" value={organization.phone} />
-							<Detail label="Website" value={organization.website} />
-							<Detail label="Address" value={organization.address} />
-						</dl>
-					</CardContent>
-				</Card>
-
-				<Card>
-					<CardHeader className="border-b">
-						<CardTitle>Company details</CardTitle>
-						<CardDescription>
-							Additional profile fields for this organization.
-						</CardDescription>
-					</CardHeader>
-					<CardContent className="p-6">
-						<dl className="grid gap-x-8 gap-y-5 sm:grid-cols-2">
-							<Detail label="Industry" value={organization.industry} />
-							<Detail
-								label="Registration number"
-								value={organization.registrationNumber}
-							/>
-							<Detail label="Tax ID" value={organization.taxId} />
-							<Detail
-								label="Founded date"
-								value={formatDate(organization.foundedDate)}
-							/>
-							<Detail label="Locale" value={organization.locale} />
-							<Detail label="Timezone" value={organization.timezone} />
-							<div>
-								<dt className="text-xs font-medium text-warm-gray">
-									Accent color
-								</dt>
-								<dd className="mt-1.5 flex items-center gap-2 text-sm text-ink-black">
-									<span
-										className="size-4 rounded-full ring-1 ring-foreground/15 ring-inset"
-										style={{ backgroundColor: organization.accentColor }}
-									/>
-									{organization.accentColor}
-								</dd>
-							</div>
+							<Detail label="Logo" value={organization.logo} />
 						</dl>
 					</CardContent>
 				</Card>
@@ -199,10 +149,7 @@ function GeneralPage() {
 								label="Created"
 								value={formatDateTime(organization.createdAt)}
 							/>
-							<Detail
-								label="Last updated"
-								value={formatDateTime(organization.updatedAt)}
-							/>
+							<Detail label="Plan" value={organization.plan} />
 							<Detail
 								label="Organization ID"
 								value={
@@ -223,19 +170,9 @@ function toFormValues(
 	organization: NonNullable<ReturnType<typeof Route.useLoaderData>>,
 ): OrganizationFormValues {
 	return {
-		accentColor: organization.accentColor,
-		address: organization.address ?? "",
-		email: organization.email ?? "",
-		foundedDate: organization.foundedDate ?? "",
-		industry: organization.industry ?? "",
-		locale: organization.locale,
+		logo: organization.logo ?? "",
 		name: organization.name,
-		phone: organization.phone ?? "",
-		registrationNumber: organization.registrationNumber ?? "",
 		slug: organization.slug,
-		taxId: organization.taxId ?? "",
-		timezone: organization.timezone,
-		website: organization.website ?? "",
 	};
 }
 
@@ -252,7 +189,7 @@ function Detail({ label, value }: { label: string; value: ReactNode }) {
 }
 
 // biome-ignore lint/style/useComponentExportOnlyModules: route modules export a Route config alongside render helpers
-function StatusBadge({ status }: { status: string }) {
+function StatusBadge({ status }: { status: string | null }) {
 	const variant =
 		status === "active"
 			? "outline"
@@ -263,20 +200,9 @@ function StatusBadge({ status }: { status: string }) {
 	return (
 		<Badge className="gap-1.5 px-2 py-0.5 text-[11px]" variant={variant}>
 			<span className="size-1.5 rounded-full bg-current opacity-70" />
-			{status}
+			{status ?? "unknown"}
 		</Badge>
 	);
-}
-
-function formatDate(value: string | null | undefined) {
-	if (!value) {
-		return null;
-	}
-	return new Intl.DateTimeFormat(undefined, {
-		day: "numeric",
-		month: "short",
-		year: "numeric",
-	}).format(new Date(`${value}T00:00:00Z`));
 }
 
 function formatDateTime(value: string | null | undefined) {

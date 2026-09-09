@@ -15,7 +15,7 @@ Bun + TanStack Start (file routes, SSR) + Vite 8 + Nitro (preset `bun`) + Tailwi
 
 ## Architecture
 
-- Aspen platform: `src/aspen/server.ts` exports `pm` (`IsolatedTenantPlatform` + `ManagementPlane` + `Organization({country:"INDIA"})`); `src/aspen/client.ts` exports browser `pm`. DB/auth/storage are configured there from `src/env.ts`.
+- Aspen platform: `src/aspen/server.ts` exports `pm` (`IsolatedTenantPlatform` + `ManagementPlane`); `src/aspen/client.ts` exports browser `pm`. DB/auth/storage are configured there from `src/env.ts`. The standalone `@aspen-os/organization` module was removed upstream — tenant profile is now the better-auth `organization` row (name/slug/logo) managed via `ManagementPlane` workflows (`tenants.get`/`tenants.update`).
 - oRPC: router in `src/rpc/router.ts`, procedures in `src/rpc/procedures/`, `authed` middleware in `src/rpc/middlewares/auth.ts` (session via `pm.auth…getSession({headers})`). UI/server-components must call via `orpc` from `src/lib/orpc.ts` (isomorphic: direct `RouterClient` on server, `RPCLink → /api/rpc` in browser) — never import `src/aspen/server.ts` or the router at module top level in shared/client code; procedures use lazy `await import("#/aspen/server")` for this reason.
 - HTTP entries: `src/routes/api/rpc.$.ts` (`/api/rpc`), `src/routes/api/auth.$.ts` (`pm.auth.fetchHandler` with subdomain-aware CORS via `isTrustedWebOrigin`).
 - Routes: `/` landing, `/account/*`, `/(tenant)/*` guarded by `beforeLoad` in `src/routes/(tenant)/route.tsx` (session check → redirect `/`, then `orpc.organizations.bySubdomain()`).
@@ -25,7 +25,7 @@ Bun + TanStack Start (file routes, SSR) + Vite 8 + Nitro (preset `bun`) + Tailwi
 ## Gotchas
 
 - Env comes from Pulumi stack config, not `.env.local` (no such file; `.env*` gitignored). Adding a var requires `src/env.ts` (`@t3-oss/env-core`, validated at import — missing var crashes startup) **and** `pulumi config set app:<NAME> --stack <stack>`.
-- Dockerfile is stale: builds to `.output/` but runtime stage copies `/app/dist` and runs `dist/server/index.mjs`. Verify before trusting the image.
+- Dockerfile builds to `.output/` and runtime copies `.output` (fixed Sep 2026).
 - TS is strict (`noUncheckedIndexedAccess`, `verbatimModuleSyntax` → use `import type`, `noUnusedLocals/Parameters`).
 - Biome auto-sorts imports (URL → node/bun → package → alias); run `check:lint` before finishing.
 - Design tokens (stone canvas + single cyan accent) live in `src/styles.css` per `DESIGN.md` — reuse them, no ad-hoc colors.

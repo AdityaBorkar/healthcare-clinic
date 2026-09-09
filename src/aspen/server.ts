@@ -1,5 +1,4 @@
 import { ManagementPlane } from "@aspen-os/management";
-import { Organization } from "@aspen-os/organization";
 import {
 	type IsolatedTenantConfig,
 	IsolatedTenantPlatform,
@@ -33,7 +32,7 @@ export function isTrustedWebOrigin(origin: string): boolean {
 const auth = {
 	advanced: {
 		crossSubDomainCookies: {
-			domain: hostname === "localhost" ? undefined : `.${hostname}`,
+			domain: `.${hostname}`,
 			enabled: hostname !== "localhost",
 		},
 	},
@@ -88,23 +87,14 @@ const db = {
 
 // Modules
 
-const management_plane = ManagementPlane.create(undefined);
-
-const organization = Organization.create({ country: "INDIA" });
-
-// Const hr = HumanResources.create();
-
-// Const inventory = Inventory.create({
-//   Service_name: "Pharmacy"
-// });
+const managementPlane = ManagementPlane.create(undefined);
 
 // Platform
 
 // Explicit annotation: the inferred type is not portable (references
 // non-exported MergedSchemas), so tsc requires it on the export.
-export const pm: IsolatedTenantPlatformInstance<
-	[ManagementPlane, Organization]
-> = IsolatedTenantPlatform.create(
-	{ auth, db, kvStore, logs, pubsub, rpc, storage },
-	[management_plane, organization],
-);
+export const pm: IsolatedTenantPlatformInstance<[ManagementPlane]> =
+	IsolatedTenantPlatform.create(
+		{ auth, db, kvStore, logs, pubsub, rpc, storage },
+		[managementPlane],
+	);

@@ -69,7 +69,7 @@ export const createUser = authed
 			} catch (error) {
 				await pm.management.users.delete
 					.run({ id: created.id })
-					.catch((rollbackError) => {
+					.catch((rollbackError: unknown) => {
 						console.error(
 							"Failed to roll back partially created workspace user",
 							{ rollbackError, userId: created.id },
