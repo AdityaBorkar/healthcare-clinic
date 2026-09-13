@@ -80,7 +80,7 @@ function UserDetailsPage() {
 
 	if (!user) {
 		return (
-			<main className="bg-stone-canvas px-4 py-6 sm:px-6 lg:px-8">
+			<main className="bg-background px-4 py-6 sm:px-6 lg:px-8">
 				<div className="mx-auto max-w-4xl space-y-6">
 					<PageHeader
 						actions={
@@ -101,7 +101,7 @@ function UserDetailsPage() {
 							<p className="text-sm font-medium ">
 								We could not find this user
 							</p>
-							<p className="mt-2 text-xs text-warm-gray">
+							<p className="mt-2 text-xs text-muted-foreground">
 								Return to the users list to see the current workspace members.
 							</p>
 						</CardContent>
@@ -112,7 +112,7 @@ function UserDetailsPage() {
 	}
 
 	return (
-		<main className="bg-stone-canvas px-4 py-6 sm:px-6 lg:px-8">
+		<main className="bg-background px-4 py-6 sm:px-6 lg:px-8">
 			<div className="mx-auto max-w-4xl space-y-6">
 				<PageHeader
 					actions={
@@ -149,18 +149,18 @@ function UserDetailsPage() {
 							<div className="min-w-0 space-y-3">
 								<div>
 									<p className="text-base font-medium ">{user.name}</p>
-									<p className="mt-1 flex items-center gap-1.5 text-sm break-all text-warm-gray">
+									<p className="mt-1 flex items-center gap-1.5 text-sm break-all text-muted-foreground">
 										<Mail className="size-3.5 shrink-0" />
 										{user.email}
 									</p>
 								</div>
 								<div className="flex flex-wrap gap-2">
-									<Badge className="gap-1.5 bg-sky-wash/40 text-cyan-edge">
+									<Badge className="gap-1.5 bg-primary/10 text-primary">
 										<ShieldCheck className="size-3.5" />
 										{roleLabels[user.role] ?? user.role}
 									</Badge>
 									<Badge
-										className="rounded-full bg-stone-muted/30 px-2.5 py-1 text-warm-gray"
+										className="rounded-full bg-input/30 px-2.5 py-1 text-muted-foreground"
 										variant="outline"
 									>
 										Added {formatDate(user.createdAt)}
@@ -231,7 +231,7 @@ function UserDetailsPage() {
 
 				<Card>
 					<CardContent className="grid gap-2 px-6 py-4 text-xs sm:grid-cols-[auto_1fr]">
-						<span className="font-medium text-warm-gray">User ID</span>
+						<span className="font-medium text-muted-foreground">User ID</span>
 						<code className="font-mono break-all ">{user.userId}</code>
 					</CardContent>
 				</Card>
@@ -250,8 +250,8 @@ function UserAvatar({ name }: { name: string }) {
 		.join("");
 
 	return (
-		<Avatar className="size-16 rounded-2xl bg-stone-muted/40">
-			<AvatarFallback className="rounded-2xl bg-stone-muted/40 text-xl font-medium text-warm-gray">
+		<Avatar className="size-16 rounded-2xl bg-input/40">
+			<AvatarFallback className="rounded-2xl bg-input/40 text-xl font-medium text-muted-foreground">
 				{initials || "?"}
 			</AvatarFallback>
 		</Avatar>

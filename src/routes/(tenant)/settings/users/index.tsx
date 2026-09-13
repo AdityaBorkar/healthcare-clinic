@@ -39,13 +39,13 @@ function UsersPage() {
 	const count = users?.length ?? 0;
 
 	return (
-		<main className="bg-stone-canvas px-4 py-6 sm:px-6 lg:px-8">
+		<main className="bg-background px-4 py-6 sm:px-6 lg:px-8">
 			<div className="mx-auto max-w-6xl space-y-6">
 				<PageHeader
 					actions={
 						<div className="flex items-center gap-2">
 							<Badge
-								className="hidden items-center gap-2 rounded-full border-stone-border bg-white px-3 py-1.5 text-xs text-warm-gray sm:inline-flex"
+								className="hidden items-center gap-2 rounded-full border-border bg-white px-3 py-1.5 text-xs text-muted-foreground sm:inline-flex"
 								variant="outline"
 							>
 								<UsersRound className="size-4" />
@@ -69,11 +69,11 @@ function UsersPage() {
 						<div className="flex items-center justify-between gap-3">
 							<div>
 								<CardTitle>Workspace users</CardTitle>
-								<p className="mt-1 text-xs text-warm-gray">
+								<p className="mt-1 text-xs text-muted-foreground">
 									Roles and access are provisioned through Aspen.
 								</p>
 							</div>
-							<UserPlus className="size-5 text-warm-gray" />
+							<UserPlus className="size-5 text-muted-foreground" />
 						</div>
 					</CardHeader>
 					<CardContent className="p-0">
@@ -89,23 +89,23 @@ function UsersPage() {
 							/>
 						) : (
 							<Table className="min-w-[680px]">
-								<TableHeader className="bg-stone-muted/30">
+								<TableHeader className="bg-input/30">
 									<TableRow className="hover:bg-transparent">
-										<TableHead className="px-5 text-xs text-warm-gray">
+										<TableHead className="px-5 text-xs text-muted-foreground">
 											User
 										</TableHead>
-										<TableHead className="px-5 text-xs text-warm-gray">
+										<TableHead className="px-5 text-xs text-muted-foreground">
 											Role
 										</TableHead>
-										<TableHead className="px-5 text-xs text-warm-gray">
+										<TableHead className="px-5 text-xs text-muted-foreground">
 											Added
 										</TableHead>
-										<TableHead className="px-5 text-right text-xs text-warm-gray" />
+										<TableHead className="px-5 text-right text-xs text-muted-foreground" />
 									</TableRow>
 								</TableHeader>
-								<TableBody className="divide-y divide-stone-border">
+								<TableBody className="divide-y divide-border">
 									{users.map((user) => (
-										<TableRow className="hover:bg-stone-muted/20" key={user.id}>
+										<TableRow className="hover:bg-input/20" key={user.id}>
 											<TableCell className="px-5 py-4">
 												<div className="flex items-center gap-3">
 													<UserAvatar name={user.name ?? user.email ?? "?"} />
@@ -113,25 +113,25 @@ function UsersPage() {
 														<p className="truncate font-medium ">
 															{user.name ?? "Unnamed user"}
 														</p>
-														<p className="truncate text-xs text-warm-gray">
+														<p className="truncate text-xs text-muted-foreground">
 															{user.email ?? "No email"}
 														</p>
 													</div>
 												</div>
 											</TableCell>
 											<TableCell className="px-5 py-4">
-												<Badge className="bg-sky-wash/40 text-cyan-edge">
+												<Badge className="bg-primary/10 text-primary">
 													{roleLabels[user.role ?? ""] ??
 														user.role ??
 														"Unassigned"}
 												</Badge>
 											</TableCell>
-											<TableCell className="px-5 py-4 text-xs text-warm-gray">
+											<TableCell className="px-5 py-4 text-xs text-muted-foreground">
 												{formatDate(user.createdAt)}
 											</TableCell>
 											<TableCell className="px-5 py-4 text-right">
 												<Link
-													className="text-xs font-medium text-cyan-edge hover:underline"
+													className="text-xs font-medium text-primary hover:underline"
 													params={{ id: user.id }}
 													to="/settings/users/$id"
 												>
@@ -161,7 +161,7 @@ function EmptyState({
 	return (
 		<div className="px-6 py-16 text-center">
 			<p className="text-sm font-medium ">{title}</p>
-			<p className="mx-auto mt-2 max-w-sm text-xs text-warm-gray">
+			<p className="mx-auto mt-2 max-w-sm text-xs text-muted-foreground">
 				{description}
 			</p>
 		</div>
@@ -178,8 +178,8 @@ function UserAvatar({ name }: { name: string }) {
 		.join("");
 
 	return (
-		<Avatar className="size-9 bg-stone-muted/40">
-			<AvatarFallback className="bg-stone-muted/40 text-xs font-medium text-warm-gray">
+		<Avatar className="size-9 bg-input/40">
+			<AvatarFallback className="bg-input/40 text-xs font-medium text-muted-foreground">
 				{initials || "?"}
 			</AvatarFallback>
 		</Avatar>

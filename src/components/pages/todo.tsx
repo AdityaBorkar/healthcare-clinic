@@ -17,14 +17,11 @@ export function TodoPage({
 	tabs?: readonly string[];
 }) {
 	return (
-		<main className="bg-stone-canvas px-4 py-6 sm:px-6 lg:px-8">
+		<main className="bg-background px-4 py-6 sm:px-6 lg:px-8">
 			<div className="mx-auto max-w-6xl space-y-6">
 				<PageHeader title={title} />
 				{tabs && tabs.length > 0 ? (
-					<Tabs
-						className="w-fit border-b border-stone-border"
-						defaultValue={tabs[0]}
-					>
+					<Tabs className="w-fit border-b border-border" defaultValue={tabs[0]}>
 						<TabsList variant="line">
 							{tabs.map((tab) => (
 								<TabsTrigger key={tab} value={tab}>
@@ -34,18 +31,18 @@ export function TodoPage({
 						</TabsList>
 					</Tabs>
 				) : null}
-				<Card className="shadow-[var(--shadow-subtle)]">
+				<Card className="shadow-xs">
 					<CardHeader className="flex flex-col items-center justify-center gap-4 py-16 text-center">
-						<span className="mb-1 flex size-12 items-center justify-center rounded-xl bg-sky-wash/40">
-							<Construction className="size-6 text-cyan-edge" />
+						<span className="mb-1 flex size-12 items-center justify-center rounded-xl bg-primary/10">
+							<Construction className="size-6 text-primary" />
 						</span>
 						<CardTitle className="text-base font-semibold">
 							Coming Soon
 						</CardTitle>
 						<CardDescription className="max-w-sm text-sm">
-							<span className="font-medium text-ink-black">{title}</span> is not
-							available yet. We are actively building this module — check back
-							soon.
+							<span className="font-medium text-foreground">{title}</span> is
+							not available yet. We are actively building this module — check
+							back soon.
 						</CardDescription>
 					</CardHeader>
 				</Card>

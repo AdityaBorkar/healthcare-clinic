@@ -31,7 +31,7 @@ export function WorkspaceSelector({
 
 	return (
 		<Popover>
-			<PopoverTrigger className="flex w-full min-w-0 items-center gap-3 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-cyan-signal/30 focus-visible:outline-none">
+			<PopoverTrigger className="flex w-full min-w-0 items-center gap-3 rounded-md px-2 py-1.5 text-left transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:outline-none">
 				{organization?.logo ? (
 					<Avatar className="size-9 rounded-lg">
 						<AvatarImage
@@ -39,13 +39,13 @@ export function WorkspaceSelector({
 							className="rounded-lg object-cover"
 							src={organization.logo}
 						/>
-						<AvatarFallback className="rounded-lg bg-cyan-signal text-sm font-medium text-white uppercase">
+						<AvatarFallback className="rounded-lg bg-primary text-sm font-medium text-primary-foreground uppercase">
 							{organizationName.slice(0, 1)}
 						</AvatarFallback>
 					</Avatar>
 				) : (
 					<Avatar className="size-9">
-						<AvatarFallback className="bg-cyan-signal text-sm font-medium text-white uppercase">
+						<AvatarFallback className="bg-primary text-sm font-medium text-primary-foreground uppercase">
 							{organizationName.slice(0, 1)}
 						</AvatarFallback>
 					</Avatar>
@@ -54,11 +54,11 @@ export function WorkspaceSelector({
 					<span className="block truncate text-sm font-medium ">
 						{organizationName}
 					</span>
-					<span className="mt-0.5 block truncate text-xs text-warm-gray">
+					<span className="mt-0.5 block truncate text-xs text-muted-foreground">
 						Workspace
 					</span>
 				</span>
-				<ChevronDown className="size-4 shrink-0 text-warm-gray" />
+				<ChevronDown className="size-4 shrink-0 text-muted-foreground" />
 			</PopoverTrigger>
 			<PopoverContent align="start" className="w-64 p-2" sideOffset={8}>
 				<div className="space-y-0.5">
@@ -67,7 +67,7 @@ export function WorkspaceSelector({
 						className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-muted"
 						to="/settings"
 					>
-						<span className="flex size-6 shrink-0 items-center justify-center rounded bg-stone-muted/40 ">
+						<span className="flex size-6 shrink-0 items-center justify-center rounded bg-input/40 ">
 							<Settings className="size-3.5" />
 						</span>
 						<span className="flex-1">Organization Settings</span>
@@ -80,11 +80,11 @@ export function WorkspaceSelector({
 						// @ts-expect-error URL Override
 						to={`${BASE_URL}/account/settings`}
 					>
-						<span className="flex size-6 shrink-0 items-center justify-center rounded bg-stone-muted/40 ">
+						<span className="flex size-6 shrink-0 items-center justify-center rounded bg-input/40 ">
 							<UserRound className="size-3.5" />
 						</span>
 						<span className="flex-1">Account Settings</span>
-						<ExternalLink className="size-3 text-warm-gray" />
+						<ExternalLink className="size-3 text-muted-foreground" />
 					</Link>
 					<Link
 						aria-label="All Organizations (opens in a new tab)"
@@ -94,11 +94,11 @@ export function WorkspaceSelector({
 						// @ts-expect-error URL Override
 						to={`${BASE_URL}/account/organizations`}
 					>
-						<span className="flex size-6 shrink-0 items-center justify-center rounded bg-stone-muted/40 ">
+						<span className="flex size-6 shrink-0 items-center justify-center rounded bg-input/40 ">
 							<Building2 className="size-3.5" />
 						</span>
 						<span className="flex-1">All Organizations</span>
-						<ExternalLink className="size-3 text-warm-gray" />
+						<ExternalLink className="size-3 text-muted-foreground" />
 					</Link>
 				</div>
 			</PopoverContent>

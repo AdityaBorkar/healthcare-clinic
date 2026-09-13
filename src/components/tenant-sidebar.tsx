@@ -85,19 +85,19 @@ export function TenantSidebar({
 	user: User;
 }) {
 	return (
-		<aside className="flex w-full shrink-0 flex-col border-b border-stone-border bg-white md:sticky md:top-0 md:h-svh md:w-72 md:min-w-72 md:border-r md:border-b-0 xl:w-80 xl:min-w-80">
-			<div className="border-b border-stone-border px-3 py-3">
+		<aside className="flex w-full shrink-0 flex-col border-b border-border bg-white md:sticky md:top-0 md:h-svh md:w-72 md:min-w-72 md:border-r md:border-b-0 xl:w-80 xl:min-w-80">
+			<div className="border-b border-border px-3 py-3">
 				<WorkspaceSelector organization={organization} />
 			</div>
 
-			<div className="space-y-2 border-b border-stone-border px-3 py-3">
+			<div className="space-y-2 border-b border-border px-3 py-3">
 				<Button
-					className="h-9 w-full justify-start gap-2.5 px-3 text-sm font-normal text-warm-gray"
+					className="h-9 w-full justify-start gap-2.5 px-3 text-sm font-normal text-muted-foreground"
 					variant="outline"
 				>
 					<Search className="size-4 shrink-0" />
 					<span className="flex-1 text-left">Search</span>
-					<kbd className="rounded border border-stone-border bg-stone-canvas px-1.5 py-0.5 font-sans text-[10px] font-medium text-warm-gray">
+					<kbd className="rounded border border-border bg-background px-1.5 py-0.5 font-sans text-[10px] font-medium text-muted-foreground">
 						Ctrl K
 					</kbd>
 				</Button>
@@ -124,7 +124,7 @@ export function TenantSidebar({
 							))}
 							{section.label === "Library" ? (
 								<>
-									<div className="mt-0.5 space-y-0.5 border-l border-stone-border py-0.5 pl-2">
+									<div className="mt-0.5 space-y-0.5 border-l border-border py-0.5 pl-2">
 										{pinnedDocumentClasses.map((documentClass) => (
 											<SidebarItem
 												href="/document-classes"
@@ -135,7 +135,7 @@ export function TenantSidebar({
 											/>
 										))}
 									</div>
-									<div className="mt-0.5 space-y-0.5 border-l border-stone-border py-0.5 pl-2">
+									<div className="mt-0.5 space-y-0.5 border-l border-border py-0.5 pl-2">
 										{pinnedDocumentViews.map((documentView) => (
 											<SidebarItem
 												href="/document-views"
@@ -153,18 +153,18 @@ export function TenantSidebar({
 				</LayoutGroup>
 			</nav>
 
-			<div className="border-t border-stone-border px-3 py-3">
+			<div className="border-t border-border px-3 py-3">
 				<div className="flex items-center gap-3 rounded-lg px-2 py-1.5">
-					<Avatar className="size-9 shrink-0 bg-stone-muted/40">
-						<AvatarFallback className="bg-stone-muted/40 text-xs font-medium text-warm-gray uppercase">
+					<Avatar className="size-9 shrink-0 bg-input/40">
+						<AvatarFallback className="bg-input/40 text-xs font-medium text-muted-foreground uppercase">
 							{user.name.slice(0, 1)}
 						</AvatarFallback>
 					</Avatar>
 					<span className="min-w-0 flex-1">
-						<span className="block truncate text-sm font-medium text-ink-black">
+						<span className="block truncate text-sm font-medium text-foreground">
 							{user.name}
 						</span>
-						<span className="block truncate text-xs text-warm-gray">
+						<span className="block truncate text-xs text-muted-foreground">
 							Signed in
 						</span>
 					</span>
@@ -192,7 +192,7 @@ function SidebarSection({
 }) {
 	return (
 		<section className="mb-6 last:mb-0">
-			<h2 className="mb-1.5 px-3 text-[11px] font-semibold tracking-[0.08em] text-warm-gray uppercase">
+			<h2 className="mb-1.5 px-3 text-[11px] font-semibold tracking-[0.08em] text-muted-foreground uppercase">
 				{label}
 			</h2>
 			<div className="space-y-0.5">{children}</div>
@@ -222,7 +222,7 @@ function SidebarItem({
 			<Icon
 				className={cn(
 					"size-4 shrink-0",
-					active ? "text-cyan-edge" : "text-warm-gray",
+					active ? "text-primary" : "text-muted-foreground",
 				)}
 			/>
 			<span className="min-w-0 flex-1 truncate">{label}</span>
@@ -237,8 +237,8 @@ function SidebarItem({
 					"h-9 w-full justify-start gap-2.5 rounded-lg bg-transparent px-3 text-[13.5px] hover:bg-transparent",
 					nested ? "h-8 pl-3 text-[13px]" : null,
 					active
-						? "bg-cyan-signal/10 font-medium text-ink-black hover:bg-cyan-signal/10"
-						: "font-normal text-warm-gray hover:text-soot",
+						? "bg-primary/10 font-medium text-foreground hover:bg-primary/10"
+						: "font-normal text-muted-foreground hover:text-foreground",
 				)}
 				nativeButton={false}
 				render={<Link aria-current={active ? "page" : undefined} to={href} />}

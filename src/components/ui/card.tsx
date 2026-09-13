@@ -15,7 +15,7 @@ function Card({
 		props: mergeProps<"div">(
 			{
 				className: cn(
-					"group/card flex flex-col gap-(--card-spacing) overflow-hidden rounded-lg border border-stone-border bg-white py-(--card-spacing) text-sm/relaxed  [--card-spacing:--spacing(4)] has-[>img:first-child]:pt-0 data-[size=sm]:[--card-spacing:--spacing(3)] *:[img:first-child]:rounded-t-lg *:[img:last-child]:rounded-b-lg",
+					"group/card flex flex-col gap-(--card-spacing) overflow-hidden rounded-lg border border-border bg-white py-(--card-spacing) text-sm/relaxed  [--card-spacing:--spacing(4)] has-[>img:first-child]:pt-0 data-[size=sm]:[--card-spacing:--spacing(3)] *:[img:first-child]:rounded-t-lg *:[img:last-child]:rounded-b-lg",
 					className,
 				),
 				...(size === "sm" ? {} : {}),
@@ -57,7 +57,7 @@ function CardTitle({ className, ...props }: React.ComponentProps<"div">) {
 function CardDescription({ className, ...props }: React.ComponentProps<"div">) {
 	return (
 		<div
-			className={cn("text-sm/relaxed text-warm-gray", className)}
+			className={cn("text-sm/relaxed text-muted-foreground", className)}
 			data-slot="card-description"
 			{...props}
 		/>

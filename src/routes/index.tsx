@@ -302,7 +302,7 @@ function LoginPage() {
 	);
 
 	return (
-		<main className="flex min-h-svh items-center justify-center bg-stone-canvas px-4 py-12 font-sans ">
+		<main className="flex min-h-svh items-center justify-center bg-background px-4 py-12 font-sans ">
 			<div className="w-full max-w-72">
 				<div className="flex flex-col items-center">
 					{organization?.logo ? (
@@ -312,7 +312,7 @@ function LoginPage() {
 							src={organization.logo}
 						/>
 					) : (
-						<span className="flex size-10 items-center justify-center overflow-hidden rounded-full bg-ink-black text-white">
+						<span className="flex size-10 items-center justify-center overflow-hidden rounded-full bg-foreground text-primary-foreground">
 							<Building2 className="size-5" />
 						</span>
 					)}
@@ -327,7 +327,7 @@ function LoginPage() {
 									Username / Email / Phone Number
 								</Label>
 								<div className="relative">
-									<IdentifierIcon className="pointer-events-none absolute top-1/2 left-3 size-5 -translate-y-1/2 text-warm-gray" />
+									<IdentifierIcon className="pointer-events-none absolute top-1/2 left-3 size-5 -translate-y-1/2 text-muted-foreground" />
 									<Input
 										autoComplete="username"
 										className="h-11 pl-10"
@@ -345,7 +345,7 @@ function LoginPage() {
 							<div className="space-y-2">
 								<Label htmlFor={passwordId}>Password</Label>
 								<div className="relative">
-									<Lock className="pointer-events-none absolute top-1/2 left-3 size-5 -translate-y-1/2 text-warm-gray" />
+									<Lock className="pointer-events-none absolute top-1/2 left-3 size-5 -translate-y-1/2 text-muted-foreground" />
 									<Input
 										autoComplete="current-password"
 										className="h-11 pl-10"
@@ -377,7 +377,7 @@ function LoginPage() {
 							)}
 						</Button>
 						<Button
-							className="block w-full py-1 text-center text-xs text-warm-gray"
+							className="block w-full py-1 text-center text-xs text-muted-foreground"
 							onClick={handleBackToOptions}
 							size="xs"
 							type="button"
@@ -393,7 +393,7 @@ function LoginPage() {
 								Username / Email / Phone Number
 							</Label>
 							<div className="relative">
-								<IdentifierIcon className="pointer-events-none absolute top-1/2 left-3 size-5 -translate-y-1/2 text-warm-gray" />
+								<IdentifierIcon className="pointer-events-none absolute top-1/2 left-3 size-5 -translate-y-1/2 text-muted-foreground" />
 								<Input
 									autoComplete="username"
 									className="h-11 pl-10"
@@ -408,7 +408,7 @@ function LoginPage() {
 								/>
 							</div>
 							{detectedKind === "username" && identifier.trim() ? (
-								<p className="text-xs text-warm-gray">
+								<p className="text-xs text-muted-foreground">
 									OTP needs an email or phone number
 								</p>
 							) : null}
@@ -419,7 +419,7 @@ function LoginPage() {
 								<div className="space-y-2">
 									<Label htmlFor={otpId}>Enter OTP</Label>
 									<div className="relative">
-										<KeyRound className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-warm-gray" />
+										<KeyRound className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground" />
 										<Input
 											autoComplete="one-time-code"
 											className="h-11 pl-10 tracking-widest"
@@ -452,7 +452,7 @@ function LoginPage() {
 								</Button>
 								<div className="flex items-center justify-between">
 									<Button
-										className="px-0 text-xs text-warm-gray"
+										className="px-0 text-xs text-muted-foreground"
 										disabled={sendingOtp}
 										onClick={onSendOtp}
 										size="xs"
@@ -462,7 +462,7 @@ function LoginPage() {
 										{sendingOtp ? "Resending..." : "Resend OTP"}
 									</Button>
 									<Button
-										className="px-0 text-xs text-warm-gray"
+										className="px-0 text-xs text-muted-foreground"
 										onClick={handleChangeIdentifier}
 										size="xs"
 										type="button"
@@ -491,7 +491,7 @@ function LoginPage() {
 							</Button>
 						)}
 						<Button
-							className="block w-full py-1 text-center text-xs text-warm-gray"
+							className="block w-full py-1 text-center text-xs text-muted-foreground"
 							onClick={handleBackToOptions}
 							size="xs"
 							type="button"
@@ -549,17 +549,17 @@ function LoginPage() {
 					</div>
 				)}
 				{method === null ? (
-					<p className="mt-6 text-center text-xs text-warm-gray">
+					<p className="mt-6 text-center text-xs text-muted-foreground">
 						New here?{" "}
 						<Link
-							className="font-medium hover:text-cyan-edge hover:underline"
+							className="font-medium hover:text-primary hover:underline"
 							to="/support"
 						>
 							Sign Up
 						</Link>{" "}
 						or{" "}
 						<Link
-							className="font-medium hover:text-cyan-edge hover:underline"
+							className="font-medium hover:text-primary hover:underline"
 							to="/support"
 						>
 							Contact Support

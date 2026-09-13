@@ -13,8 +13,8 @@ export function NotPrintable({ children }: NotPrintableProps) {
 				className="hidden h-full w-full items-center justify-center bg-white p-8 print:flex"
 			>
 				<div className="mx-auto flex max-w-sm flex-col items-center gap-2 text-center">
-					<span className="flex size-12 items-center justify-center rounded-full bg-sky-wash/40">
-						<ShieldAlert className="size-6 text-cyan-edge" />
+					<span className="flex size-12 items-center justify-center rounded-full bg-primary/10">
+						<ShieldAlert className="size-6 text-primary" />
 					</span>
 					<p className="text-sm font-medium ">
 						This content is protected to prevent unauthorized printing.

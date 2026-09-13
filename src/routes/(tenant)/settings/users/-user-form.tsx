@@ -101,7 +101,7 @@ export function UserForm({
 	return (
 		<form className="grid gap-4" onSubmit={handleSubmit}>
 			<div className="grid gap-1.5">
-				<Label className="text-xs text-warm-gray" htmlFor={nameId}>
+				<Label className="text-xs text-muted-foreground" htmlFor={nameId}>
 					Full name
 				</Label>
 				<Input
@@ -115,7 +115,7 @@ export function UserForm({
 			</div>
 
 			<div className="grid gap-1.5">
-				<Label className="text-xs text-warm-gray" htmlFor={emailId}>
+				<Label className="text-xs text-muted-foreground" htmlFor={emailId}>
 					Email address
 				</Label>
 				<Input
@@ -129,7 +129,7 @@ export function UserForm({
 					value={values.email}
 				/>
 				{isEditing ? (
-					<p className="text-[11px] text-warm-gray">
+					<p className="text-[11px] text-muted-foreground">
 						Email addresses cannot be changed here.
 					</p>
 				) : null}
@@ -137,7 +137,7 @@ export function UserForm({
 
 			{!isEditing ? (
 				<div className="grid gap-1.5">
-					<Label className="text-xs text-warm-gray" htmlFor={passwordId}>
+					<Label className="text-xs text-muted-foreground" htmlFor={passwordId}>
 						Temporary password
 					</Label>
 					<Input
@@ -151,19 +151,22 @@ export function UserForm({
 						type="password"
 						value={values.password}
 					/>
-					<p className="text-[11px] text-warm-gray" id={`${passwordId}-hint`}>
+					<p
+						className="text-[11px] text-muted-foreground"
+						id={`${passwordId}-hint`}
+					>
 						Share this securely with the user so they can sign in.
 					</p>
 				</div>
 			) : null}
 
 			<div className="grid gap-1.5">
-				<Label className="text-xs text-warm-gray" htmlFor={roleId}>
+				<Label className="text-xs text-muted-foreground" htmlFor={roleId}>
 					Workspace role
 				</Label>
 				{isOwner ? (
 					<div
-						className="flex h-9 items-center rounded-md border border-stone-muted bg-stone-muted/30 px-3 text-sm text-warm-gray"
+						className="flex h-9 items-center rounded-md border border-input bg-input/30 px-3 text-sm text-muted-foreground"
 						id={roleId}
 					>
 						Owner
@@ -175,7 +178,7 @@ export function UserForm({
 						value={values.role}
 					>
 						<SelectTrigger
-							className="h-9 w-full border-stone-muted bg-white text-sm"
+							className="h-9 w-full border-input bg-white text-sm"
 							id={roleId}
 						>
 							<SelectValue>
@@ -188,7 +191,7 @@ export function UserForm({
 						</SelectContent>
 					</Select>
 				)}
-				<p className="text-[11px] text-warm-gray">
+				<p className="text-[11px] text-muted-foreground">
 					Administrators can manage workspace settings and users.
 				</p>
 			</div>
@@ -201,7 +204,7 @@ export function UserForm({
 				</Alert>
 			) : null}
 
-			<div className="flex flex-col-reverse justify-end gap-2 border-t border-stone-border pt-4 sm:flex-row">
+			<div className="flex flex-col-reverse justify-end gap-2 border-t border-border pt-4 sm:flex-row">
 				<Button onClick={onCancel} type="button" variant="outline">
 					Cancel
 				</Button>

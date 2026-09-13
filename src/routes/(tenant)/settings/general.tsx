@@ -53,7 +53,7 @@ function GeneralPage() {
 
 	if (organization === null) {
 		return (
-			<main className="bg-stone-canvas px-4 py-6 sm:px-6 lg:px-8">
+			<main className="bg-background px-4 py-6 sm:px-6 lg:px-8">
 				<div className="mx-auto max-w-4xl space-y-6">
 					<PageHeader
 						description="Organization profile and workspace details."
@@ -61,13 +61,13 @@ function GeneralPage() {
 					/>
 					<Card>
 						<CardContent className="py-16 text-center">
-							<span className="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-stone-muted/40">
-								<Building2 className="size-6 text-warm-gray" />
+							<span className="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-input/40">
+								<Building2 className="size-6 text-muted-foreground" />
 							</span>
 							<p className="text-sm font-medium ">
 								Organization information is unavailable
 							</p>
-							<p className="mx-auto mt-2 max-w-sm text-xs text-warm-gray">
+							<p className="mx-auto mt-2 max-w-sm text-xs text-muted-foreground">
 								We could not load your organization's profile. Try refreshing
 								the page.
 							</p>
@@ -80,7 +80,7 @@ function GeneralPage() {
 
 	if (isEditing) {
 		return (
-			<main className="bg-stone-canvas px-4 py-6 sm:px-6 lg:px-8">
+			<main className="bg-background px-4 py-6 sm:px-6 lg:px-8">
 				<div className="mx-auto max-w-3xl space-y-6">
 					<PageHeader
 						description="Update your organization's information."
@@ -101,7 +101,7 @@ function GeneralPage() {
 	}
 
 	return (
-		<main className="bg-stone-canvas px-4 py-6 sm:px-6 lg:px-8">
+		<main className="bg-background px-4 py-6 sm:px-6 lg:px-8">
 			<div className="mx-auto max-w-4xl space-y-6">
 				<PageHeader
 					actions={
@@ -140,7 +140,9 @@ function GeneralPage() {
 					<CardContent className="p-6">
 						<dl className="grid gap-x-8 gap-y-5 sm:grid-cols-2">
 							<div>
-								<dt className="text-xs font-medium text-warm-gray">Status</dt>
+								<dt className="text-xs font-medium text-muted-foreground">
+									Status
+								</dt>
 								<dd className="mt-1.5">
 									<StatusBadge status={organization.status} />
 								</dd>
@@ -180,7 +182,7 @@ function toFormValues(
 function Detail({ label, value }: { label: string; value: ReactNode }) {
 	return (
 		<div>
-			<dt className="text-xs font-medium text-warm-gray">{label}</dt>
+			<dt className="text-xs font-medium text-muted-foreground">{label}</dt>
 			<dd className="mt-1 text-sm break-words ">{value ?? "—"}</dd>
 		</div>
 	);

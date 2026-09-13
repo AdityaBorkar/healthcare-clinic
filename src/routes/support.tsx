@@ -37,7 +37,7 @@ function SupportPage() {
 	const displayName = organization?.name ?? AGENCY.name;
 
 	return (
-		<main className="flex min-h-svh items-center justify-center bg-stone-canvas px-4 py-12 font-sans ">
+		<main className="flex min-h-svh items-center justify-center bg-background px-4 py-12 font-sans ">
 			<div className="w-full max-w-md">
 				<div className="mb-6 flex flex-col items-center text-center">
 					{organization?.logo ? (
@@ -47,31 +47,31 @@ function SupportPage() {
 							src={organization.logo}
 						/>
 					) : (
-						<span className="flex size-10 items-center justify-center rounded-full bg-ink-black text-white">
+						<span className="flex size-10 items-center justify-center rounded-full bg-foreground text-primary-foreground">
 							<Building2 className="size-5" />
 						</span>
 					)}
 					<h1 className="mt-4  text-2xl font-medium  ">{displayName}</h1>
-					<p className="mt-2 max-w-sm text-sm text-warm-gray">
+					<p className="mt-2 max-w-sm text-sm text-muted-foreground">
 						Need an account or help signing in? Reach out to the agency using
 						the details below.
 					</p>
 				</div>
 
-				<Card className="shadow-shadow-md">
+				<Card className="shadow-md">
 					<CardHeader>
 						<CardTitle>Contact Support</CardTitle>
-						<p className="text-sm text-warm-gray">
+						<p className="text-sm text-muted-foreground">
 							For sign-up requests and sign-in help.
 						</p>
 					</CardHeader>
 					<CardContent className="space-y-4">
 						<div className="flex items-start gap-3">
-							<Phone className="mt-0.5 size-4 shrink-0 text-warm-gray" />
+							<Phone className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
 							<div>
-								<p className="text-xs text-warm-gray">Phone</p>
+								<p className="text-xs text-muted-foreground">Phone</p>
 								<a
-									className="text-sm font-medium  hover:text-cyan-edge hover:underline"
+									className="text-sm font-medium  hover:text-primary hover:underline"
 									href={`tel:${AGENCY.phone}`}
 								>
 									{AGENCY.phone}
@@ -79,11 +79,11 @@ function SupportPage() {
 							</div>
 						</div>
 						<div className="flex items-start gap-3">
-							<Mail className="mt-0.5 size-4 shrink-0 text-warm-gray" />
+							<Mail className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
 							<div>
-								<p className="text-xs text-warm-gray">Email</p>
+								<p className="text-xs text-muted-foreground">Email</p>
 								<a
-									className="text-sm font-medium  hover:text-cyan-edge hover:underline"
+									className="text-sm font-medium  hover:text-primary hover:underline"
 									href={`mailto:${AGENCY.email}`}
 								>
 									{AGENCY.email}
@@ -91,16 +91,16 @@ function SupportPage() {
 							</div>
 						</div>
 						<div className="flex items-start gap-3">
-							<MapPin className="mt-0.5 size-4 shrink-0 text-warm-gray" />
+							<MapPin className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
 							<div>
-								<p className="text-xs text-warm-gray">Address</p>
+								<p className="text-xs text-muted-foreground">Address</p>
 								<p className="text-sm font-medium ">{AGENCY.address}</p>
 							</div>
 						</div>
 						<div className="flex items-start gap-3">
-							<Clock className="mt-0.5 size-4 shrink-0 text-warm-gray" />
+							<Clock className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
 							<div>
-								<p className="text-xs text-warm-gray">Working hours</p>
+								<p className="text-xs text-muted-foreground">Working hours</p>
 								<p className="text-sm font-medium ">{AGENCY.hours}</p>
 							</div>
 						</div>

@@ -87,7 +87,7 @@ export function SettingsHeader() {
 	insertUsersCrumb(breadcrumbs);
 
 	return (
-		<header className="sticky top-0 z-10 border-b border-stone-border bg-white/80 backdrop-blur-md">
+		<header className="sticky top-0 z-10 border-b border-border bg-white/80 backdrop-blur-md">
 			<div className="flex h-14 items-center gap-2 px-4 sm:px-6">
 				<Settings2 className="size-4 shrink-0 " />
 				<Breadcrumb aria-label="Breadcrumb" className="min-w-0 flex-1">
@@ -106,7 +106,7 @@ export function SettingsHeader() {
 										<BreadcrumbLink
 											render={
 												<Link
-													className="block truncate rounded px-1 py-0.5 text-warm-gray transition-colors hover: focus-visible:ring-2 focus-visible:ring-cyan-signal/30 focus-visible:outline-none"
+													className="block truncate rounded px-1 py-0.5 text-muted-foreground transition-colors hover: focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:outline-none"
 													to={crumb.href}
 												/>
 											}

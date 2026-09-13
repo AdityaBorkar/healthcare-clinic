@@ -11,13 +11,13 @@ export const Route = createFileRoute("/not-found")({
 
 function RouteComponent() {
 	return (
-		<main className="flex min-h-svh items-center justify-center bg-stone-canvas px-4 py-12 font-sans ">
-			<Card className="w-full max-w-sm p-6 text-center shadow-shadow-md">
-				<span className="mx-auto mb-5 flex size-10 items-center justify-center rounded-full bg-stone-muted/40 ">
+		<main className="flex min-h-svh items-center justify-center bg-background px-4 py-12 font-sans ">
+			<Card className="w-full max-w-sm p-6 text-center shadow-md">
+				<span className="mx-auto mb-5 flex size-10 items-center justify-center rounded-full bg-input/40 ">
 					<Building2 className="size-5" />
 				</span>
 				<h1 className=" text-lg font-medium  ">Organization: Not Found</h1>
-				<p className="mt-2 text-sm text-warm-gray">
+				<p className="mt-2 text-sm text-muted-foreground">
 					This organization does not exist or is no longer active.
 				</p>
 				<Button

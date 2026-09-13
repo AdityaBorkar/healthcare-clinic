@@ -1,17 +1,10 @@
 # TODO
 
-
-When clicked on "Sign in using Password" or "Sign in using OTP",
-show the input field as User Name / Email / Phone Number (auto detect)
-
-If password input, then show passsword,
-If OTP input, show Send OTP button and then trigger OTP verification
+Ensure ShadCN tokens are used throughout the repository. If not, migrate everything to shadcn tokens.
 
 Auth
-- User Name / Email / Phone Number
-  - Password
-  - OTP
-  - Password Reset
+- Verify OTP Flow
+- Add Password Reset Flow in the Settings
 
 Printing and Sending through WhatsApp is very important
 

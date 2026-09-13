@@ -4,7 +4,7 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "#/lib/utils";
 
 const buttonVariants = cva(
-	"group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-[0.8125rem]/[1.4] font-medium whitespace-nowrap transition-colors outline-none select-none focus-visible:ring-2 focus-visible:ring-cyan-signal/30 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/20 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+	"group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-[0.8125rem]/[1.4] font-medium whitespace-nowrap transition-colors outline-none select-none focus-visible:ring-2 focus-visible:ring-primary/30 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-2 aria-invalid:ring-destructive/20 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
 	{
 		defaultVariants: {
 			size: "default",
@@ -24,16 +24,16 @@ const buttonVariants = cva(
 			},
 			variant: {
 				default:
-					"border-cyan-edge bg-primary text-primary-foreground shadow-[var(--shadow-subtle)] hover:bg-cyan-edge",
+					"border-primary bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
 				destructive:
 					"bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:ring-destructive/20",
 				ghost:
-					"text-warm-gray hover:bg-muted hover:text-soot aria-expanded:bg-muted",
-				link: "text-cyan-signal underline-offset-4 hover:text-cyan-edge hover:underline",
+					"text-muted-foreground hover:bg-muted hover:text-foreground aria-expanded:bg-muted",
+				link: "text-primary underline-offset-4 hover:underline",
 				outline:
-					"border-stone-border bg-pure-white shadow-[var(--shadow-subtle)] hover:bg-muted hover:text-soot aria-expanded:bg-muted",
+					"border-border bg-card shadow-xs hover:bg-muted hover:text-foreground aria-expanded:bg-muted",
 				secondary:
-					"bg-muted text-soot hover:bg-stone-muted/60 aria-expanded:bg-stone-muted/60",
+					"bg-muted text-foreground hover:bg-input/60 aria-expanded:bg-input/60",
 			},
 		},
 	},

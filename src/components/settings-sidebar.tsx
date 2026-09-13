@@ -84,12 +84,12 @@ export function SettingsSidebar({
 	user: User;
 }) {
 	return (
-		<aside className="flex w-full shrink-0 flex-col border-b border-stone-border bg-white md:sticky md:top-0 md:h-svh md:w-72 md:min-w-72 md:border-r md:border-b-0 xl:w-80 xl:min-w-80">
-			<div className="border-b border-stone-border px-3 py-3">
+		<aside className="flex w-full shrink-0 flex-col border-b border-border bg-white md:sticky md:top-0 md:h-svh md:w-72 md:min-w-72 md:border-r md:border-b-0 xl:w-80 xl:min-w-80">
+			<div className="border-b border-border px-3 py-3">
 				<WorkspaceSelector organization={organization} />
 			</div>
 
-			<div className="border-b border-stone-border px-3 py-3">
+			<div className="border-b border-border px-3 py-3">
 				<Button
 					className="h-9 w-full justify-start gap-2.5 rounded-lg px-3 text-[13.5px] font-normal"
 					nativeButton={false}
@@ -124,18 +124,18 @@ export function SettingsSidebar({
 				</LayoutGroup>
 			</nav>
 
-			<div className="border-t border-stone-border px-3 py-3">
+			<div className="border-t border-border px-3 py-3">
 				<div className="flex items-center gap-3 rounded-lg px-2 py-1.5">
-					<Avatar className="size-9 shrink-0 bg-stone-muted/40">
-						<AvatarFallback className="bg-stone-muted/40 text-xs font-medium text-warm-gray uppercase">
+					<Avatar className="size-9 shrink-0 bg-input/40">
+						<AvatarFallback className="bg-input/40 text-xs font-medium text-muted-foreground uppercase">
 							{user.name.slice(0, 1)}
 						</AvatarFallback>
 					</Avatar>
 					<span className="min-w-0 flex-1">
-						<span className="block truncate text-sm font-medium text-ink-black">
+						<span className="block truncate text-sm font-medium text-foreground">
 							{user.name}
 						</span>
-						<span className="block truncate text-xs text-warm-gray">
+						<span className="block truncate text-xs text-muted-foreground">
 							Signed in
 						</span>
 					</span>
@@ -163,7 +163,7 @@ function SidebarSection({
 }) {
 	return (
 		<section className="mb-6 last:mb-0">
-			<h2 className="mb-1.5 px-3 text-[11px] font-semibold tracking-[0.08em] text-warm-gray uppercase">
+			<h2 className="mb-1.5 px-3 text-[11px] font-semibold tracking-[0.08em] text-muted-foreground uppercase">
 				{label}
 			</h2>
 			<div className="space-y-0.5">{children}</div>
@@ -187,13 +187,13 @@ function SettingsSidebarItem({
 		<SidebarHoverItem>
 			<Button
 				aria-current={active ? "page" : undefined}
-				className={`h-9 w-full justify-start gap-2.5 rounded-lg bg-transparent px-3 text-left text-[13.5px] hover:bg-transparent ${active ? "bg-cyan-signal/10 font-medium text-ink-black hover:bg-cyan-signal/10" : "font-normal text-warm-gray hover:text-soot"}`}
+				className={`h-9 w-full justify-start gap-2.5 rounded-lg bg-transparent px-3 text-left text-[13.5px] hover:bg-transparent ${active ? "bg-primary/10 font-medium text-foreground hover:bg-primary/10" : "font-normal text-muted-foreground hover:text-foreground"}`}
 				nativeButton={false}
 				render={<Link aria-current={active ? "page" : undefined} to={href} />}
 				size="default"
 				variant="ghost"
 			>
-				<Icon className={`size-4 shrink-0 ${active ? "text-cyan-edge" : ""}`} />
+				<Icon className={`size-4 shrink-0 ${active ? "text-primary" : ""}`} />
 				<span className="min-w-0 flex-1 truncate">{label}</span>
 			</Button>
 		</SidebarHoverItem>

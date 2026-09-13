@@ -68,7 +68,7 @@ export function OrganizationForm({
 		<form className="grid gap-4" onSubmit={handleSubmit}>
 			<div className="grid gap-4 sm:grid-cols-2">
 				<div className="grid gap-1.5">
-					<Label className="text-xs text-warm-gray" htmlFor={nameId}>
+					<Label className="text-xs text-muted-foreground" htmlFor={nameId}>
 						Organization name
 					</Label>
 					<Input
@@ -81,7 +81,7 @@ export function OrganizationForm({
 				</div>
 
 				<div className="grid gap-1.5">
-					<Label className="text-xs text-warm-gray" htmlFor={slugId}>
+					<Label className="text-xs text-muted-foreground" htmlFor={slugId}>
 						Slug
 					</Label>
 					<Input
@@ -91,13 +91,13 @@ export function OrganizationForm({
 						required
 						value={values.slug}
 					/>
-					<p className="text-[11px] text-warm-gray">
+					<p className="text-[11px] text-muted-foreground">
 						Used for this workspace's subdomain. Changing it changes your URL.
 					</p>
 				</div>
 
 				<div className="grid gap-1.5 sm:col-span-2">
-					<Label className="text-xs text-warm-gray" htmlFor={logoId}>
+					<Label className="text-xs text-muted-foreground" htmlFor={logoId}>
 						Logo URL
 					</Label>
 					<Input
@@ -118,7 +118,7 @@ export function OrganizationForm({
 				</Alert>
 			) : null}
 
-			<div className="flex flex-col-reverse justify-end gap-2 border-t border-stone-border pt-4 sm:flex-row">
+			<div className="flex flex-col-reverse justify-end gap-2 border-t border-border pt-4 sm:flex-row">
 				<Button onClick={onCancel} type="button" variant="outline">
 					Cancel
 				</Button>

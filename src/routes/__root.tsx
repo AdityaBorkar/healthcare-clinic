@@ -25,7 +25,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				{/*<script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />*/}
 				<HeadContent />
 			</head>
-			<body className="bg-stone-canvas font-sans text-sm wrap-anywhere  antialiased">
+			<body className="bg-background font-sans text-sm wrap-anywhere  antialiased">
 				{children}
 				<Toaster
 					position="bottom-center"

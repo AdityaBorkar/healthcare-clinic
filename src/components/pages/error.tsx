@@ -17,7 +17,7 @@ export function ErrorPage() {
 	return (
 		<div className="space-y-6">
 			<PageHeader description="Something went wrong." title="Error" />
-			<Card className="shadow-subtle">
+			<Card className="shadow-xs">
 				<CardHeader className="items-center pt-10 pb-2 text-center">
 					<span className="mb-3 flex size-12 items-center justify-center rounded-full bg-destructive/10">
 						<CircleAlert className="size-6 text-destructive" />
