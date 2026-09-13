@@ -5,12 +5,9 @@ import {
 	findOrganizationBrandingBySlug,
 	listMyOrganizationBranding,
 	listOrganizationBranding,
-} from "../organization-branding";
-import {
-	extractSubdomain,
-	getWorkspaceOrganization,
-	requireOrganizationSlug,
-} from "../workspace";
+} from "../utils/organization-branding";
+import { extractSubdomain, requireOrganizationSlug } from "../utils/subdomain";
+import { getWorkspaceOrganization } from "../utils/workspace-organization";
 
 export const getOrganizationBySubdomain = base.handler(async ({ context }) => {
 	const host = context.headers.get("host");
@@ -29,9 +26,7 @@ export const listOrganizations = base.handler(async () => {
 });
 
 export const listMyOrganizations = authed.handler(async ({ context }) => {
-	const organizations = await listMyOrganizationBranding(
-		context.session.user.id,
-	);
+	const organizations = await listMyOrganizationBranding(context.headers);
 	return { organizations };
 });
 

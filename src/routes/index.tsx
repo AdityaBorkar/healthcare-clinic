@@ -18,141 +18,163 @@ import { object, optional, string } from "valibot";
 
 import { pm } from "#/aspen/client";
 import { Button } from "#/components/ui/button";
-import { Card } from "#/components/ui/card";
 import { Input } from "#/components/ui/input";
 import { Label } from "#/components/ui/label";
-import { BASE_URL } from "#/env";
 import { orpc } from "#/lib/rpc";
 
 export const Route = createFileRoute("/")({
 	beforeLoad: async ({ search }) => {
-		const result = await orpc.organizations.bySubdomain().catch(() => ({
-			organization: null,
-			subdomain: null,
-		}));
-		// Narrow to serializable branding fields (TanStack Start validates
-		// beforeLoad return values; metadata: unknown is not serializable).
-		const organization = result.organization
-			? {
-					logo: result.organization.logo,
-					name: result.organization.name,
-					slug: result.organization.slug,
-				}
-			: null;
-		const subdomain = result.subdomain;
+		const { organization, subdomain } = await orpc.organizations
+			.bySubdomain()
+			.catch(() => ({ organization: null }));
+		if (subdomain && !organization) {
+			throw redirect({ to: "/not-found" });
+		}
 
 		const session = await orpc.auth.getSession();
 		if (session) {
-			const redirectTo = search?.redirect;
-			const safeRedirect =
-				redirectTo?.startsWith("/") && !redirectTo.startsWith("//")
-					? redirectTo
-					: null;
-			if (subdomain && organization) {
-				throw redirect({ to: safeRedirect ?? "/dashboard" });
+			if (organization) {
+				throw redirect({ to: search?.redirect ?? "/dashboard" });
 			}
 			throw redirect({ to: "/account/organizations" });
 		}
 
-		return { organization, subdomain };
+		return { organization };
 	},
-	component: IndexPage,
+	component: LoginPage,
 	validateSearch: object({ redirect: optional(string()) }),
 });
 
-function IndexPage() {
-	const { organization, subdomain } = Route.useRouteContext();
+type AuthMethod = "password" | "otp" | null;
+type IdentifierKind = "email" | "phone" | "username";
+
+function detectIdentifierKind(raw: string): IdentifierKind {
+	const value = raw.trim();
+	if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+		return "email";
+	}
+	const digits = value.replace(/[\s\-().]/g, "");
+	if (/^\+?\d{7,15}$/.test(digits)) {
+		return "phone";
+	}
+	return "username";
+}
+
+const IDENTIFIER_KIND_LABEL: Record<IdentifierKind, string> = {
+	email: "Email",
+	phone: "Phone number",
+	username: "Username",
+};
+
+type AuthResult = Promise<{ error: { message?: string } | null }>;
+type PluginSignIn = {
+	username: (input: { password: string; username: string }) => AuthResult;
+	phoneNumber: (input: { password: string; phoneNumber: string }) => AuthResult;
+	emailOtp: (input: { email: string; otp: string }) => AuthResult;
+};
+type PluginEmailOtp = {
+	sendVerificationOtp: (input: {
+		email: string;
+		type: "sign-in";
+	}) => AuthResult;
+};
+type PluginPhoneNumber = {
+	sendOtp: (input: { phoneNumber: string }) => AuthResult;
+	verify: (input: { code: string; phoneNumber: string }) => AuthResult;
+};
+
+// The platform AuthUnit's static `AuthClient` type only infers the base
+// `signIn.email` endpoint, but the dynamic client proxy serves every mounted
+// better-auth plugin route (username, phone-number, email-otp) at runtime.
+// These narrow casts recover those routes without touching the sibling repo.
+const pluginSignIn = pm.auth.client.signIn as typeof pm.auth.client.signIn &
+	PluginSignIn;
+const pluginEmailOtp = (
+	pm.auth.client as unknown as { emailOtp: PluginEmailOtp }
+).emailOtp;
+const pluginPhoneNumber = (
+	pm.auth.client as unknown as { phoneNumber: PluginPhoneNumber }
+).phoneNumber;
+
+function LoginPage() {
+	const { organization } = Route.useRouteContext();
 	const { redirect: redirectTo } = Route.useSearch();
 	const navigate = useNavigate();
 	const router = useRouter();
 
-	if (subdomain && !organization) {
-		return <OrganizationNotExists subdomain={subdomain} />;
-	}
-
-	return (
-		<LoginView
-			navigate={navigate}
-			organization={organization}
-			redirectTo={redirectTo}
-			router={router}
-			subdomain={subdomain}
-		/>
-	);
-}
-
-function OrganizationNotExists({ subdomain }: { subdomain: string }) {
-	return (
-		<main className="flex min-h-svh items-center justify-center bg-stone-canvas px-4 py-12 font-sans ">
-			<Card className="w-full max-w-sm p-6 text-center shadow-shadow-md">
-				<span className="mx-auto mb-5 flex size-10 items-center justify-center rounded-full bg-stone-muted/40 ">
-					<Building2 className="size-5" />
-				</span>
-				<h1 className=" text-lg font-medium  ">Organization: {subdomain}</h1>
-				<p className="mt-2 text-sm text-warm-gray">
-					This organization does not exist or is no longer active.
-				</p>
-				<Button
-					className="mt-6 w-full"
-					nativeButton={false}
-					render={
-						<a aria-label="Return to Global Sign-In Page" href={BASE_URL} />
-					}
-					size="lg"
-				>
-					Return to Global Sign-In Page
-				</Button>
-			</Card>
-		</main>
-	);
-}
-
-type LoginOrganization = {
-	logo: string | null;
-	name: string;
-	slug: string;
-} | null;
-
-function LoginView({
-	organization,
-	subdomain,
-	redirectTo,
-	navigate,
-	router,
-}: {
-	organization: LoginOrganization;
-	subdomain: string | null;
-	redirectTo: string | undefined;
-	navigate: ReturnType<typeof useNavigate>;
-	router: ReturnType<typeof useRouter>;
-}) {
-	const [email, setEmail] = useState("");
+	const [method, setMethod] = useState<AuthMethod>(null);
+	const [identifier, setIdentifier] = useState("");
 	const [password, setPassword] = useState("");
+	const [otp, setOtp] = useState("");
+	const [otpSent, setOtpSent] = useState(false);
 	const [loading, setLoading] = useState(false);
-	const [showEmailForm, setShowEmailForm] = useState(false);
-	const emailId = useId();
+	const [sendingOtp, setSendingOtp] = useState(false);
+	const identifierId = useId();
 	const passwordId = useId();
+	const otpId = useId();
 
-	const isOrgContext = Boolean(subdomain && organization);
+	const isOrgContext = Boolean(organization);
 	const title = isOrgContext
 		? `Log in to ${organization?.name}`
 		: "Sign in to Shaun Healthcare Management System";
 
-	const handleEmailChange = useCallback(
-		(ev: ChangeEvent<HTMLInputElement>) => setEmail(ev.target.value),
+	const detectedKind = detectIdentifierKind(identifier);
+
+	const handleIdentifierChange = useCallback(
+		(ev: ChangeEvent<HTMLInputElement>) => setIdentifier(ev.target.value),
 		[],
 	);
 	const handlePasswordChange = useCallback(
 		(ev: ChangeEvent<HTMLInputElement>) => setPassword(ev.target.value),
 		[],
 	);
+	const handleOtpChange = useCallback(
+		(ev: ChangeEvent<HTMLInputElement>) =>
+			setOtp(ev.target.value.replace(/\D/g, "").slice(0, 6)),
+		[],
+	);
 
-	const onSubmit = useCallback(
+	const handleAuthSuccess = useCallback(async () => {
+		await router.invalidate();
+
+		const safeRedirect =
+			redirectTo?.startsWith("/") && !redirectTo.startsWith("//")
+				? redirectTo
+				: null;
+		if (safeRedirect) {
+			navigate({ to: safeRedirect });
+		} else if (isOrgContext) {
+			navigate({ to: "/dashboard" });
+		} else {
+			navigate({ to: "/account/organizations" });
+		}
+	}, [navigate, redirectTo, isOrgContext, router]);
+
+	const onPasswordSubmit = useCallback(
 		async (ev: FormEvent) => {
 			ev.preventDefault();
+			const value = identifier.trim();
+			if (!value || !password) {
+				toast.error(
+					"Enter your username, email, or phone number and password.",
+				);
+				return;
+			}
 			setLoading(true);
 
-			const { error } = await pm.auth.client.signIn.email({ email, password });
+			const kind = detectIdentifierKind(value);
+			const { error } =
+				kind === "email"
+					? await pm.auth.client.signIn.email({ email: value, password })
+					: kind === "username"
+						? await pluginSignIn.username({
+								password,
+								username: value,
+							})
+						: await pluginSignIn.phoneNumber({
+								password,
+								phoneNumber: value,
+							});
 			if (error) {
 				toast.error(error.message ?? "Login failed");
 				setLoading(false);
@@ -160,31 +182,102 @@ function LoginView({
 			}
 
 			setLoading(false);
-			await router.invalidate();
-
-			const safeRedirect =
-				redirectTo?.startsWith("/") && !redirectTo.startsWith("//")
-					? redirectTo
-					: null;
-			if (safeRedirect) {
-				navigate({ to: safeRedirect });
-			} else if (isOrgContext) {
-				navigate({ to: "/dashboard" });
-			} else {
-				navigate({ to: "/account/organizations" });
-			}
+			await handleAuthSuccess();
 		},
-		[email, password, navigate, redirectTo, isOrgContext, router],
+		[identifier, password, handleAuthSuccess],
 	);
 
-	const showUnavailableMethod = useCallback((method: string) => {
-		toast.error(`${method} sign-in is disabled for this workspace.`);
+	const onSendOtp = useCallback(async () => {
+		const value = identifier.trim();
+		if (!value) {
+			toast.error("Enter your email or phone number to receive an OTP.");
+			return;
+		}
+		const kind = detectIdentifierKind(value);
+		if (kind === "username") {
+			toast.error(
+				"OTP sign-in needs an email address or phone number, not a username.",
+			);
+			return;
+		}
+		setSendingOtp(true);
+		const { error } =
+			kind === "email"
+				? await pluginEmailOtp.sendVerificationOtp({
+						email: value,
+						type: "sign-in",
+					})
+				: await pluginPhoneNumber.sendOtp({ phoneNumber: value });
+		setSendingOtp(false);
+		if (error) {
+			toast.error(error.message ?? "Failed to send OTP");
+			return;
+		}
+		setOtpSent(true);
+		toast.success(
+			kind === "email"
+				? `OTP sent to ${value}`
+				: `OTP sent to ${value} via SMS`,
+		);
+	}, [identifier]);
+
+	const onVerifyOtp = useCallback(
+		async (ev: FormEvent) => {
+			ev.preventDefault();
+			const value = identifier.trim();
+			if (!value || !otp) {
+				toast.error("Enter the OTP sent to you.");
+				return;
+			}
+			const kind = detectIdentifierKind(value);
+			if (kind === "username") {
+				toast.error(
+					"OTP sign-in needs an email address or phone number, not a username.",
+				);
+				return;
+			}
+			setLoading(true);
+			const { error } =
+				kind === "email"
+					? await pluginSignIn.emailOtp({ email: value, otp })
+					: await pluginPhoneNumber.verify({
+							code: otp,
+							phoneNumber: value,
+						});
+			if (error) {
+				toast.error(error.message ?? "OTP verification failed");
+				setLoading(false);
+				return;
+			}
+			setLoading(false);
+			await handleAuthSuccess();
+		},
+		[identifier, otp, handleAuthSuccess],
+	);
+
+	const handleChangeIdentifier = useCallback(() => {
+		setOtpSent(false);
+		setOtp("");
+	}, []);
+	const showUnavailableMethod = useCallback((methodName: string) => {
+		toast.error(`${methodName} sign-in is disabled for this workspace.`);
 	}, []);
 	const handleBackToOptions = useCallback(() => {
-		setShowEmailForm(false);
+		setMethod(null);
+		setPassword("");
+		setOtp("");
+		setOtpSent(false);
 	}, []);
-	const handleEmailOption = useCallback(() => {
-		setShowEmailForm(true);
+	const handlePasswordOption = useCallback(() => {
+		setMethod("password");
+		setOtp("");
+		setOtpSent(false);
+	}, []);
+	const handleOtpOption = useCallback(() => {
+		setMethod("otp");
+		setPassword("");
+		setOtp("");
+		setOtpSent(false);
 	}, []);
 	const handleGoogleOption = useCallback(
 		() => showUnavailableMethod("Google"),
@@ -217,24 +310,29 @@ function LoginView({
 					<h1 className="mt-9 text-center text-lg font-medium">{title}</h1>
 				</div>
 
-				{showEmailForm ? (
-					<form className="mt-5 space-y-4" onSubmit={onSubmit}>
+				{method === "password" ? (
+					<form className="mt-5 space-y-4" onSubmit={onPasswordSubmit}>
 						<div className="space-y-3">
 							<div>
-								<Label className="mb-1.5 block text-xs" htmlFor={emailId}>
-									Email
+								<Label className="mb-1.5 block text-xs" htmlFor={identifierId}>
+									Username / Email / Phone Number
 								</Label>
 								<Input
-									autoComplete="email"
+									autoComplete="username"
 									className="h-11"
-									id={emailId}
-									name="email"
-									onChange={handleEmailChange}
-									placeholder="you@company.com"
+									id={identifierId}
+									name="identifier"
+									onChange={handleIdentifierChange}
+									placeholder="username, you@company.com, or +91…"
 									required
-									type="email"
-									value={email}
+									type="text"
+									value={identifier}
 								/>
+								{identifier.trim() ? (
+									<p className="mt-1 text-xs text-warm-gray">
+										Detected as {IDENTIFIER_KIND_LABEL[detectedKind]}
+									</p>
+								) : null}
 							</div>
 
 							<div>
@@ -279,11 +377,124 @@ function LoginView({
 							Back to sign-in options
 						</Button>
 					</form>
+				) : method === "otp" ? (
+					<div className="mt-5 space-y-4">
+						<div>
+							<Label className="mb-1.5 block text-xs" htmlFor={identifierId}>
+								Username / Email / Phone Number
+							</Label>
+							<Input
+								autoComplete="username"
+								className="h-11"
+								disabled={otpSent}
+								id={identifierId}
+								name="identifier"
+								onChange={handleIdentifierChange}
+								placeholder="username, you@company.com, or +91…"
+								required
+								type="text"
+								value={identifier}
+							/>
+							{identifier.trim() ? (
+								<p className="mt-1 text-xs text-warm-gray">
+									Detected as {IDENTIFIER_KIND_LABEL[detectedKind]}
+									{detectedKind === "username"
+										? " — OTP needs an email or phone number"
+										: ""}
+								</p>
+							) : null}
+						</div>
+
+						{otpSent ? (
+							<form className="space-y-4" onSubmit={onVerifyOtp}>
+								<div>
+									<Label className="mb-1.5 block text-xs" htmlFor={otpId}>
+										Enter OTP
+									</Label>
+									<Input
+										autoComplete="one-time-code"
+										className="h-11 tracking-widest"
+										id={otpId}
+										inputMode="numeric"
+										maxLength={6}
+										name="otp"
+										onChange={handleOtpChange}
+										placeholder="6-digit code"
+										required
+										type="text"
+										value={otp}
+									/>
+								</div>
+								<Button
+									className="w-full"
+									disabled={loading}
+									size="lg"
+									type="submit"
+								>
+									{loading ? (
+										<>
+											<Loader2 className="mr-2 size-4 animate-spin" />
+											Verifying...
+										</>
+									) : (
+										"Verify OTP"
+									)}
+								</Button>
+								<div className="flex items-center justify-between">
+									<Button
+										className="px-0 text-xs text-warm-gray"
+										disabled={sendingOtp}
+										onClick={onSendOtp}
+										size="xs"
+										type="button"
+										variant="ghost"
+									>
+										{sendingOtp ? "Resending..." : "Resend OTP"}
+									</Button>
+									<Button
+										className="px-0 text-xs text-warm-gray"
+										onClick={handleChangeIdentifier}
+										size="xs"
+										type="button"
+										variant="ghost"
+									>
+										Change identifier
+									</Button>
+								</div>
+							</form>
+						) : (
+							<Button
+								className="w-full"
+								disabled={sendingOtp}
+								onClick={onSendOtp}
+								size="lg"
+								type="button"
+							>
+								{sendingOtp ? (
+									<>
+										<Loader2 className="mr-2 size-4 animate-spin" />
+										Sending OTP...
+									</>
+								) : (
+									"Send OTP"
+								)}
+							</Button>
+						)}
+						<Button
+							className="block w-full py-1 text-center text-xs text-warm-gray hover:"
+							onClick={handleBackToOptions}
+							size="xs"
+							type="button"
+							variant="ghost"
+						>
+							Back to sign-in options
+						</Button>
+					</div>
 				) : (
 					<div className="mt-5 space-y-4">
 						<Button
 							className="w-full"
-							onClick={handleEmailOption}
+							onClick={handleOtpOption}
 							size="lg"
 							type="button"
 						>
@@ -291,7 +502,7 @@ function LoginView({
 						</Button>
 						<Button
 							className="w-full"
-							onClick={handleEmailOption}
+							onClick={handlePasswordOption}
 							size="lg"
 							type="button"
 							variant="secondary"

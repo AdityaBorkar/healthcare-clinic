@@ -4,15 +4,17 @@ import {
 	UpdateTenantUserInputSchema,
 } from "#/schemas/users";
 import { authed } from "../middlewares/auth";
+import { requireOrganizationSlug } from "../utils/subdomain";
 import {
 	findWorkspaceMember,
-	getWorkspaceOrganization,
 	listWorkspaceMembers,
-	renameAuthUser,
-	requireOrganizationSlug,
-	requireWorkspaceAdmin,
 	toWorkspaceUser,
-} from "../workspace";
+} from "../utils/workspace-members";
+import {
+	getWorkspaceOrganization,
+	renameAuthUser,
+	requireWorkspaceAdmin,
+} from "../utils/workspace-organization";
 
 export const listUsers = authed.handler(async ({ context }) => {
 	const organizationSlug = requireOrganizationSlug(context.headers);
