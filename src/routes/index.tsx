@@ -5,7 +5,15 @@ import {
 	useNavigate,
 	useRouter,
 } from "@tanstack/react-router";
-import { Building2, Loader2 } from "lucide-react";
+import {
+	Building2,
+	KeyRound,
+	Loader2,
+	Lock,
+	Mail,
+	Phone,
+	User,
+} from "lucide-react";
 import {
 	type ChangeEvent,
 	type FormEvent,
@@ -60,11 +68,11 @@ function detectIdentifierKind(raw: string): IdentifierKind {
 	return "username";
 }
 
-const IDENTIFIER_KIND_LABEL: Record<IdentifierKind, string> = {
-	email: "Email",
-	phone: "Phone number",
-	username: "Username",
-};
+const IDENTIFIER_ICON = {
+	email: Mail,
+	phone: Phone,
+	username: User,
+} as const;
 
 type AuthResult = Promise<{ error: { message?: string } | null }>;
 type PluginSignIn = {
@@ -119,6 +127,7 @@ function LoginPage() {
 		: "Sign in to Shaun Healthcare Management System";
 
 	const detectedKind = detectIdentifierKind(identifier);
+	const IdentifierIcon = IDENTIFIER_ICON[detectedKind];
 
 	const handleIdentifierChange = useCallback(
 		(ev: ChangeEvent<HTMLInputElement>) => setIdentifier(ev.target.value),
@@ -311,44 +320,44 @@ function LoginPage() {
 				</div>
 
 				{method === "password" ? (
-					<form className="mt-5 space-y-4" onSubmit={onPasswordSubmit}>
-						<div className="space-y-3">
-							<div>
-								<Label className="mb-1.5 block text-xs" htmlFor={identifierId}>
+					<form className="mt-6 space-y-4" onSubmit={onPasswordSubmit}>
+						<div className="space-y-4">
+							<div className="space-y-2">
+								<Label htmlFor={identifierId}>
 									Username / Email / Phone Number
 								</Label>
-								<Input
-									autoComplete="username"
-									className="h-11"
-									id={identifierId}
-									name="identifier"
-									onChange={handleIdentifierChange}
-									placeholder="username, you@company.com, or +91…"
-									required
-									type="text"
-									value={identifier}
-								/>
-								{identifier.trim() ? (
-									<p className="mt-1 text-xs text-warm-gray">
-										Detected as {IDENTIFIER_KIND_LABEL[detectedKind]}
-									</p>
-								) : null}
+								<div className="relative">
+									<IdentifierIcon className="pointer-events-none absolute top-1/2 left-3 size-5 -translate-y-1/2 text-warm-gray" />
+									<Input
+										autoComplete="username"
+										className="h-11 pl-10"
+										id={identifierId}
+										name="identifier"
+										onChange={handleIdentifierChange}
+										placeholder="username, you@company.com, or +91…"
+										required
+										type="text"
+										value={identifier}
+									/>
+								</div>
 							</div>
 
-							<div>
-								<Label className="mb-1.5 block text-xs" htmlFor={passwordId}>
-									Password
-								</Label>
-								<Input
-									autoComplete="current-password"
-									className="h-11"
-									id={passwordId}
-									name="password"
-									onChange={handlePasswordChange}
-									required
-									type="password"
-									value={password}
-								/>
+							<div className="space-y-2">
+								<Label htmlFor={passwordId}>Password</Label>
+								<div className="relative">
+									<Lock className="pointer-events-none absolute top-1/2 left-3 size-5 -translate-y-1/2 text-warm-gray" />
+									<Input
+										autoComplete="current-password"
+										className="h-11 pl-10"
+										id={passwordId}
+										name="password"
+										onChange={handlePasswordChange}
+										placeholder="Enter your password"
+										required
+										type="password"
+										value={password}
+									/>
+								</div>
 							</div>
 						</div>
 
@@ -368,7 +377,7 @@ function LoginPage() {
 							)}
 						</Button>
 						<Button
-							className="block w-full py-1 text-center text-xs text-warm-gray hover:"
+							className="block w-full py-1 text-center text-xs text-warm-gray"
 							onClick={handleBackToOptions}
 							size="xs"
 							type="button"
@@ -378,52 +387,53 @@ function LoginPage() {
 						</Button>
 					</form>
 				) : method === "otp" ? (
-					<div className="mt-5 space-y-4">
-						<div>
-							<Label className="mb-1.5 block text-xs" htmlFor={identifierId}>
+					<div className="mt-6 space-y-4">
+						<div className="space-y-2">
+							<Label htmlFor={identifierId}>
 								Username / Email / Phone Number
 							</Label>
-							<Input
-								autoComplete="username"
-								className="h-11"
-								disabled={otpSent}
-								id={identifierId}
-								name="identifier"
-								onChange={handleIdentifierChange}
-								placeholder="username, you@company.com, or +91…"
-								required
-								type="text"
-								value={identifier}
-							/>
-							{identifier.trim() ? (
-								<p className="mt-1 text-xs text-warm-gray">
-									Detected as {IDENTIFIER_KIND_LABEL[detectedKind]}
-									{detectedKind === "username"
-										? " — OTP needs an email or phone number"
-										: ""}
+							<div className="relative">
+								<IdentifierIcon className="pointer-events-none absolute top-1/2 left-3 size-5 -translate-y-1/2 text-warm-gray" />
+								<Input
+									autoComplete="username"
+									className="h-11 pl-10"
+									disabled={otpSent}
+									id={identifierId}
+									name="identifier"
+									onChange={handleIdentifierChange}
+									placeholder="username, you@company.com, or +91…"
+									required
+									type="text"
+									value={identifier}
+								/>
+							</div>
+							{detectedKind === "username" && identifier.trim() ? (
+								<p className="text-xs text-warm-gray">
+									OTP needs an email or phone number
 								</p>
 							) : null}
 						</div>
 
 						{otpSent ? (
 							<form className="space-y-4" onSubmit={onVerifyOtp}>
-								<div>
-									<Label className="mb-1.5 block text-xs" htmlFor={otpId}>
-										Enter OTP
-									</Label>
-									<Input
-										autoComplete="one-time-code"
-										className="h-11 tracking-widest"
-										id={otpId}
-										inputMode="numeric"
-										maxLength={6}
-										name="otp"
-										onChange={handleOtpChange}
-										placeholder="6-digit code"
-										required
-										type="text"
-										value={otp}
-									/>
+								<div className="space-y-2">
+									<Label htmlFor={otpId}>Enter OTP</Label>
+									<div className="relative">
+										<KeyRound className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-warm-gray" />
+										<Input
+											autoComplete="one-time-code"
+											className="h-11 pl-10 tracking-widest"
+											id={otpId}
+											inputMode="numeric"
+											maxLength={6}
+											name="otp"
+											onChange={handleOtpChange}
+											placeholder="6-digit code"
+											required
+											type="text"
+											value={otp}
+										/>
+									</div>
 								</div>
 								<Button
 									className="w-full"
@@ -481,7 +491,7 @@ function LoginPage() {
 							</Button>
 						)}
 						<Button
-							className="block w-full py-1 text-center text-xs text-warm-gray hover:"
+							className="block w-full py-1 text-center text-xs text-warm-gray"
 							onClick={handleBackToOptions}
 							size="xs"
 							type="button"
@@ -491,7 +501,7 @@ function LoginPage() {
 						</Button>
 					</div>
 				) : (
-					<div className="mt-5 space-y-4">
+					<div className="mt-6 space-y-3">
 						<Button
 							className="w-full"
 							onClick={handleOtpOption}
@@ -538,22 +548,24 @@ function LoginPage() {
 						</Button>
 					</div>
 				)}
-				<p className="mt-6 text-center text-xs text-warm-gray">
-					New here?{" "}
-					<Link
-						className="font-medium  hover:text-cyan-edge hover:underline"
-						to="/support"
-					>
-						Sign Up
-					</Link>{" "}
-					or{" "}
-					<Link
-						className="font-medium  hover:text-cyan-edge hover:underline"
-						to="/support"
-					>
-						Contact Support
-					</Link>
-				</p>
+				{method === null ? (
+					<p className="mt-6 text-center text-xs text-warm-gray">
+						New here?{" "}
+						<Link
+							className="font-medium hover:text-cyan-edge hover:underline"
+							to="/support"
+						>
+							Sign Up
+						</Link>{" "}
+						or{" "}
+						<Link
+							className="font-medium hover:text-cyan-edge hover:underline"
+							to="/support"
+						>
+							Contact Support
+						</Link>
+					</p>
+				) : null}
 			</div>
 		</main>
 	);
