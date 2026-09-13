@@ -84,27 +84,29 @@ export function SettingsSidebar({
 	user: User;
 }) {
 	return (
-		<aside className="flex w-full shrink-0 flex-col border-b border-stone-border bg-white  md:sticky md:top-0 md:h-svh md:w-64 md:border-r md:border-b-0">
-			<div className="border-b border-stone-border px-4 py-4">
+		<aside className="flex w-full shrink-0 flex-col border-b border-stone-border bg-white md:sticky md:top-0 md:h-svh md:w-72 md:border-r md:border-b-0 xl:w-80">
+			<div className="border-b border-stone-border px-3 py-3">
 				<WorkspaceSelector organization={organization} />
 			</div>
 
-			<div className="border-b border-stone-border px-4 py-3">
+			<div className="border-b border-stone-border px-3 py-3">
 				<Button
-					className="w-full justify-start rounded-md px-3 text-warm-gray"
+					className="h-9 w-full justify-start gap-2.5 rounded-lg px-3 text-[13.5px] font-normal"
 					nativeButton={false}
 					render={<Link to="/dashboard" />}
 					size="default"
 					variant="ghost"
 				>
 					<ArrowLeft className="size-4 shrink-0" />
-					<span className="truncate">Back</span>
+					<span className="min-w-0 flex-1 truncate text-left">
+						Back to workspace
+					</span>
 				</Button>
 			</div>
 
 			<nav
 				aria-label="Settings navigation"
-				className="min-h-0 flex-1 overflow-y-auto px-4 py-4"
+				className="min-h-0 flex-1 overflow-y-auto px-3 py-4"
 			>
 				<LayoutGroup>
 					{sections.map((section) => (
@@ -122,15 +124,15 @@ export function SettingsSidebar({
 				</LayoutGroup>
 			</nav>
 
-			<div className="border-t border-stone-border px-4 py-3">
-				<div className="flex items-center gap-3 rounded-md px-2 py-2">
-					<Avatar className="bg-stone-muted/40">
+			<div className="border-t border-stone-border px-3 py-3">
+				<div className="flex items-center gap-3 rounded-lg px-2 py-1.5">
+					<Avatar className="size-9 shrink-0 bg-stone-muted/40">
 						<AvatarFallback className="bg-stone-muted/40 text-xs font-medium text-warm-gray uppercase">
 							{user.name.slice(0, 1)}
 						</AvatarFallback>
 					</Avatar>
 					<span className="min-w-0 flex-1">
-						<span className="block truncate text-sm font-medium ">
+						<span className="block truncate text-sm font-medium text-ink-black">
 							{user.name}
 						</span>
 						<span className="block truncate text-xs text-warm-gray">
@@ -160,8 +162,8 @@ function SidebarSection({
 	label: string;
 }) {
 	return (
-		<section className="mb-5 last:mb-0">
-			<h2 className="mb-2 px-3 text-[10px] font-medium tracking-[0.14em] text-warm-gray uppercase">
+		<section className="mb-6 last:mb-0">
+			<h2 className="mb-1.5 px-3 text-[11px] font-semibold tracking-[0.08em] text-warm-gray uppercase">
 				{label}
 			</h2>
 			<div className="space-y-0.5">{children}</div>
@@ -185,14 +187,14 @@ function SettingsSidebarItem({
 		<SidebarHoverItem>
 			<Button
 				aria-current={active ? "page" : undefined}
-				className={`w-full justify-start rounded-md bg-transparent px-3 text-left hover:bg-transparent ${active ? "bg-cyan-signal/10 font-medium text-cyan-edge" : "text-warm-gray"}`}
+				className={`h-9 w-full justify-start gap-2.5 rounded-lg bg-transparent px-3 text-left text-[13.5px] hover:bg-transparent ${active ? "bg-cyan-signal/10 font-medium text-ink-black hover:bg-cyan-signal/10" : "font-normal text-warm-gray hover:text-soot"}`}
 				nativeButton={false}
 				render={<Link aria-current={active ? "page" : undefined} to={href} />}
 				size="default"
-				variant={active ? "secondary" : "ghost"}
+				variant="ghost"
 			>
-				<Icon className="size-4 shrink-0" />
-				<span className="truncate">{label}</span>
+				<Icon className={`size-4 shrink-0 ${active ? "text-cyan-edge" : ""}`} />
+				<span className="min-w-0 flex-1 truncate">{label}</span>
 			</Button>
 		</SidebarHoverItem>
 	);

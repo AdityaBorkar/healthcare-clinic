@@ -21,7 +21,7 @@ const sections = [
 
 function RouteComponent() {
 	return (
-		<main className="bg-stone-canvas p-4 sm:p-8">
+		<main className="bg-stone-canvas px-4 py-6 sm:px-6 lg:px-8">
 			<div className="mx-auto max-w-4xl space-y-6">
 				<PageHeader
 					description="Manage your personal account and preferences."

@@ -22,7 +22,7 @@ function RouteComponent() {
 
 	return (
 		<NotPrintable>
-			<div className="flex min-h-svh flex-col bg-stone-canvas  md:flex-row">
+			<div className="flex min-h-svh flex-col bg-stone-canvas md:flex-row">
 				<SettingsSidebar
 					onSignOut={handleSignOut}
 					organization={organization}
@@ -30,9 +30,9 @@ function RouteComponent() {
 				/>
 				<div className="flex min-w-0 flex-1 flex-col">
 					<SettingsHeader />
-					<main className="min-w-0 flex-1">
+					<div className="min-w-0 flex-1">
 						<Outlet />
-					</main>
+					</div>
 				</div>
 			</div>
 		</NotPrintable>

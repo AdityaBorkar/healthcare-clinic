@@ -53,7 +53,7 @@ function GeneralPage() {
 
 	if (organization === null) {
 		return (
-			<main className="bg-stone-canvas p-4 sm:p-8">
+			<main className="bg-stone-canvas px-4 py-6 sm:px-6 lg:px-8">
 				<div className="mx-auto max-w-4xl space-y-6">
 					<PageHeader
 						description="Organization profile and workspace details."
@@ -80,7 +80,7 @@ function GeneralPage() {
 
 	if (isEditing) {
 		return (
-			<main className="bg-stone-canvas p-4 sm:p-8">
+			<main className="bg-stone-canvas px-4 py-6 sm:px-6 lg:px-8">
 				<div className="mx-auto max-w-3xl space-y-6">
 					<PageHeader
 						description="Update your organization's information."
@@ -101,7 +101,7 @@ function GeneralPage() {
 	}
 
 	return (
-		<main className="bg-stone-canvas p-4 sm:p-8">
+		<main className="bg-stone-canvas px-4 py-6 sm:px-6 lg:px-8">
 			<div className="mx-auto max-w-4xl space-y-6">
 				<PageHeader
 					actions={

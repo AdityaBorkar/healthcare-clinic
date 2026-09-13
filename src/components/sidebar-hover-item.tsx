@@ -18,7 +18,7 @@ export function SidebarHoverItem({ children }: { children: React.ReactNode }) {
 			{isHovered ? (
 				<motion.div
 					aria-hidden="true"
-					className="pointer-events-none absolute inset-0 rounded-md bg-muted shadow-[var(--shadow-subtle)]"
+					className="pointer-events-none absolute inset-0 rounded-lg bg-stone-muted/40"
 					initial={false}
 					layoutId="sidebar-hover"
 					transition={

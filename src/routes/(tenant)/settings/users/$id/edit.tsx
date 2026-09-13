@@ -55,7 +55,7 @@ function EditUserPage() {
 
 	if (!user) {
 		return (
-			<main className="bg-stone-canvas p-4 sm:p-8">
+			<main className="bg-stone-canvas px-4 py-6 sm:px-6 lg:px-8">
 				<div className="mx-auto max-w-2xl space-y-6">
 					<Button
 						nativeButton={false}
@@ -83,7 +83,7 @@ function EditUserPage() {
 	const currentUser = user;
 
 	return (
-		<main className="bg-stone-canvas p-4 sm:p-8">
+		<main className="bg-stone-canvas px-4 py-6 sm:px-6 lg:px-8">
 			<NewEntityPage
 				backHref={`/settings/users/${currentUser.id}`}
 				description="Update this user's name or workspace access level."

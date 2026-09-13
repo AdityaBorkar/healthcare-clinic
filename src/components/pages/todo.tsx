@@ -17,8 +17,8 @@ export function TodoPage({
 	tabs?: readonly string[];
 }) {
 	return (
-		<main className="bg-stone-canvas p-4 sm:p-8">
-			<div className="mx-auto max-w-5xl space-y-6">
+		<main className="bg-stone-canvas px-4 py-6 sm:px-6 lg:px-8">
+			<div className="mx-auto max-w-6xl space-y-6">
 				<PageHeader title={title} />
 				{tabs && tabs.length > 0 ? (
 					<Tabs
@@ -34,15 +34,18 @@ export function TodoPage({
 						</TabsList>
 					</Tabs>
 				) : null}
-				<Card className="border-dashed bg-stone-muted/20 shadow-none">
-					<CardHeader className="flex flex-col items-center justify-center gap-4 py-12 text-center">
-						<span className="mb-3 flex size-12 items-center justify-center rounded-full bg-sky-wash/40">
+				<Card className="shadow-[var(--shadow-subtle)]">
+					<CardHeader className="flex flex-col items-center justify-center gap-4 py-16 text-center">
+						<span className="mb-1 flex size-12 items-center justify-center rounded-xl bg-sky-wash/40">
 							<Construction className="size-6 text-cyan-edge" />
 						</span>
-						<CardTitle className="text-lg">Coming Soon</CardTitle>
+						<CardTitle className="text-base font-semibold">
+							Coming Soon
+						</CardTitle>
 						<CardDescription className="max-w-sm text-sm">
-							<span className="font-medium ">{title}</span> is not available
-							yet. We are actively building this module — check back soon.
+							<span className="font-medium text-ink-black">{title}</span> is not
+							available yet. We are actively building this module — check back
+							soon.
 						</CardDescription>
 					</CardHeader>
 				</Card>
