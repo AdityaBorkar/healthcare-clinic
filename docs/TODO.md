@@ -1,34 +1,20 @@
 # TODO
 
-Ensure ShadCN tokens are used throughout the repository. If not, migrate everything to shadcn tokens.
-
-Auth
-- Verify OTP Flow
-- Add Password Reset Flow in the Settings
+Speed: 2 modules per day for 5 days a week. Rest 2 days must be on review fo those modules.
 
 Printing and Sending through WhatsApp is very important
 
-Failed to publish message to topic "user:created": Name can only contain alphanumeric characters, underscores, hyphens, periods, or forward slashes
+------------------------------------------------------------------
 
-Speed: 2 modules per day for 5 days a week. Rest 2 days must be on review fo those modules.
-
----
-
-- Administration
-- Practitioners
-- Patients
-- Facilities
-- Services
-
-- Appointments
-- Nursing
-- Medical Records
-
-- Data Explorer
-- Forms
-- Reports
-
-- Accounting Module
+- Modules
+  - Accounting
+  - Data Explorer
+  - Forms
+  - Reports
+- Recently Used Medicines
+- Auth
+  - Verify OTP Flow
+  - Add Password Reset Flow in the Settings
 
 ## Architecture
 
