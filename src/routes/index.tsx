@@ -13,6 +13,7 @@ import {
 	useId,
 	useState,
 } from "react";
+import { toast } from "sonner";
 import { object, optional, string } from "valibot";
 
 import { pm } from "#/aspen/client";
@@ -20,7 +21,6 @@ import { Button } from "#/components/ui/button";
 import { Card } from "#/components/ui/card";
 import { Input } from "#/components/ui/input";
 import { Label } from "#/components/ui/label";
-import { toast } from "#/components/ui/toaster";
 import { BASE_URL } from "#/env";
 import { orpc } from "#/lib/rpc";
 
@@ -136,7 +136,7 @@ function LoginView({
 	const isOrgContext = Boolean(subdomain && organization);
 	const title = isOrgContext
 		? `Log in to ${organization?.name}`
-		: "Sign in to your workspace";
+		: "Sign in to Shaun Healthcare Management System";
 
 	const handleEmailChange = useCallback(
 		(ev: ChangeEvent<HTMLInputElement>) => setEmail(ev.target.value),
@@ -178,7 +178,7 @@ function LoginView({
 	);
 
 	const showUnavailableMethod = useCallback((method: string) => {
-		toast.error(`${method} sign-in is not configured for this workspace.`);
+		toast.error(`${method} sign-in is disabled for this workspace.`);
 	}, []);
 	const handleBackToOptions = useCallback(() => {
 		setShowEmailForm(false);
@@ -214,7 +214,7 @@ function LoginView({
 							<Building2 className="size-5" />
 						</span>
 					)}
-					<h1 className="mt-9  text-center text-lg font-medium  ">{title}</h1>
+					<h1 className="mt-9 text-center text-lg font-medium">{title}</h1>
 				</div>
 
 				{showEmailForm ? (

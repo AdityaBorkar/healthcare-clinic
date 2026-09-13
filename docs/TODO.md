@@ -1,6 +1,12 @@
 # TODO
 
 
+When clicked on "Sign in using Password" or "Sign in using OTP",
+show the input field as User Name / Email / Phone Number (auto detect)
+
+If password input, then show passsword,
+If OTP input, show Send OTP button and then trigger OTP verification
+
 Auth
 - User Name / Email / Phone Number
   - Password
