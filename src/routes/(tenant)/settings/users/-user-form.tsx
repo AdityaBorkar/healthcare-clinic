@@ -178,7 +178,7 @@ export function UserForm({
 						value={values.role}
 					>
 						<SelectTrigger
-							className="h-9 w-full border-input bg-white text-sm"
+							className="h-9 w-full border-input bg-background text-sm"
 							id={roleId}
 						>
 							<SelectValue>

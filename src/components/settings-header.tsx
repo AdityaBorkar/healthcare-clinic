@@ -87,7 +87,7 @@ export function SettingsHeader() {
 	insertUsersCrumb(breadcrumbs);
 
 	return (
-		<header className="sticky top-0 z-10 border-b border-border bg-white/80 backdrop-blur-md">
+		<header className="sticky top-0 z-10 border-b border-border bg-background/80 backdrop-blur-md">
 			<div className="flex h-14 items-center gap-2 px-4 sm:px-6">
 				<Settings2 className="size-4 shrink-0 " />
 				<Breadcrumb aria-label="Breadcrumb" className="min-w-0 flex-1">

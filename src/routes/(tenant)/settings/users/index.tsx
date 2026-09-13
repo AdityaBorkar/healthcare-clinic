@@ -45,7 +45,7 @@ function UsersPage() {
 					actions={
 						<div className="flex items-center gap-2">
 							<Badge
-								className="hidden items-center gap-2 rounded-full border-border bg-white px-3 py-1.5 text-xs text-muted-foreground sm:inline-flex"
+								className="hidden items-center gap-2 rounded-full border-border bg-card px-3 py-1.5 text-xs text-muted-foreground sm:inline-flex"
 								variant="outline"
 							>
 								<UsersRound className="size-4" />

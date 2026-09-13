@@ -10,7 +10,7 @@ export function NotPrintable({ children }: NotPrintableProps) {
 		<>
 			<div
 				aria-hidden="true"
-				className="hidden h-full w-full items-center justify-center bg-white p-8 print:flex"
+				className="hidden h-full w-full items-center justify-center bg-background p-8 print:flex"
 			>
 				<div className="mx-auto flex max-w-sm flex-col items-center gap-2 text-center">
 					<span className="flex size-12 items-center justify-center rounded-full bg-primary/10">

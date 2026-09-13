@@ -84,7 +84,7 @@ export function SettingsSidebar({
 	user: User;
 }) {
 	return (
-		<aside className="flex w-full shrink-0 flex-col border-b border-border bg-white md:sticky md:top-0 md:h-svh md:w-72 md:min-w-72 md:border-r md:border-b-0 xl:w-80 xl:min-w-80">
+		<aside className="flex w-full shrink-0 flex-col border-b border-border bg-sidebar md:sticky md:top-0 md:h-svh md:w-72 md:min-w-72 md:border-r md:border-b-0 xl:w-80 xl:min-w-80">
 			<div className="border-b border-border px-3 py-3">
 				<WorkspaceSelector organization={organization} />
 			</div>
