@@ -1,10 +1,11 @@
 import {
 	createFileRoute,
+	Link,
 	redirect,
 	useNavigate,
 	useRouter,
 } from "@tanstack/react-router";
-import { AlertCircle, Building2, Loader2 } from "lucide-react";
+import { Building2, Loader2 } from "lucide-react";
 import {
 	type ChangeEvent,
 	type FormEvent,
@@ -15,11 +16,11 @@ import {
 import { object, optional, string } from "valibot";
 
 import { pm } from "#/aspen/client";
-import { Alert, AlertDescription } from "#/components/ui/alert";
 import { Button } from "#/components/ui/button";
 import { Card } from "#/components/ui/card";
 import { Input } from "#/components/ui/input";
 import { Label } from "#/components/ui/label";
+import { toast } from "#/components/ui/toaster";
 import { BASE_URL } from "#/env";
 import { orpc } from "#/lib/rpc";
 
@@ -82,14 +83,12 @@ function IndexPage() {
 
 function OrganizationNotExists({ subdomain }: { subdomain: string }) {
 	return (
-		<main className="flex min-h-svh items-center justify-center bg-stone-canvas px-4 py-12 font-sans text-ink-black">
+		<main className="flex min-h-svh items-center justify-center bg-stone-canvas px-4 py-12 font-sans ">
 			<Card className="w-full max-w-sm p-6 text-center shadow-shadow-md">
-				<span className="mx-auto mb-5 flex size-10 items-center justify-center rounded-full bg-stone-muted/40 text-ink-black">
+				<span className="mx-auto mb-5 flex size-10 items-center justify-center rounded-full bg-stone-muted/40 ">
 					<Building2 className="size-5" />
 				</span>
-				<h1 className="font-roobert text-lg font-medium tracking-[-0.8px] text-ink-black">
-					Organization: {subdomain}
-				</h1>
+				<h1 className=" text-lg font-medium  ">Organization: {subdomain}</h1>
 				<p className="mt-2 text-sm text-warm-gray">
 					This organization does not exist or is no longer active.
 				</p>
@@ -129,7 +128,6 @@ function LoginView({
 }) {
 	const [email, setEmail] = useState("");
 	const [password, setPassword] = useState("");
-	const [err, setErr] = useState<string | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [showEmailForm, setShowEmailForm] = useState(false);
 	const emailId = useId();
@@ -139,9 +137,6 @@ function LoginView({
 	const title = isOrgContext
 		? `Log in to ${organization?.name}`
 		: "Sign in to your workspace";
-	const subtitle = isOrgContext
-		? `Enter your credentials to continue to ${organization?.name}`
-		: "Enter your credentials to continue";
 
 	const handleEmailChange = useCallback(
 		(ev: ChangeEvent<HTMLInputElement>) => setEmail(ev.target.value),
@@ -155,12 +150,11 @@ function LoginView({
 	const onSubmit = useCallback(
 		async (ev: FormEvent) => {
 			ev.preventDefault();
-			setErr(null);
 			setLoading(true);
 
 			const { error } = await pm.auth.client.signIn.email({ email, password });
 			if (error) {
-				setErr(error.message ?? "Login failed");
+				toast.error(error.message ?? "Login failed");
 				setLoading(false);
 				return;
 			}
@@ -184,14 +178,12 @@ function LoginView({
 	);
 
 	const showUnavailableMethod = useCallback((method: string) => {
-		setErr(`${method} sign-in is not configured for this workspace.`);
+		toast.error(`${method} sign-in is not configured for this workspace.`);
 	}, []);
 	const handleBackToOptions = useCallback(() => {
-		setErr(null);
 		setShowEmailForm(false);
 	}, []);
 	const handleEmailOption = useCallback(() => {
-		setErr(null);
 		setShowEmailForm(true);
 	}, []);
 	const handleGoogleOption = useCallback(
@@ -208,7 +200,7 @@ function LoginView({
 	);
 
 	return (
-		<main className="flex min-h-svh items-center justify-center bg-stone-canvas px-4 py-12 font-sans text-ink-black">
+		<main className="flex min-h-svh items-center justify-center bg-stone-canvas px-4 py-12 font-sans ">
 			<div className="w-full max-w-72">
 				<div className="flex flex-col items-center">
 					{organization?.logo ? (
@@ -222,23 +214,11 @@ function LoginView({
 							<Building2 className="size-5" />
 						</span>
 					)}
-					<h1 className="mt-9 font-roobert text-center text-lg font-medium tracking-[-0.8px] text-ink-black">
-						{title}
-					</h1>
-					<p className="mt-2 text-center text-sm text-warm-gray">{subtitle}</p>
+					<h1 className="mt-9  text-center text-lg font-medium  ">{title}</h1>
 				</div>
 
 				{showEmailForm ? (
 					<form className="mt-5 space-y-4" onSubmit={onSubmit}>
-						{Boolean(err) && (
-							<Alert variant="destructive">
-								<AlertCircle className="size-4 shrink-0" />
-								<AlertDescription className="font-medium text-destructive">
-									{err}
-								</AlertDescription>
-							</Alert>
-						)}
-
 						<div className="space-y-3">
 							<div>
 								<Label className="mb-1.5 block text-xs" htmlFor={emailId}>
@@ -290,7 +270,7 @@ function LoginView({
 							)}
 						</Button>
 						<Button
-							className="block w-full py-1 text-center text-xs text-warm-gray hover:text-ink-black"
+							className="block w-full py-1 text-center text-xs text-warm-gray hover:"
 							onClick={handleBackToOptions}
 							size="xs"
 							type="button"
@@ -301,21 +281,13 @@ function LoginView({
 					</form>
 				) : (
 					<div className="mt-5 space-y-4">
-						{Boolean(err) && (
-							<Alert variant="destructive">
-								<AlertCircle className="size-4 shrink-0" />
-								<AlertDescription className="font-medium text-destructive">
-									{err}
-								</AlertDescription>
-							</Alert>
-						)}
 						<Button
 							className="w-full"
-							onClick={handleGoogleOption}
+							onClick={handleEmailOption}
 							size="lg"
 							type="button"
 						>
-							Continue with Google
+							Continue with OTP
 						</Button>
 						<Button
 							className="w-full"
@@ -324,28 +296,53 @@ function LoginView({
 							type="button"
 							variant="secondary"
 						>
-							Continue with email
-						</Button>
-						<Button
-							className="w-full"
-							onClick={handleSamlOption}
-							size="lg"
-							type="button"
-							variant="outline"
-						>
-							Continue with SAML SSO
+							Continue with Password
 						</Button>
 						<Button
 							className="w-full"
 							onClick={handlePasskeyOption}
 							size="lg"
 							type="button"
-							variant="outline"
+							variant="secondary"
 						>
-							Log in with passkey
+							Continue with Passkey
+						</Button>
+						<Button
+							className="w-full"
+							onClick={handleGoogleOption}
+							size="lg"
+							type="button"
+							variant="secondary"
+						>
+							Continue with Google
+						</Button>
+						<Button
+							className="w-full"
+							onClick={handleSamlOption}
+							size="lg"
+							type="button"
+							variant="secondary"
+						>
+							Continue with SAML SSO
 						</Button>
 					</div>
 				)}
+				<p className="mt-6 text-center text-xs text-warm-gray">
+					New here?{" "}
+					<Link
+						className="font-medium  hover:text-cyan-edge hover:underline"
+						to="/support"
+					>
+						Sign Up
+					</Link>{" "}
+					or{" "}
+					<Link
+						className="font-medium  hover:text-cyan-edge hover:underline"
+						to="/support"
+					>
+						Contact Support
+					</Link>
+				</p>
 			</div>
 		</main>
 	);

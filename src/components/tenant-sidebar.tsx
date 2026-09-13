@@ -48,7 +48,7 @@ export function TenantSidebar({
 	user: User;
 }) {
 	return (
-		<aside className="flex w-full shrink-0 flex-col border-b border-stone-border bg-white text-ink-black md:sticky md:top-0 md:h-svh md:w-64 md:border-r md:border-b-0">
+		<aside className="flex w-full shrink-0 flex-col border-b border-stone-border bg-white  md:sticky md:top-0 md:h-svh md:w-64 md:border-r md:border-b-0">
 			<div className="border-b border-stone-border px-4 py-4">
 				<WorkspaceSelector organization={organization} />
 			</div>
@@ -143,7 +143,7 @@ export function TenantSidebar({
 						</AvatarFallback>
 					</Avatar>
 					<span className="min-w-0 flex-1">
-						<span className="block truncate text-sm font-medium text-ink-black">
+						<span className="block truncate text-sm font-medium ">
 							{user.name}
 						</span>
 						<span className="block truncate text-xs text-warm-gray">
@@ -216,7 +216,7 @@ function SidebarItem({
 		return (
 			<SidebarHoverItem>
 				<Button
-					className={`w-full justify-start rounded-md bg-transparent px-3 hover:bg-transparent hover:text-ink-black ${nested ? "pl-6 text-warm-gray" : "text-warm-gray"}`}
+					className={`w-full justify-start rounded-md bg-transparent px-3 hover:bg-transparent hover: ${nested ? "pl-6 text-warm-gray" : "text-warm-gray"}`}
 					nativeButton={false}
 					render={<Link to={href} />}
 					size="default"
@@ -231,7 +231,7 @@ function SidebarItem({
 	return (
 		<SidebarHoverItem>
 			<Button
-				className={`w-full justify-start rounded-md bg-transparent px-3 hover:bg-transparent hover:text-ink-black ${nested ? "pl-6 text-warm-gray" : "text-warm-gray"}`}
+				className={`w-full justify-start rounded-md bg-transparent px-3 hover:bg-transparent hover: ${nested ? "pl-6 text-warm-gray" : "text-warm-gray"}`}
 				size="default"
 				type="button"
 				variant="ghost"

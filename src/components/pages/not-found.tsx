@@ -21,7 +21,7 @@ export function NotFoundPage() {
 					<span className="mb-3 flex size-12 items-center justify-center rounded-full bg-sky-wash/40">
 						<FileQuestion className="size-6 text-cyan-edge" />
 					</span>
-					<p className="font-roobert text-sm font-medium tracking-wide text-warm-gray">
+					<p className=" text-sm font-medium tracking-wide text-warm-gray">
 						404 — Not found
 					</p>
 					<CardTitle className="text-lg">Page not found</CardTitle>

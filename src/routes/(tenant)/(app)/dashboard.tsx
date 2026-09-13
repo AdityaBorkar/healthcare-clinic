@@ -29,9 +29,7 @@ function RouteComponent() {
 						<span className="flex size-12 items-center justify-center rounded-full bg-sky-wash/40">
 							<LayoutDashboard className="size-6 text-cyan-edge" />
 						</span>
-						<CardTitle className="text-lg text-ink-black">
-							Dashboard coming soon
-						</CardTitle>
+						<CardTitle className="text-lg ">Dashboard coming soon</CardTitle>
 						<p className="max-w-sm text-sm text-warm-gray">
 							Workspace activity, recent documents, and pending approvals will
 							appear here.

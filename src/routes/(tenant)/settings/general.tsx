@@ -64,7 +64,7 @@ function GeneralPage() {
 							<span className="mx-auto mb-3 flex size-12 items-center justify-center rounded-full bg-stone-muted/40">
 								<Building2 className="size-6 text-warm-gray" />
 							</span>
-							<p className="text-sm font-medium text-ink-black">
+							<p className="text-sm font-medium ">
 								Organization information is unavailable
 							</p>
 							<p className="mx-auto mt-2 max-w-sm text-xs text-warm-gray">
@@ -181,9 +181,7 @@ function Detail({ label, value }: { label: string; value: ReactNode }) {
 	return (
 		<div>
 			<dt className="text-xs font-medium text-warm-gray">{label}</dt>
-			<dd className="mt-1 text-sm break-words text-ink-black">
-				{value ?? "—"}
-			</dd>
+			<dd className="mt-1 text-sm break-words ">{value ?? "—"}</dd>
 		</div>
 	);
 }

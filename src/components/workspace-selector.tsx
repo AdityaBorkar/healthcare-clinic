@@ -51,7 +51,7 @@ export function WorkspaceSelector({
 					</Avatar>
 				)}
 				<span className="min-w-0 flex-1">
-					<span className="block truncate text-sm font-medium text-ink-black">
+					<span className="block truncate text-sm font-medium ">
 						{organizationName}
 					</span>
 					<span className="mt-0.5 block truncate text-xs text-warm-gray">
@@ -67,7 +67,7 @@ export function WorkspaceSelector({
 						className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-muted"
 						to="/settings"
 					>
-						<span className="flex size-6 shrink-0 items-center justify-center rounded bg-stone-muted/40 text-ink-black">
+						<span className="flex size-6 shrink-0 items-center justify-center rounded bg-stone-muted/40 ">
 							<Settings className="size-3.5" />
 						</span>
 						<span className="flex-1">Organization Settings</span>
@@ -80,7 +80,7 @@ export function WorkspaceSelector({
 						// @ts-expect-error URL Override
 						to={`${BASE_URL}/account/settings`}
 					>
-						<span className="flex size-6 shrink-0 items-center justify-center rounded bg-stone-muted/40 text-ink-black">
+						<span className="flex size-6 shrink-0 items-center justify-center rounded bg-stone-muted/40 ">
 							<UserRound className="size-3.5" />
 						</span>
 						<span className="flex-1">Account Settings</span>
@@ -94,7 +94,7 @@ export function WorkspaceSelector({
 						// @ts-expect-error URL Override
 						to={`${BASE_URL}/account/organizations`}
 					>
-						<span className="flex size-6 shrink-0 items-center justify-center rounded bg-stone-muted/40 text-ink-black">
+						<span className="flex size-6 shrink-0 items-center justify-center rounded bg-stone-muted/40 ">
 							<Building2 className="size-3.5" />
 						</span>
 						<span className="flex-1">All Organizations</span>

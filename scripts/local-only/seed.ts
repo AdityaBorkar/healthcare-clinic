@@ -1,6 +1,5 @@
 import * as cli from "@clack/prompts";
 
-// import { context } from "@aspen-os/platform/server";
 import { pm } from "../../src/aspen/server";
 
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -83,11 +82,6 @@ async function promptInput() {
 async function main() {
 	const input = await promptInput();
 
-	const users = await pm.management.users.list.run({
-		filters: { limit: 100, offset: 0 },
-	});
-	console.log({ users });
-
 	const user = await pm.run("$global", async () => {
 		const users = await pm.management.users.list.run({
 			filters: { limit: 100, offset: 0 },
@@ -118,27 +112,29 @@ async function main() {
 		const existing = tenants.find(({ slug }) => slug === input.org.slug);
 		if (existing) {
 			cli.log.info("Org already exists");
-			return existing;
+			return { id: existing.id, slug: existing.slug };
 		}
 
-		const tenant = await pm.management.tenants.onboard.run({
+		const { tenantId } = await pm.management.tenants.onboard.run({
 			tenant: input.org,
 			userId: user.id,
 		});
 		cli.log.info("Org created");
 
-		return tenant;
+		const created = await pm.management.tenants.get.run({ id: tenantId });
+		return { id: created.id, slug: created.slug };
 	});
 	cli.log.info(`${tenant.slug} (${tenant.id})`);
-
-	cli.outro(`Seed completed!`);
 }
 
 await main()
-	.then(() => {
+	.then(async () => {
+		cli.outro(`Seed completed!`);
+		await pm.$cleanup().catch(() => {});
 		process.exit(0);
 	})
-	.catch((err) => {
+	.catch(async (err) => {
 		cli.cancel(err instanceof Error ? err.message : String(err));
+		await pm.$cleanup().catch(() => {});
 		process.exit(1);
 	});

@@ -1,6 +1,15 @@
 # TODO
 
-- Script based onboarding
+
+Auth
+- User Name / Email / Phone Number
+  - Password
+  - OTP
+  - Password Reset
+
+Printing and Sending through WhatsApp is very important
+
+Failed to publish message to topic "user:created": Name can only contain alphanumeric characters, underscores, hyphens, periods, or forward slashes
 
 Speed: 2 modules per day for 5 days a week. Rest 2 days must be on review fo those modules.
 
@@ -62,8 +71,6 @@ Speed: 2 modules per day for 5 days a week. Rest 2 days must be on review fo tho
 ---
 
 # TODO
-
-**CREATE A PLAN OF ACTION AND PREPARE AND EXECUTE AT-LEAST 3 PLANS BEFORE GOING TO GYM.**
 
 Failed to upload Photo
 

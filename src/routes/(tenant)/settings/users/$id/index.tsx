@@ -98,7 +98,7 @@ function UserDetailsPage() {
 					/>
 					<Card>
 						<CardContent className="py-16 text-center">
-							<p className="text-sm font-medium text-ink-black">
+							<p className="text-sm font-medium ">
 								We could not find this user
 							</p>
 							<p className="mt-2 text-xs text-warm-gray">
@@ -148,9 +148,7 @@ function UserDetailsPage() {
 							<UserAvatar name={user.name} />
 							<div className="min-w-0 space-y-3">
 								<div>
-									<p className="text-base font-medium text-ink-black">
-										{user.name}
-									</p>
+									<p className="text-base font-medium ">{user.name}</p>
 									<p className="mt-1 flex items-center gap-1.5 text-sm break-all text-warm-gray">
 										<Mail className="size-3.5 shrink-0" />
 										{user.email}
@@ -234,9 +232,7 @@ function UserDetailsPage() {
 				<Card>
 					<CardContent className="grid gap-2 px-6 py-4 text-xs sm:grid-cols-[auto_1fr]">
 						<span className="font-medium text-warm-gray">User ID</span>
-						<code className="font-mono break-all text-ink-black">
-							{user.userId}
-						</code>
+						<code className="font-mono break-all ">{user.userId}</code>
 					</CardContent>
 				</Card>
 			</div>

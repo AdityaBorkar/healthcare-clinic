@@ -27,13 +27,12 @@ const buttonVariants = cva(
 					"border-cyan-edge bg-primary text-primary-foreground shadow-[var(--shadow-subtle)] hover:bg-cyan-edge",
 				destructive:
 					"bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:ring-destructive/20",
-				ghost:
-					"text-ink-black hover:bg-muted hover:text-ink-black aria-expanded:bg-muted aria-expanded:text-ink-black",
+				ghost: " hover:bg-muted hover: aria-expanded:bg-muted aria-expanded:",
 				link: "text-cyan-signal underline-offset-4 hover:text-cyan-edge hover:underline",
 				outline:
-					"border-stone-border bg-pure-white text-ink-black shadow-[var(--shadow-subtle)] hover:bg-muted hover:text-ink-black aria-expanded:bg-muted",
+					"border-stone-border bg-pure-white  shadow-[var(--shadow-subtle)] hover:bg-muted hover: aria-expanded:bg-muted",
 				secondary:
-					"bg-muted text-ink-black hover:bg-stone-muted/60 aria-expanded:bg-stone-muted/60",
+					"bg-muted  hover:bg-stone-muted/60 aria-expanded:bg-stone-muted/60",
 			},
 		},
 	},

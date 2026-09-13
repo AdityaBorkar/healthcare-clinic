@@ -16,7 +16,7 @@ export function NotPrintable({ children }: NotPrintableProps) {
 					<span className="flex size-12 items-center justify-center rounded-full bg-sky-wash/40">
 						<ShieldAlert className="size-6 text-cyan-edge" />
 					</span>
-					<p className="text-sm font-medium text-ink-black">
+					<p className="text-sm font-medium ">
 						This content is protected to prevent unauthorized printing.
 					</p>
 				</div>

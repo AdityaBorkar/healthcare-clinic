@@ -41,9 +41,8 @@ export function TodoPage({
 						</span>
 						<CardTitle className="text-lg">Coming Soon</CardTitle>
 						<CardDescription className="max-w-sm text-sm">
-							<span className="font-medium text-ink-black">{title}</span> is not
-							available yet. We are actively building this module — check back
-							soon.
+							<span className="font-medium ">{title}</span> is not available
+							yet. We are actively building this module — check back soon.
 						</CardDescription>
 					</CardHeader>
 				</Card>

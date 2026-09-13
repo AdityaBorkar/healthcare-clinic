@@ -32,7 +32,7 @@ function RouteComponent() {
 	};
 
 	return (
-		<main className="flex min-h-svh items-center justify-center bg-stone-canvas px-4 py-12 font-sans text-ink-black">
+		<main className="flex min-h-svh items-center justify-center bg-stone-canvas px-4 py-12 font-sans ">
 			<div className="w-full max-w-lg">
 				<div className="mb-8 flex flex-col items-center text-center">
 					<span className="flex size-10 items-center justify-center rounded-full bg-ink-black text-white">
@@ -41,7 +41,7 @@ function RouteComponent() {
 					<p className="mt-6 text-xs font-medium tracking-[0.18em] text-warm-gray uppercase">
 						Tenant Application
 					</p>
-					<h1 className="mt-3 font-roobert text-2xl font-medium tracking-[-0.8px] text-ink-black">
+					<h1 className="mt-3  text-2xl font-medium  ">
 						Choose your organization
 					</h1>
 					<p className="mt-2 max-w-sm text-sm text-warm-gray">
@@ -64,7 +64,7 @@ function RouteComponent() {
 								}
 							>
 								<span className="min-w-0">
-									<span className="block truncate text-sm font-medium text-ink-black">
+									<span className="block truncate text-sm font-medium ">
 										{organization.name}
 									</span>
 									<span className="mt-1 block truncate text-xs text-warm-gray">

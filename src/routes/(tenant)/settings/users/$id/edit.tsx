@@ -67,7 +67,7 @@ function EditUserPage() {
 					</Button>
 					<Card>
 						<CardContent className="py-16 text-center">
-							<p className="text-sm font-medium text-ink-black">
+							<p className="text-sm font-medium ">
 								We could not find this user
 							</p>
 							<p className="mt-2 text-xs text-warm-gray">

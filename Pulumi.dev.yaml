@@ -2,7 +2,7 @@ encryptionsalt: v1:xM6v+lRArgA=:v1:356gtQ447Fniunqf:gxajsPvIgBFcpkIv1JdwwkBxi7qv
 config:
   # App
   app:PUBLIC_WEB_DOMAIN: localhost
-  app:PUBLIC_WEB_PORT: "3000"
+  app:PUBLIC_WEB_PORT: "4020"
   app:PUBLIC_WEB_SSL: "false"
   # App Auth
   app:AUTH_SECRET:

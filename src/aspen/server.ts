@@ -91,8 +91,6 @@ const managementPlane = ManagementPlane.create(undefined);
 
 // Platform
 
-// Explicit annotation: the inferred type is not portable (references
-// non-exported MergedSchemas), so tsc requires it on the export.
 export const pm: IsolatedTenantPlatformInstance<[ManagementPlane]> =
 	IsolatedTenantPlatform.create(
 		{ auth, db, kvStore, logs, pubsub, rpc, storage },

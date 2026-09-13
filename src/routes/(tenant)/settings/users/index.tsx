@@ -110,7 +110,7 @@ function UsersPage() {
 												<div className="flex items-center gap-3">
 													<UserAvatar name={user.name ?? user.email ?? "?"} />
 													<div className="min-w-0">
-														<p className="truncate font-medium text-ink-black">
+														<p className="truncate font-medium ">
 															{user.name ?? "Unnamed user"}
 														</p>
 														<p className="truncate text-xs text-warm-gray">
@@ -160,7 +160,7 @@ function EmptyState({
 }) {
 	return (
 		<div className="px-6 py-16 text-center">
-			<p className="text-sm font-medium text-ink-black">{title}</p>
+			<p className="text-sm font-medium ">{title}</p>
 			<p className="mx-auto mt-2 max-w-sm text-xs text-warm-gray">
 				{description}
 			</p>
