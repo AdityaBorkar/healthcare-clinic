@@ -85,7 +85,7 @@ export function TenantSidebar({
 	user: User;
 }) {
 	return (
-		<aside className="flex w-full shrink-0 flex-col border-b border-stone-border bg-white md:sticky md:top-0 md:h-svh md:w-72 md:border-r md:border-b-0 xl:w-80">
+		<aside className="flex w-full shrink-0 flex-col border-b border-stone-border bg-white md:sticky md:top-0 md:h-svh md:w-72 md:min-w-72 md:border-r md:border-b-0 xl:w-80 xl:min-w-80">
 			<div className="border-b border-stone-border px-3 py-3">
 				<WorkspaceSelector organization={organization} />
 			</div>
@@ -109,7 +109,7 @@ export function TenantSidebar({
 
 			<nav
 				aria-label="Main navigation"
-				className="min-h-0 flex-1 overflow-y-auto px-3 py-4"
+				className="min-h-0 w-full flex-1 overflow-y-auto px-3 py-4"
 			>
 				<LayoutGroup>
 					{sections.map((section) => (

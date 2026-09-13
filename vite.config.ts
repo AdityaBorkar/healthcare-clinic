@@ -20,6 +20,9 @@ const config = defineConfig({
 	resolve: {
 		tsconfigPaths: true,
 	},
+	server: {
+		forwardConsole: false,
+	},
 });
 
 export default config;

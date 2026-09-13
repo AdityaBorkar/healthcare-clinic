@@ -21,6 +21,11 @@ Bun + TanStack Start (file routes, SSR) + Vite 8 + Nitro (preset `bun`) + Tailwi
 - Validation schemas in `src/schemas/*` are valibot (not zod). Note `src/env.ts` itself uses `zod` via `@t3-oss/env-core`.
 - Alias `#/*` → `src/*` (`tsconfig.json` + `resolve.tsconfigPaths` + `components.json` shadcn aliases); only `PUBLIC_*` env is client-exposed (`envPrefix` + `clientPrefix`).
 
+## Verify frontend
+
+- After UI changes, `bun run dev` (port 4020) then verify with `agent-browser`: load the `agent-browser` skill first (`agent-browser skills get core`), then `open http://localhost:4020`, snapshot/interact via `@eN` refs, screenshot the fixed state.
+- Tenant routes (`/(tenant)/*`) resolve the org from `Host` subdomain vs `PUBLIC_WEB_DOMAIN` — on bare `localhost:4020` they redirect to `/account/organizations`; that redirect is expected, not a bug.
+
 ## Gotchas
 
 - Env comes from Pulumi stack config, not `.env*` (gitignored, no `.env.local`). Adding a var requires `src/env.ts` (validated at import — missing var crashes startup) **and** `pulumi config set app:<NAME> --stack <stack>`.
