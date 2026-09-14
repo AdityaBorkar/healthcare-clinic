@@ -21,17 +21,13 @@ import {
 	SeedPresetsSchema,
 	StaffUpsertSchema,
 } from "#/schemas/operations";
-import { authMiddleware } from "../middlewares/auth";
-import { requireOrganizationSlug } from "../utils/subdomain";
-import { resolveTenantDatabaseName } from "../utils/workspace-organization";
+import { scopedAuthMiddleware } from "../middlewares/scoped_auth";
 
-export const hrStaffUpsert = authMiddleware
+export const hrStaffUpsert = scopedAuthMiddleware
 	.input(StaffUpsertSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
 			pm.healthcare.staff.upsertStaff.run(
 				{
 					input: {
@@ -46,18 +42,16 @@ export const hrStaffUpsert = authMiddleware
 						status: input.status,
 					},
 				},
-				{ actorId: context.session.user.id },
+				{ actorId },
 			),
 		);
 	});
 
-export const rosterPlan = authMiddleware
+export const rosterPlan = scopedAuthMiddleware
 	.input(RosterPlanSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
 			pm.healthcare.staff.rosterPlan.run(
 				{
 					input: {
@@ -66,18 +60,16 @@ export const rosterPlan = authMiddleware
 						month: input.month,
 					},
 				},
-				{ actorId: context.session.user.id },
+				{ actorId },
 			),
 		);
 	});
 
-export const attendanceMark = authMiddleware
+export const attendanceMark = scopedAuthMiddleware
 	.input(AttendanceMarkSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
 			pm.healthcare.staff.attendanceMark.run(
 				{
 					input: {
@@ -87,18 +79,16 @@ export const attendanceMark = authMiddleware
 						status: input.status,
 					},
 				},
-				{ actorId: context.session.user.id },
+				{ actorId },
 			),
 		);
 	});
 
-export const leaveRequest = authMiddleware
+export const leaveRequest = scopedAuthMiddleware
 	.input(LeaveRequestSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
 			pm.healthcare.staff.leaveRequest.run(
 				{
 					input: {
@@ -109,18 +99,16 @@ export const leaveRequest = authMiddleware
 						to: input.to,
 					},
 				},
-				{ actorId: context.session.user.id },
+				{ actorId },
 			),
 		);
 	});
 
-export const leaveDecide = authMiddleware
+export const leaveDecide = scopedAuthMiddleware
 	.input(LeaveDecideSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
 			pm.healthcare.staff.leaveDecide.run(
 				{
 					input: {
@@ -130,18 +118,16 @@ export const leaveDecide = authMiddleware
 						leaveId: input.leaveId,
 					},
 				},
-				{ actorId: context.session.user.id },
+				{ actorId },
 			),
 		);
 	});
 
-export const payrollExport = authMiddleware
+export const payrollExport = scopedAuthMiddleware
 	.input(PayrollExportSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
 			pm.healthcare.staff.payrollExport.run(
 				{
 					input: {
@@ -149,18 +135,16 @@ export const payrollExport = authMiddleware
 						month: input.month,
 					},
 				},
-				{ actorId: context.session.user.id },
+				{ actorId },
 			),
 		);
 	});
 
-export const mastersUpsert = authMiddleware
+export const mastersUpsert = scopedAuthMiddleware
 	.input(MasterUpsertSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
 			pm.healthcare.operations.mastersUpsert.run(
 				{
 					input: {
@@ -170,18 +154,16 @@ export const mastersUpsert = authMiddleware
 						value: input.value,
 					},
 				},
-				{ actorId: context.session.user.id },
+				{ actorId },
 			),
 		);
 	});
 
-export const branchesCreate = authMiddleware
+export const branchesCreate = scopedAuthMiddleware
 	.input(BranchCreateSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
 			pm.healthcare.operations.branchesCreate.run(
 				{
 					input: {
@@ -190,18 +172,16 @@ export const branchesCreate = authMiddleware
 						slug: input.slug,
 					},
 				},
-				{ actorId: context.session.user.id },
+				{ actorId },
 			),
 		);
 	});
 
-export const seedPresets = authMiddleware
+export const seedPresets = scopedAuthMiddleware
 	.input(SeedPresetsSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
 			pm.healthcare.operations.seedPresets.run(
 				{
 					input: {
@@ -209,18 +189,16 @@ export const seedPresets = authMiddleware
 						preset: input.preset,
 					},
 				},
-				{ actorId: context.session.user.id },
+				{ actorId },
 			),
 		);
 	});
 
-export const explorerQuery = authMiddleware
+export const explorerQuery = scopedAuthMiddleware
 	.input(ExplorerQuerySchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
 			pm.healthcare.operations.explorerQuery.run(
 				{
 					input: {
@@ -232,18 +210,16 @@ export const explorerQuery = authMiddleware
 						sort: input.sort,
 					},
 				},
-				{ actorId: context.session.user.id },
+				{ actorId },
 			),
 		);
 	});
 
-export const explorerExportCsv = authMiddleware
+export const explorerExportCsv = scopedAuthMiddleware
 	.input(ExplorerQuerySchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
 			pm.healthcare.operations.explorerExportCsv.run(
 				{
 					input: {
@@ -255,18 +231,16 @@ export const explorerExportCsv = authMiddleware
 						sort: input.sort,
 					},
 				},
-				{ actorId: context.session.user.id },
+				{ actorId },
 			),
 		);
 	});
 
-export const reportsDefine = authMiddleware
+export const reportsDefine = scopedAuthMiddleware
 	.input(ReportDefSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
 			pm.healthcare.operations.reportsDefine.run(
 				{
 					input: {
@@ -276,18 +250,16 @@ export const reportsDefine = authMiddleware
 						name: input.name,
 					},
 				},
-				{ actorId: context.session.user.id },
+				{ actorId },
 			),
 		);
 	});
 
-export const reportsRun = authMiddleware
+export const reportsRun = scopedAuthMiddleware
 	.input(ReportRunSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
 			pm.healthcare.operations.reportsRun.run(
 				{
 					input: {
@@ -296,18 +268,16 @@ export const reportsRun = authMiddleware
 						reportId: input.reportId,
 					},
 				},
-				{ actorId: context.session.user.id },
+				{ actorId },
 			),
 		);
 	});
 
-export const complianceEvidence = authMiddleware
+export const complianceEvidence = scopedAuthMiddleware
 	.input(ComplianceEvidenceSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
 			pm.healthcare.operations.complianceEvidence.run(
 				{
 					input: {
@@ -318,18 +288,16 @@ export const complianceEvidence = authMiddleware
 						framework: input.framework,
 					},
 				},
-				{ actorId: context.session.user.id },
+				{ actorId },
 			),
 		);
 	});
 
-export const messagingSend = authMiddleware
+export const messagingSend = scopedAuthMiddleware
 	.input(MessageSendSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
 			pm.healthcare.operations.messagingSend.run(
 				{
 					input: {
@@ -340,18 +308,16 @@ export const messagingSend = authMiddleware
 						to: input.to,
 					},
 				},
-				{ actorId: context.session.user.id },
+				{ actorId },
 			),
 		);
 	});
 
-export const messagingRetry = authMiddleware
+export const messagingRetry = scopedAuthMiddleware
 	.input(MessageRetrySchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
 			pm.healthcare.operations.messagingRetry.run(
 				{
 					input: {
@@ -359,18 +325,16 @@ export const messagingRetry = authMiddleware
 						messageId: input.messageId,
 					},
 				},
-				{ actorId: context.session.user.id },
+				{ actorId },
 			),
 		);
 	});
 
-export const messagingOptOut = authMiddleware
+export const messagingOptOut = scopedAuthMiddleware
 	.input(OptOutSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
 			pm.healthcare.operations.messagingOptOut.run(
 				{
 					input: {
@@ -379,18 +343,16 @@ export const messagingOptOut = authMiddleware
 						to: input.to,
 					},
 				},
-				{ actorId: context.session.user.id },
+				{ actorId },
 			),
 		);
 	});
 
-export const explorerGrant = authMiddleware
+export const explorerGrant = scopedAuthMiddleware
 	.input(ExplorerGrantSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
 			pm.healthcare.operations.explorerGrant.run(
 				{
 					input: {
@@ -400,63 +362,55 @@ export const explorerGrant = authMiddleware
 						scope: input.scope,
 					},
 				},
-				{ actorId: context.session.user.id },
+				{ actorId },
 			),
 		);
 	});
 
-export const auditQuery = authMiddleware
+export const auditQuery = scopedAuthMiddleware
 	.input(OperationsIdSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
 			pm.healthcare.operations.auditQuery.run(
 				{ input: { branchId: input.branchId, limit: 200 } },
-				{ actorId: context.session.user.id },
+				{ actorId },
 			),
 		);
 	});
 
-export const mastersGet = authMiddleware
+export const mastersGet = scopedAuthMiddleware
 	.input(MasterFilterSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
 			pm.healthcare.operations.mastersGet.run(
 				{ input: { branchId: input.branchId, domain: input.domain } },
-				{ actorId: context.session.user.id },
+				{ actorId },
 			),
 		);
 	});
 
-export const complianceList = authMiddleware
+export const complianceList = scopedAuthMiddleware
 	.input(ComplianceListSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
 			pm.healthcare.operations.complianceList.run(
 				{ input: { branchId: input.branchId, framework: input.framework } },
-				{ actorId: context.session.user.id },
+				{ actorId },
 			),
 		);
 	});
 
-export const reportsList = authMiddleware
+export const reportsList = scopedAuthMiddleware
 	.input(ReportListSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
 			pm.healthcare.operations.reportsList.run(
 				{ input: { branchId: input.branchId, collection: input.collection } },
-				{ actorId: context.session.user.id },
+				{ actorId },
 			),
 		);
 	});

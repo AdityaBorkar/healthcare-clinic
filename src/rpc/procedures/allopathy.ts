@@ -12,146 +12,94 @@ import {
 	TriageEntryInputSchema,
 } from "#/schemas/allopathy";
 import { InteractionCheckSchema } from "#/schemas/encounters";
-import { authMiddleware } from "../middlewares/auth";
-import { requireOrganizationSlug } from "../utils/subdomain";
-import { resolveTenantDatabaseName } from "../utils/workspace-organization";
+import { scopedAuthMiddleware } from "../middlewares/scoped_auth";
 
-export const saveSoap = authMiddleware
+export const saveSoap = scopedAuthMiddleware
 	.input(SoapNoteInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.allopathy.saveSoap.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.allopathy.saveSoap.run({ input }, { actorId }),
 		);
 	});
 
-export const saveExam = authMiddleware
+export const saveExam = scopedAuthMiddleware
 	.input(ExamFindingInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.allopathy.saveExam.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.allopathy.saveExam.run({ input }, { actorId }),
 		);
 	});
 
-export const logChronic = authMiddleware
+export const logChronic = scopedAuthMiddleware
 	.input(ChronicLogInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.allopathy.logChronic.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.allopathy.logChronic.run({ input }, { actorId }),
 		);
 	});
 
-export const recordImmunization = authMiddleware
+export const recordImmunization = scopedAuthMiddleware
 	.input(ImmunizationInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.allopathy.recordImmunization.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.allopathy.recordImmunization.run({ input }, { actorId }),
 		);
 	});
 
-export const triageEntry = authMiddleware
+export const triageEntry = scopedAuthMiddleware
 	.input(TriageEntryInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.allopathy.triageEntry.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.allopathy.triageEntry.run({ input }, { actorId }),
 		);
 	});
 
-export const registerEntry = authMiddleware
+export const registerEntry = scopedAuthMiddleware
 	.input(RegisterEntryInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.allopathy.registerEntry.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.allopathy.registerEntry.run({ input }, { actorId }),
 		);
 	});
 
-export const listSoap = authMiddleware
+export const listSoap = scopedAuthMiddleware
 	.input(EncounterFilterSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.allopathy.listSoap.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.allopathy.listSoap.run({ input }, { actorId }),
 		);
 	});
 
-export const problemUpsert = authMiddleware
+export const problemUpsert = scopedAuthMiddleware
 	.input(ProblemUpsertSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.allopathy.problemUpsert.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.allopathy.problemUpsert.run({ input }, { actorId }),
 		);
 	});
 
-export const problemList = authMiddleware
+export const problemList = scopedAuthMiddleware
 	.input(ProblemListFilterSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.allopathy.problemList.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.allopathy.problemList.run({ input }, { actorId }),
 		);
 	});
 
-export const checkInteraction = authMiddleware
+export const checkInteraction = scopedAuthMiddleware
 	.input(InteractionCheckSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.allopathy.checkInteraction.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.allopathy.checkInteraction.run({ input }, { actorId }),
 		);
 	});

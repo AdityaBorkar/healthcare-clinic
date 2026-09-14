@@ -9,22 +9,18 @@ import {
 	ServiceListSchema,
 	ServicePatchSchema,
 } from "#/schemas/services";
-import { authMiddleware } from "../middlewares/auth";
-import { requireOrganizationSlug } from "../utils/subdomain";
-import { resolveTenantDatabaseName } from "../utils/workspace-organization";
+import { scopedAuthMiddleware } from "../middlewares/scoped_auth";
 
-export const create = authMiddleware
+export const create = scopedAuthMiddleware
 	.input(ServiceCreateSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
+		const { actorId, pm, tenantId } = context;
 		try {
 			// Backend create accepts basePrice/branchId/code/name/teleExempt
 			// only; department/pathy/modality/duration/payer/GST/billing-code
 			// are validated locally and kept client-side until backend grows.
 			// Dup-block (P1): callers check list(search=code) before create.
-			return await pm.run(dbName, () =>
+			return await pm.run(tenantId, () =>
 				pm.healthcare.services.create.run(
 					{
 						input: {
@@ -35,7 +31,7 @@ export const create = authMiddleware
 							teleExempt: input.teleExempt,
 						},
 					},
-					{ actorId: context.session.user.id },
+					{ actorId },
 				),
 			);
 		} catch (error) {
@@ -45,17 +41,15 @@ export const create = authMiddleware
 		}
 	});
 
-export const get = authMiddleware
+export const get = scopedAuthMiddleware
 	.input(ServiceIdSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
+		const { actorId, pm, tenantId } = context;
 		try {
-			return await pm.run(dbName, () =>
+			return await pm.run(tenantId, () =>
 				pm.healthcare.services.get.run(
 					{ input: { id: input.id } },
-					{ actorId: context.session.user.id },
+					{ actorId },
 				),
 			);
 		} catch (error) {
@@ -65,19 +59,17 @@ export const get = authMiddleware
 		}
 	});
 
-export const list = authMiddleware
+export const list = scopedAuthMiddleware
 	.input(ServiceListSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
+		const { actorId, pm, tenantId } = context;
 		try {
 			// Backend list accepts branchId only; department/pathy/search are
 			// applied as client-side type-ahead until backend filters land.
-			return await pm.run(dbName, () =>
+			return await pm.run(tenantId, () =>
 				pm.healthcare.services.list.run(
 					{ input: { branchId: input.branchId } },
-					{ actorId: context.session.user.id },
+					{ actorId },
 				),
 			);
 		} catch (error) {
@@ -87,16 +79,14 @@ export const list = authMiddleware
 		}
 	});
 
-export const update = authMiddleware
+export const update = scopedAuthMiddleware
 	.input(ServicePatchSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
+		const { actorId, pm, tenantId } = context;
 		try {
 			// Strip client-only patch keys before the backend update call.
 			const { patch } = input;
-			return await pm.run(dbName, () =>
+			return await pm.run(tenantId, () =>
 				pm.healthcare.services.update.run(
 					{
 						input: {
@@ -112,7 +102,7 @@ export const update = authMiddleware
 							},
 						},
 					},
-					{ actorId: context.session.user.id },
+					{ actorId },
 				),
 			);
 		} catch (error) {
@@ -122,17 +112,15 @@ export const update = authMiddleware
 		}
 	});
 
-export const publish = authMiddleware
+export const publish = scopedAuthMiddleware
 	.input(ServiceIdSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
+		const { actorId, pm, tenantId } = context;
 		try {
-			return await pm.run(dbName, () =>
+			return await pm.run(tenantId, () =>
 				pm.healthcare.services.publish.run(
 					{ input: { id: input.id } },
-					{ actorId: context.session.user.id },
+					{ actorId },
 				),
 			);
 		} catch (error) {
@@ -142,17 +130,15 @@ export const publish = authMiddleware
 		}
 	});
 
-export const retire = authMiddleware
+export const retire = scopedAuthMiddleware
 	.input(ServiceIdSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
+		const { actorId, pm, tenantId } = context;
 		try {
-			return await pm.run(dbName, () =>
+			return await pm.run(tenantId, () =>
 				pm.healthcare.services.retire.run(
 					{ input: { id: input.id } },
-					{ actorId: context.session.user.id },
+					{ actorId },
 				),
 			);
 		} catch (error) {
@@ -162,14 +148,12 @@ export const retire = authMiddleware
 		}
 	});
 
-export const mapFacilities = authMiddleware
+export const mapFacilities = scopedAuthMiddleware
 	.input(FacilityMapSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
+		const { actorId, pm, tenantId } = context;
 		try {
-			return await pm.run(dbName, () =>
+			return await pm.run(tenantId, () =>
 				pm.healthcare.services.mapFacilities.run(
 					{
 						input: {
@@ -178,7 +162,7 @@ export const mapFacilities = authMiddleware
 							serviceId: input.serviceId,
 						},
 					},
-					{ actorId: context.session.user.id },
+					{ actorId },
 				),
 			);
 		} catch (error) {
@@ -188,14 +172,12 @@ export const mapFacilities = authMiddleware
 		}
 	});
 
-export const setPrice = authMiddleware
+export const setPrice = scopedAuthMiddleware
 	.input(PriceSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
+		const { actorId, pm, tenantId } = context;
 		try {
-			return await pm.run(dbName, () =>
+			return await pm.run(tenantId, () =>
 				pm.healthcare.services.setPrice.run(
 					{
 						input: {
@@ -206,7 +188,7 @@ export const setPrice = authMiddleware
 							serviceId: input.serviceId,
 						},
 					},
-					{ actorId: context.session.user.id },
+					{ actorId },
 				),
 			);
 		} catch (error) {
@@ -216,16 +198,14 @@ export const setPrice = authMiddleware
 		}
 	});
 
-export const addDiscountRule = authMiddleware
+export const addDiscountRule = scopedAuthMiddleware
 	.input(DiscountRuleSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
+		const { actorId, pm, tenantId } = context;
 		try {
 			// maxPct/approver are validated locally as the discount note
 			// (max-% + approver) until the backend stores them.
-			return await pm.run(dbName, () =>
+			return await pm.run(tenantId, () =>
 				pm.healthcare.services.addDiscountRule.run(
 					{
 						input: {
@@ -236,7 +216,7 @@ export const addDiscountRule = authMiddleware
 							serviceId: input.serviceId,
 						},
 					},
-					{ actorId: context.session.user.id },
+					{ actorId },
 				),
 			);
 		} catch (error) {
@@ -246,16 +226,14 @@ export const addDiscountRule = authMiddleware
 		}
 	});
 
-export const definePackage = authMiddleware
+export const definePackage = scopedAuthMiddleware
 	.input(PackageDefSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
+		const { actorId, pm, tenantId } = context;
 		try {
 			// sessions/validityDays/scope are validated locally as the package
 			// note (sessions/validity/scope) until the backend stores them.
-			return await pm.run(dbName, () =>
+			return await pm.run(tenantId, () =>
 				pm.healthcare.services.definePackage.run(
 					{
 						input: {
@@ -265,7 +243,7 @@ export const definePackage = authMiddleware
 							serviceIds: input.serviceIds,
 						},
 					},
-					{ actorId: context.session.user.id },
+					{ actorId },
 				),
 			);
 		} catch (error) {
@@ -275,14 +253,12 @@ export const definePackage = authMiddleware
 		}
 	});
 
-export const redeem = authMiddleware
+export const redeem = scopedAuthMiddleware
 	.input(RedeemSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
+		const { actorId, pm, tenantId } = context;
 		try {
-			return await pm.run(dbName, () =>
+			return await pm.run(tenantId, () =>
 				pm.healthcare.services.redeem.run(
 					{
 						input: {
@@ -291,7 +267,7 @@ export const redeem = authMiddleware
 							patientId: input.patientId,
 						},
 					},
-					{ actorId: context.session.user.id },
+					{ actorId },
 				),
 			);
 		} catch (error) {

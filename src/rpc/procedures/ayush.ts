@@ -17,230 +17,148 @@ import {
 	YogaBatchInputSchema,
 	YogaEnrollmentInputSchema,
 } from "#/schemas/ayush";
-import { authMiddleware } from "../middlewares/auth";
-import { requireOrganizationSlug } from "../utils/subdomain";
-import { resolveTenantDatabaseName } from "../utils/workspace-organization";
+import { scopedAuthMiddleware } from "../middlewares/scoped_auth";
 
-export const saveCaseSheet = authMiddleware
+export const saveCaseSheet = scopedAuthMiddleware
 	.input(AyushCaseSheetInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.ayush.saveCaseSheet.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.ayush.saveCaseSheet.run({ input }, { actorId }),
 		);
 	});
 
-export const repertorize = authMiddleware
+export const repertorize = scopedAuthMiddleware
 	.input(RepertorizationInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.ayush.repertorize.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.ayush.repertorize.run({ input }, { actorId }),
 		);
 	});
 
-export const dualCode = authMiddleware
+export const dualCode = scopedAuthMiddleware
 	.input(AyushDiagnosisInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.ayush.dualCode.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.ayush.dualCode.run({ input }, { actorId }),
 		);
 	});
 
-export const bookNadi = authMiddleware
+export const bookNadi = scopedAuthMiddleware
 	.input(NadiBookingInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.ayush.bookNadi.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.ayush.bookNadi.run({ input }, { actorId }),
 		);
 	});
 
-export const scheduleTherapy = authMiddleware
+export const scheduleTherapy = scopedAuthMiddleware
 	.input(TherapySittingInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.ayush.scheduleTherapy.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.ayush.scheduleTherapy.run({ input }, { actorId }),
 		);
 	});
 
-export const recordSitting = authMiddleware
+export const recordSitting = scopedAuthMiddleware
 	.input(TherapySittingInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.ayush.recordSitting.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.ayush.recordSitting.run({ input }, { actorId }),
 		);
 	});
 
-export const sellPackage = authMiddleware
+export const sellPackage = scopedAuthMiddleware
 	.input(TherapyPackageInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.ayush.sellPackage.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.ayush.sellPackage.run({ input }, { actorId }),
 		);
 	});
 
-export const pauseExtendPackage = authMiddleware
+export const pauseExtendPackage = scopedAuthMiddleware
 	.input(PackagePauseExtendInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.ayush.pauseExtendPackage.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.ayush.pauseExtendPackage.run({ input }, { actorId }),
 		);
 	});
 
-export const issueDiet = authMiddleware
+export const issueDiet = scopedAuthMiddleware
 	.input(DietPlanInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.ayush.issueDiet.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.ayush.issueDiet.run({ input }, { actorId }),
 		);
 	});
 
-export const enrollYoga = authMiddleware
+export const enrollYoga = scopedAuthMiddleware
 	.input(YogaEnrollmentInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.ayush.enrollYoga.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.ayush.enrollYoga.run({ input }, { actorId }),
 		);
 	});
 
-export const createYogaBatch = authMiddleware
+export const createYogaBatch = scopedAuthMiddleware
 	.input(YogaBatchInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.ayush.createYogaBatch.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.ayush.createYogaBatch.run({ input }, { actorId }),
 		);
 	});
 
-export const saveFollowUpGrid = authMiddleware
+export const saveFollowUpGrid = scopedAuthMiddleware
 	.input(FollowUpGridInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.ayush.saveFollowUpGrid.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.ayush.saveFollowUpGrid.run({ input }, { actorId }),
 		);
 	});
 
-export const listFollowUpGrid = authMiddleware
+export const listFollowUpGrid = scopedAuthMiddleware
 	.input(FollowUpGridListSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.ayush.listFollowUpGrid.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.ayush.listFollowUpGrid.run({ input }, { actorId }),
 		);
 	});
 
-export const markYogaAttendance = authMiddleware
+export const markYogaAttendance = scopedAuthMiddleware
 	.input(YogaAttendanceInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.ayush.markYogaAttendance.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.ayush.markYogaAttendance.run({ input }, { actorId }),
 		);
 	});
 
-export const prescribeAyush = authMiddleware
+export const prescribeAyush = scopedAuthMiddleware
 	.input(AyushPrescriptionInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.ayush.prescribe.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.ayush.prescribe.run({ input }, { actorId }),
 		);
 	});
 
-export const recordPackageOutcome = authMiddleware
+export const recordPackageOutcome = scopedAuthMiddleware
 	.input(PackageOutcomeInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.ayush.recordPackageOutcome.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.ayush.recordPackageOutcome.run({ input }, { actorId }),
 		);
 	});

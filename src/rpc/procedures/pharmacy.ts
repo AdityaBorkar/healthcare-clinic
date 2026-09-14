@@ -16,230 +16,148 @@ import {
 	TransferAcceptSchema,
 	TransferSchema,
 } from "#/schemas/pharmacy";
-import { authMiddleware } from "../middlewares/auth";
-import { requireOrganizationSlug } from "../utils/subdomain";
-import { resolveTenantDatabaseName } from "../utils/workspace-organization";
+import { scopedAuthMiddleware } from "../middlewares/scoped_auth";
 
-export const itemUpsert = authMiddleware
+export const itemUpsert = scopedAuthMiddleware
 	.input(ItemUpsertSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.pharmacy.itemUpsert.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.pharmacy.itemUpsert.run({ input }, { actorId }),
 		);
 	});
 
-export const batchReceive = authMiddleware
+export const batchReceive = scopedAuthMiddleware
 	.input(BatchReceiveSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.pharmacy.batchReceive.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.pharmacy.batchReceive.run({ input }, { actorId }),
 		);
 	});
 
-export const saleFromRx = authMiddleware
+export const saleFromRx = scopedAuthMiddleware
 	.input(SaleFromRxSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.pharmacy.saleFromRx.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.pharmacy.saleFromRx.run({ input }, { actorId }),
 		);
 	});
 
-export const partialClose = authMiddleware
+export const partialClose = scopedAuthMiddleware
 	.input(PartialCloseSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.pharmacy.partialClose.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.pharmacy.partialClose.run({ input }, { actorId }),
 		);
 	});
 
-export const returnAgainstBill = authMiddleware
+export const returnAgainstBill = scopedAuthMiddleware
 	.input(ReturnSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.pharmacy.returnAgainstBill.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.pharmacy.returnAgainstBill.run({ input }, { actorId }),
 		);
 	});
 
-export const poCreate = authMiddleware
+export const poCreate = scopedAuthMiddleware
 	.input(PoCreateSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.pharmacy.poCreate.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.pharmacy.poCreate.run({ input }, { actorId }),
 		);
 	});
 
-export const grnVerify = authMiddleware
+export const grnVerify = scopedAuthMiddleware
 	.input(GrnVerifySchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.pharmacy.grnVerify.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.pharmacy.grnVerify.run({ input }, { actorId }),
 		);
 	});
 
-export const piBook = authMiddleware
+export const piBook = scopedAuthMiddleware
 	.input(PiBookSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.pharmacy.piBook.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.pharmacy.piBook.run({ input }, { actorId }),
 		);
 	});
 
-export const cndnIssue = authMiddleware
+export const cndnIssue = scopedAuthMiddleware
 	.input(PharmacyCndnSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.pharmacy.cndnIssue.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.pharmacy.cndnIssue.run({ input }, { actorId }),
 		);
 	});
 
-export const transfer = authMiddleware
+export const transfer = scopedAuthMiddleware
 	.input(TransferSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.pharmacy.transfer.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.pharmacy.transfer.run({ input }, { actorId }),
 		);
 	});
 
-export const transferAccept = authMiddleware
+export const transferAccept = scopedAuthMiddleware
 	.input(TransferAcceptSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.pharmacy.transferAccept.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.pharmacy.transferAccept.run({ input }, { actorId }),
 		);
 	});
 
-export const reorderSuggest = authMiddleware
+export const reorderSuggest = scopedAuthMiddleware
 	.input(ReorderSuggestSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.pharmacy.reorderSuggest.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.pharmacy.reorderSuggest.run({ input }, { actorId }),
 		);
 	});
 
-export const getSale = authMiddleware
+export const getSale = scopedAuthMiddleware
 	.input(PharmacyIdSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.pharmacy.getSale.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.pharmacy.getSale.run({ input }, { actorId }),
 		);
 	});
 
-export const expiryAlerts = authMiddleware
+export const expiryAlerts = scopedAuthMiddleware
 	.input(ExpiryAlertQuerySchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.pharmacy.expiryAlerts.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.pharmacy.expiryAlerts.run({ input }, { actorId }),
 		);
 	});
 
-export const stockLedger = authMiddleware
+export const stockLedger = scopedAuthMiddleware
 	.input(StockLedgerQuerySchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.pharmacy.stockLedger.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.pharmacy.stockLedger.run({ input }, { actorId }),
 		);
 	});
 
-export const stockCorrect = authMiddleware
+export const stockCorrect = scopedAuthMiddleware
 	.input(StockCorrectSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.pharmacy.stockCorrect.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.pharmacy.stockCorrect.run({ input }, { actorId }),
 		);
 	});

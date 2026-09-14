@@ -15,20 +15,13 @@ import {
 	TemplateSchema,
 	UserDisableSchema,
 } from "#/schemas/admin";
-import { authMiddleware } from "../middlewares/auth";
-import { requireOrganizationSlug } from "../utils/subdomain";
-import { resolveTenantDatabaseName } from "../utils/workspace-organization";
+import { scopedAuthMiddleware } from "../middlewares/scoped_auth";
 
-export const getCompany = authMiddleware.handler(async ({ context }) => {
-	requireOrganizationSlug(context.headers);
-	const dbName = await resolveTenantDatabaseName(context.headers);
-	const { pm } = await import("#/aspen/server");
+export const getCompany = scopedAuthMiddleware.handler(async ({ context }) => {
+	const { actorId, pm, tenantId } = context;
 	try {
-		return await pm.run(dbName, () =>
-			pm.healthcare.admin.getCompany.run(
-				{ input: {} },
-				{ actorId: context.session.user.id },
-			),
+		return await pm.run(tenantId, () =>
+			pm.healthcare.admin.getCompany.run({ input: {} }, { actorId }),
 		);
 	} catch (error) {
 		throw new Error(
@@ -37,14 +30,12 @@ export const getCompany = authMiddleware.handler(async ({ context }) => {
 	}
 });
 
-export const saveCompany = authMiddleware
+export const saveCompany = scopedAuthMiddleware
 	.input(CompanySchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
+		const { actorId, pm, tenantId } = context;
 		try {
-			return await pm.run(dbName, () =>
+			return await pm.run(tenantId, () =>
 				pm.healthcare.admin.saveCompany.run(
 					{
 						input: {
@@ -53,7 +44,7 @@ export const saveCompany = authMiddleware
 							slug: input.slug,
 						},
 					},
-					{ actorId: context.session.user.id },
+					{ actorId },
 				),
 			);
 		} catch (error) {
@@ -63,32 +54,27 @@ export const saveCompany = authMiddleware
 		}
 	});
 
-export const listBranches = authMiddleware.handler(async ({ context }) => {
-	requireOrganizationSlug(context.headers);
-	const dbName = await resolveTenantDatabaseName(context.headers);
-	const { pm } = await import("#/aspen/server");
-	try {
-		return await pm.run(dbName, () =>
-			pm.healthcare.admin.listBranches.run(
-				{ input: {} },
-				{ actorId: context.session.user.id },
-			),
-		);
-	} catch (error) {
-		throw new Error(
-			`Branch list failed (${error instanceof Error ? error.message : "unknown error"}); retry`,
-		);
-	}
-});
+export const listBranches = scopedAuthMiddleware.handler(
+	async ({ context }) => {
+		const { actorId, pm, tenantId } = context;
+		try {
+			return await pm.run(tenantId, () =>
+				pm.healthcare.admin.listBranches.run({ input: {} }, { actorId }),
+			);
+		} catch (error) {
+			throw new Error(
+				`Branch list failed (${error instanceof Error ? error.message : "unknown error"}); retry`,
+			);
+		}
+	},
+);
 
-export const createBranch = authMiddleware
+export const createBranch = scopedAuthMiddleware
 	.input(BranchCreateSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
+		const { actorId, pm, tenantId } = context;
 		try {
-			return await pm.run(dbName, () =>
+			return await pm.run(tenantId, () =>
 				pm.healthcare.admin.createBranch.run(
 					{
 						input: {
@@ -97,7 +83,7 @@ export const createBranch = authMiddleware
 							subdomain: input.subdomain,
 						},
 					},
-					{ actorId: context.session.user.id },
+					{ actorId },
 				),
 			);
 		} catch (error) {
@@ -107,17 +93,15 @@ export const createBranch = authMiddleware
 		}
 	});
 
-export const updateBranch = authMiddleware
+export const updateBranch = scopedAuthMiddleware
 	.input(BranchPatchSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
+		const { actorId, pm, tenantId } = context;
 		try {
-			return await pm.run(dbName, () =>
+			return await pm.run(tenantId, () =>
 				pm.healthcare.admin.updateBranch.run(
 					{ input: { id: input.id, patch: input.patch } },
-					{ actorId: context.session.user.id },
+					{ actorId },
 				),
 			);
 		} catch (error) {
@@ -127,14 +111,12 @@ export const updateBranch = authMiddleware
 		}
 	});
 
-export const disableUser = authMiddleware
+export const disableUser = scopedAuthMiddleware
 	.input(UserDisableSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
+		const { actorId, pm, tenantId } = context;
 		try {
-			return await pm.run(dbName, () =>
+			return await pm.run(tenantId, () =>
 				pm.healthcare.staff.disableUser.run(
 					{
 						input: {
@@ -144,7 +126,7 @@ export const disableUser = authMiddleware
 							status: "exited",
 						},
 					},
-					{ actorId: context.session.user.id },
+					{ actorId },
 				),
 			);
 		} catch (error) {
@@ -154,15 +136,13 @@ export const disableUser = authMiddleware
 		}
 	});
 
-export const listRoles = authMiddleware.handler(async ({ context }) => {
-	requireOrganizationSlug(context.headers);
-	const dbName = await resolveTenantDatabaseName(context.headers);
-	const { pm } = await import("#/aspen/server");
+export const listRoles = scopedAuthMiddleware.handler(async ({ context }) => {
+	const { actorId, pm, tenantId } = context;
 	try {
-		return await pm.run(dbName, () =>
+		return await pm.run(tenantId, () =>
 			pm.healthcare.staff.listRoles.run(
 				{ input: { branchId: "main" } },
-				{ actorId: context.session.user.id },
+				{ actorId },
 			),
 		);
 	} catch (error) {
@@ -172,14 +152,12 @@ export const listRoles = authMiddleware.handler(async ({ context }) => {
 	}
 });
 
-export const createRole = authMiddleware
+export const createRole = scopedAuthMiddleware
 	.input(RoleSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
+		const { actorId, pm, tenantId } = context;
 		try {
-			return await pm.run(dbName, () =>
+			return await pm.run(tenantId, () =>
 				pm.healthcare.staff.createRole.run(
 					{
 						input: {
@@ -188,7 +166,7 @@ export const createRole = authMiddleware
 							permissions: input.permissions,
 						},
 					},
-					{ actorId: context.session.user.id },
+					{ actorId },
 				),
 			);
 		} catch (error) {
@@ -198,17 +176,15 @@ export const createRole = authMiddleware
 		}
 	});
 
-export const deleteRole = authMiddleware
+export const deleteRole = scopedAuthMiddleware
 	.input(RoleIdSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
+		const { actorId, pm, tenantId } = context;
 		try {
-			return await pm.run(dbName, () =>
+			return await pm.run(tenantId, () =>
 				pm.healthcare.staff.deleteRole.run(
 					{ input: { branchId: "main", id: input.id } },
-					{ actorId: context.session.user.id },
+					{ actorId },
 				),
 			);
 		} catch (error) {
@@ -218,17 +194,12 @@ export const deleteRole = authMiddleware
 		}
 	});
 
-export const listMasterVersions = authMiddleware.handler(
+export const listMasterVersions = scopedAuthMiddleware.handler(
 	async ({ context }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
+		const { actorId, pm, tenantId } = context;
 		try {
-			return await pm.run(dbName, () =>
-				pm.healthcare.admin.listMasterVersions.run(
-					{ input: {} },
-					{ actorId: context.session.user.id },
-				),
+			return await pm.run(tenantId, () =>
+				pm.healthcare.admin.listMasterVersions.run({ input: {} }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -238,14 +209,12 @@ export const listMasterVersions = authMiddleware.handler(
 	},
 );
 
-export const saveMasterVersion = authMiddleware
+export const saveMasterVersion = scopedAuthMiddleware
 	.input(MasterVersionSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
+		const { actorId, pm, tenantId } = context;
 		try {
-			return await pm.run(dbName, () =>
+			return await pm.run(tenantId, () =>
 				pm.healthcare.admin.saveMasterVersion.run(
 					{
 						input: {
@@ -255,7 +224,7 @@ export const saveMasterVersion = authMiddleware
 							version: input.version,
 						},
 					},
-					{ actorId: context.session.user.id },
+					{ actorId },
 				),
 			);
 		} catch (error) {
@@ -265,35 +234,30 @@ export const saveMasterVersion = authMiddleware
 		}
 	});
 
-export const listTemplates = authMiddleware.handler(async ({ context }) => {
-	requireOrganizationSlug(context.headers);
-	const dbName = await resolveTenantDatabaseName(context.headers);
-	const { pm } = await import("#/aspen/server");
-	try {
-		return await pm.run(dbName, () =>
-			pm.healthcare.admin.listTemplates.run(
-				{ input: {} },
-				{ actorId: context.session.user.id },
-			),
-		);
-	} catch (error) {
-		throw new Error(
-			`Template list failed (${error instanceof Error ? error.message : "unknown error"}); retry`,
-		);
-	}
-});
+export const listTemplates = scopedAuthMiddleware.handler(
+	async ({ context }) => {
+		const { actorId, pm, tenantId } = context;
+		try {
+			return await pm.run(tenantId, () =>
+				pm.healthcare.admin.listTemplates.run({ input: {} }, { actorId }),
+			);
+		} catch (error) {
+			throw new Error(
+				`Template list failed (${error instanceof Error ? error.message : "unknown error"}); retry`,
+			);
+		}
+	},
+);
 
-export const saveTemplate = authMiddleware
+export const saveTemplate = scopedAuthMiddleware
 	.input(TemplateSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
+		const { actorId, pm, tenantId } = context;
 		try {
 			// status (draft/approved/retired) is validated locally for the
 			// send-gate; the backend save-template stores body/kind/name only
 			// until its schema grows a status column.
-			return await pm.run(dbName, () =>
+			return await pm.run(tenantId, () =>
 				pm.healthcare.admin.saveTemplate.run(
 					{
 						input: {
@@ -303,7 +267,7 @@ export const saveTemplate = authMiddleware
 							name: input.name,
 						},
 					},
-					{ actorId: context.session.user.id },
+					{ actorId },
 				),
 			);
 		} catch (error) {
@@ -313,17 +277,15 @@ export const saveTemplate = authMiddleware
 		}
 	});
 
-export const deleteTemplate = authMiddleware
+export const deleteTemplate = scopedAuthMiddleware
 	.input(NamedIdSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
+		const { actorId, pm, tenantId } = context;
 		try {
-			return await pm.run(dbName, () =>
+			return await pm.run(tenantId, () =>
 				pm.healthcare.admin.deleteTemplate.run(
 					{ input: { id: input.id } },
-					{ actorId: context.session.user.id },
+					{ actorId },
 				),
 			);
 		} catch (error) {
@@ -333,32 +295,27 @@ export const deleteTemplate = authMiddleware
 		}
 	});
 
-export const listRecallRules = authMiddleware.handler(async ({ context }) => {
-	requireOrganizationSlug(context.headers);
-	const dbName = await resolveTenantDatabaseName(context.headers);
-	const { pm } = await import("#/aspen/server");
-	try {
-		return await pm.run(dbName, () =>
-			pm.healthcare.admin.listRecallRules.run(
-				{ input: {} },
-				{ actorId: context.session.user.id },
-			),
-		);
-	} catch (error) {
-		throw new Error(
-			`Recall-rule list failed (${error instanceof Error ? error.message : "unknown error"}); retry`,
-		);
-	}
-});
+export const listRecallRules = scopedAuthMiddleware.handler(
+	async ({ context }) => {
+		const { actorId, pm, tenantId } = context;
+		try {
+			return await pm.run(tenantId, () =>
+				pm.healthcare.admin.listRecallRules.run({ input: {} }, { actorId }),
+			);
+		} catch (error) {
+			throw new Error(
+				`Recall-rule list failed (${error instanceof Error ? error.message : "unknown error"}); retry`,
+			);
+		}
+	},
+);
 
-export const saveRecallRule = authMiddleware
+export const saveRecallRule = scopedAuthMiddleware
 	.input(RecallRuleSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
+		const { actorId, pm, tenantId } = context;
 		try {
-			return await pm.run(dbName, () =>
+			return await pm.run(tenantId, () =>
 				pm.healthcare.admin.saveRecallRule.run(
 					{
 						input: {
@@ -368,7 +325,7 @@ export const saveRecallRule = authMiddleware
 							name: input.name,
 						},
 					},
-					{ actorId: context.session.user.id },
+					{ actorId },
 				),
 			);
 		} catch (error) {
@@ -378,17 +335,15 @@ export const saveRecallRule = authMiddleware
 		}
 	});
 
-export const deleteRecallRule = authMiddleware
+export const deleteRecallRule = scopedAuthMiddleware
 	.input(BranchIdSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
+		const { actorId, pm, tenantId } = context;
 		try {
-			return await pm.run(dbName, () =>
+			return await pm.run(tenantId, () =>
 				pm.healthcare.admin.deleteRecallRule.run(
 					{ input: { id: input.id } },
-					{ actorId: context.session.user.id },
+					{ actorId },
 				),
 			);
 		} catch (error) {
@@ -398,14 +353,12 @@ export const deleteRecallRule = authMiddleware
 		}
 	});
 
-export const logs = authMiddleware
+export const logs = scopedAuthMiddleware
 	.input(LogsQuerySchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
+		const { actorId, pm, tenantId } = context;
 		try {
-			return await pm.run(dbName, () =>
+			return await pm.run(tenantId, () =>
 				pm.healthcare.admin.logs.run(
 					{
 						input: {
@@ -413,7 +366,7 @@ export const logs = authMiddleware
 							limit: input.limit,
 						},
 					},
-					{ actorId: context.session.user.id },
+					{ actorId },
 				),
 			);
 		} catch (error) {
@@ -426,14 +379,12 @@ export const logs = authMiddleware
 // CPT + billing-code master (P0-5, admin domain). Backed by the generic
 // master-version store with domain "cpt": version = CPT code, payload = JSON
 // of { code, description, billingCode, system, price }.
-export const upsertCptCode = authMiddleware
+export const upsertCptCode = scopedAuthMiddleware
 	.input(CptUpsertSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
+		const { actorId, pm, tenantId } = context;
 		try {
-			return await pm.run(dbName, () =>
+			return await pm.run(tenantId, () =>
 				pm.healthcare.admin.saveMasterVersion.run(
 					{
 						input: {
@@ -449,7 +400,7 @@ export const upsertCptCode = authMiddleware
 							version: input.code,
 						},
 					},
-					{ actorId: context.session.user.id },
+					{ actorId },
 				),
 			);
 		} catch (error) {
@@ -459,18 +410,13 @@ export const upsertCptCode = authMiddleware
 		}
 	});
 
-export const listCptCodes = authMiddleware
+export const listCptCodes = scopedAuthMiddleware
 	.input(CptListSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
+		const { actorId, pm, tenantId } = context;
 		try {
-			const rows = (await pm.run(dbName, () =>
-				pm.healthcare.admin.listMasterVersions.run(
-					{ input: {} },
-					{ actorId: context.session.user.id },
-				),
+			const rows = (await pm.run(tenantId, () =>
+				pm.healthcare.admin.listMasterVersions.run({ input: {} }, { actorId }),
 			)) as Array<{
 				branchId?: string;
 				domain?: string;
@@ -504,14 +450,12 @@ export const listCptCodes = authMiddleware
 		}
 	});
 
-export const saveCptVersion = authMiddleware
+export const saveCptVersion = scopedAuthMiddleware
 	.input(CptVersionSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
+		const { actorId, pm, tenantId } = context;
 		try {
-			return await pm.run(dbName, () =>
+			return await pm.run(tenantId, () =>
 				pm.healthcare.admin.saveMasterVersion.run(
 					{
 						input: {
@@ -521,7 +465,7 @@ export const saveCptVersion = authMiddleware
 							version: input.version,
 						},
 					},
-					{ actorId: context.session.user.id },
+					{ actorId },
 				),
 			);
 		} catch (error) {

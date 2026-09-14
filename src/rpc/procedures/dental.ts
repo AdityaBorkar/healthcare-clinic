@@ -14,174 +14,112 @@ import {
 	RescheduleStageInputSchema,
 	TreatmentPlanInputSchema,
 } from "#/schemas/dental";
-import { authMiddleware } from "../middlewares/auth";
-import { requireOrganizationSlug } from "../utils/subdomain";
-import { resolveTenantDatabaseName } from "../utils/workspace-organization";
+import { scopedAuthMiddleware } from "../middlewares/scoped_auth";
 
-export const chart = authMiddleware
+export const chart = scopedAuthMiddleware
 	.input(DentalChartInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.dental.chart.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.dental.chart.run({ input }, { actorId }),
 		);
 	});
 
-export const buildPlan = authMiddleware
+export const buildPlan = scopedAuthMiddleware
 	.input(TreatmentPlanInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.dental.buildPlan.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.dental.buildPlan.run({ input }, { actorId }),
 		);
 	});
 
-export const quote = authMiddleware
+export const quote = scopedAuthMiddleware
 	.input(QuoteInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.dental.quote.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.dental.quote.run({ input }, { actorId }),
 		);
 	});
 
-export const consent = authMiddleware
+export const consent = scopedAuthMiddleware
 	.input(ConsentFormInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.dental.consent.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.dental.consent.run({ input }, { actorId }),
 		);
 	});
 
-export const bookChair = authMiddleware
+export const bookChair = scopedAuthMiddleware
 	.input(ChairSlotInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.dental.bookChair.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.dental.bookChair.run({ input }, { actorId }),
 		);
 	});
 
-export const raiseLabJob = authMiddleware
+export const raiseLabJob = scopedAuthMiddleware
 	.input(LabJobInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.dental.raiseLabJob.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.dental.raiseLabJob.run({ input }, { actorId }),
 		);
 	});
 
-export const trackLabJob = authMiddleware
+export const trackLabJob = scopedAuthMiddleware
 	.input(LabJobTrackInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.dental.trackLabJob.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.dental.trackLabJob.run({ input }, { actorId }),
 		);
 	});
 
-export const closeStage = authMiddleware
+export const closeStage = scopedAuthMiddleware
 	.input(PlanStageCloseInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.dental.closeStage.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.dental.closeStage.run({ input }, { actorId }),
 		);
 	});
 
-export const pendingJobs = authMiddleware
+export const pendingJobs = scopedAuthMiddleware
 	.input(PendingJobsFilterSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.dental.pendingJobs.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.dental.pendingJobs.run({ input }, { actorId }),
 		);
 	});
 
-export const rescheduleStage = authMiddleware
+export const rescheduleStage = scopedAuthMiddleware
 	.input(RescheduleStageInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.dental.rescheduleStage.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.dental.rescheduleStage.run({ input }, { actorId }),
 		);
 	});
 
-export const implantMilestone = authMiddleware
+export const implantMilestone = scopedAuthMiddleware
 	.input(ImplantMilestoneInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.dental.implantMilestone.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.dental.implantMilestone.run({ input }, { actorId }),
 		);
 	});
 
-export const sellPackage = authMiddleware
+export const sellPackage = scopedAuthMiddleware
 	.input(DentalPackageInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.dental.sellPackage.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.dental.sellPackage.run({ input }, { actorId }),
 		);
 	});

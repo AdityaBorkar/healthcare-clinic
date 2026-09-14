@@ -25,10 +25,12 @@ export const listOrganizations = base.handler(async () => {
 	return { organizations };
 });
 
-export const listMyOrganizations = authMiddleware.handler(async ({ context }) => {
-	const organizations = await listMyOrganizationBranding(context.headers);
-	return { organizations };
-});
+export const listMyOrganizations = authMiddleware.handler(
+	async ({ context }) => {
+		const organizations = await listMyOrganizationBranding(context.headers);
+		return { organizations };
+	},
+);
 
 type TenantOrganizationRow = {
 	createdAt: Date;
@@ -56,31 +58,33 @@ function toOrganizationDto(org: TenantOrganizationRow) {
 	};
 }
 
-export const getCurrentOrganization = authMiddleware.handler(async ({ context }) => {
-	const organizationSlug = requireOrganizationSlug(context.headers);
-	const workspaceOrg = await getWorkspaceOrganization(
-		context.headers,
-		organizationSlug,
-	);
+export const getCurrentOrganization = authMiddleware.handler(
+	async ({ context }) => {
+		const organizationSlug = requireOrganizationSlug(context.headers);
+		const workspaceOrg = await getWorkspaceOrganization(
+			context.headers,
+			organizationSlug,
+		);
 
-	const { pm } = await import("#/aspen/server");
+		const { pm } = await import("#/aspen/server");
 
-	const tenant = await pm.run("$global", () =>
-		pm.management.tenants.get.run({ id: workspaceOrg.id }),
-	);
+		const tenant = await pm.run("$global", () =>
+			pm.management.tenants.get.run({ id: workspaceOrg.id }),
+		);
 
-	return toOrganizationDto({
-		createdAt: tenant.createdAt,
-		id: tenant.id,
-		logo: tenant.logo,
-		metadata: tenant.metadata,
-		name: tenant.name,
-		plan: tenant.plan,
-		serviceProviderId: tenant.serviceProviderId,
-		slug: tenant.slug,
-		status: tenant.status,
-	});
-});
+		return toOrganizationDto({
+			createdAt: tenant.createdAt,
+			id: tenant.id,
+			logo: tenant.logo,
+			metadata: tenant.metadata,
+			name: tenant.name,
+			plan: tenant.plan,
+			serviceProviderId: tenant.serviceProviderId,
+			slug: tenant.slug,
+			status: tenant.status,
+		});
+	},
+);
 
 export const updateCurrentOrganization = authMiddleware
 	.input(UpdateOrganizationInputSchema)

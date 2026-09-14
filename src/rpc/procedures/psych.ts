@@ -17,230 +17,148 @@ import {
 	SideEffectCheckInputSchema,
 	WithdrawalChartInputSchema,
 } from "#/schemas/psych";
-import { authMiddleware } from "../middlewares/auth";
-import { requireOrganizationSlug } from "../utils/subdomain";
-import { resolveTenantDatabaseName } from "../utils/workspace-organization";
+import { scopedAuthMiddleware } from "../middlewares/scoped_auth";
 
-export const assess = authMiddleware
+export const assess = scopedAuthMiddleware
 	.input(PsychAssessmentInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.psych.assess.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.psych.assess.run({ input }, { actorId }),
 		);
 	});
 
-export const scoreScale = authMiddleware
+export const scoreScale = scopedAuthMiddleware
 	.input(ScaleResultInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.psych.scoreScale.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.psych.scoreScale.run({ input }, { actorId }),
 		);
 	});
 
-export const screenRisk = authMiddleware
+export const screenRisk = scopedAuthMiddleware
 	.input(RiskScreenInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.psych.screenRisk.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.psych.screenRisk.run({ input }, { actorId }),
 		);
 	});
 
-export const saveSafetyPlan = authMiddleware
+export const saveSafetyPlan = scopedAuthMiddleware
 	.input(SafetyPlanInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.psych.saveSafetyPlan.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.psych.saveSafetyPlan.run({ input }, { actorId }),
 		);
 	});
 
-export const alertSenior = authMiddleware
+export const alertSenior = scopedAuthMiddleware
 	.input(SeniorAlertInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.psych.alertSenior.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.psych.alertSenior.run({ input }, { actorId }),
 		);
 	});
 
-export const bookCounselling = authMiddleware
+export const bookCounselling = scopedAuthMiddleware
 	.input(CounsellingBookInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.psych.bookCounselling.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.psych.bookCounselling.run({ input }, { actorId }),
 		);
 	});
 
-export const bookTele = authMiddleware
+export const bookTele = scopedAuthMiddleware
 	.input(CounsellingBookInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.psych.bookTele.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.psych.bookTele.run({ input }, { actorId }),
 		);
 	});
 
-export const chartWithdrawal = authMiddleware
+export const chartWithdrawal = scopedAuthMiddleware
 	.input(WithdrawalChartInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.psych.chartWithdrawal.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.psych.chartWithdrawal.run({ input }, { actorId }),
 		);
 	});
 
-export const relapsePlan = authMiddleware
+export const relapsePlan = scopedAuthMiddleware
 	.input(RelapsePlanInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.psych.relapsePlan.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.psych.relapsePlan.run({ input }, { actorId }),
 		);
 	});
 
-export const prescribeControlled = authMiddleware
+export const prescribeControlled = scopedAuthMiddleware
 	.input(ControlledPrescriptionInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.psych.prescribeControlled.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.psych.prescribeControlled.run({ input }, { actorId }),
 		);
 	});
 
-export const sideEffectCheck = authMiddleware
+export const sideEffectCheck = scopedAuthMiddleware
 	.input(SideEffectCheckInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.psych.sideEffectCheck.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.psych.sideEffectCheck.run({ input }, { actorId }),
 		);
 	});
 
-export const caregiverConsent = authMiddleware
+export const caregiverConsent = scopedAuthMiddleware
 	.input(CaregiverConsentInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.psych.caregiverConsent.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.psych.caregiverConsent.run({ input }, { actorId }),
 		);
 	});
 
-export const involuntaryHook = authMiddleware
+export const involuntaryHook = scopedAuthMiddleware
 	.input(InvoluntaryHookInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.psych.involuntaryHook.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.psych.involuntaryHook.run({ input }, { actorId }),
 		);
 	});
 
-export const breakGlass = authMiddleware
+export const breakGlass = scopedAuthMiddleware
 	.input(BreakGlassInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.psych.breakGlass.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.psych.breakGlass.run({ input }, { actorId }),
 		);
 	});
 
-export const recallList = authMiddleware
+export const recallList = scopedAuthMiddleware
 	.input(RecallListInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.psych.recallList.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.psych.recallList.run({ input }, { actorId }),
 		);
 	});
 
-export const closeReadiness = authMiddleware
+export const closeReadiness = scopedAuthMiddleware
 	.input(CloseReadinessInputSchema)
 	.handler(async ({ context, input }) => {
-		requireOrganizationSlug(context.headers);
-		const dbName = await resolveTenantDatabaseName(context.headers);
-		const { pm } = await import("#/aspen/server");
-		return pm.run(dbName, () =>
-			pm.healthcare.psych.closeReadiness.run(
-				{ input },
-				{ actorId: context.session.user.id },
-			),
+		const { actorId, pm, tenantId } = context;
+		return pm.run(tenantId, () =>
+			pm.healthcare.psych.closeReadiness.run({ input }, { actorId }),
 		);
 	});

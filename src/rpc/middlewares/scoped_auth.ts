@@ -18,11 +18,11 @@ export const scopedAuthMiddleware = base.use(async ({ context, next }) => {
 		throw new Error("Unauthorized");
 	}
 
+	const organizationSlug = requireOrganizationSlug(headers);
+	const tenantId = await resolveTenantDatabaseName(headers);
 	const actorId = session.user.id;
-	const dbName = await resolveTenantDatabaseName(headers);
 
-	requireOrganizationSlug(context.headers);
-	const ctx = { ...context, actorId, dbName, pm, session };
+	const ctx = { ...context, actorId, organizationSlug, pm, session, tenantId };
 
 	return next({ context: ctx });
 });
