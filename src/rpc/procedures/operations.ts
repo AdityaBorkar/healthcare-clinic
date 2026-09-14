@@ -2,10 +2,12 @@ import {
 	AttendanceMarkSchema,
 	BranchCreateSchema,
 	ComplianceEvidenceSchema,
+	ComplianceListSchema,
 	ExplorerGrantSchema,
 	ExplorerQuerySchema,
 	LeaveDecideSchema,
 	LeaveRequestSchema,
+	MasterFilterSchema,
 	MasterUpsertSchema,
 	MessageRetrySchema,
 	MessageSendSchema,
@@ -13,6 +15,7 @@ import {
 	OptOutSchema,
 	PayrollExportSchema,
 	ReportDefSchema,
+	ReportListSchema,
 	ReportRunSchema,
 	RosterPlanSchema,
 	SeedPresetsSchema,
@@ -33,11 +36,14 @@ export const hrStaffUpsert = authed
 				{
 					input: {
 						branchId: input.branchId,
+						department: input.department,
 						doj: input.doj,
+						exitDate: input.exitDate,
 						name: input.name,
 						phone: input.phone,
 						role: input.role,
 						staffId: input.staffId,
+						status: input.status,
 					},
 				},
 				{ actorId: context.session.user.id },
@@ -220,7 +226,10 @@ export const explorerQuery = authed
 					input: {
 						branchId: input.branchId,
 						collection: input.collection,
+						filters: input.filters,
 						limit: input.limit,
+						offset: input.offset,
+						sort: input.sort,
 					},
 				},
 				{ actorId: context.session.user.id },
@@ -240,7 +249,10 @@ export const explorerExportCsv = authed
 					input: {
 						branchId: input.branchId,
 						collection: input.collection,
+						filters: input.filters,
 						limit: input.limit,
+						offset: input.offset,
+						sort: input.sort,
 					},
 				},
 				{ actorId: context.session.user.id },
@@ -402,6 +414,48 @@ export const auditQuery = authed
 		return pm.run(dbName, () =>
 			pm.healthcare.operations.auditQuery.run(
 				{ input: { branchId: input.branchId, limit: 200 } },
+				{ actorId: context.session.user.id },
+			),
+		);
+	});
+
+export const mastersGet = authed
+	.input(MasterFilterSchema)
+	.handler(async ({ context, input }) => {
+		requireOrganizationSlug(context.headers);
+		const dbName = await resolveTenantDatabaseName(context.headers);
+		const { pm } = await import("#/aspen/server");
+		return pm.run(dbName, () =>
+			pm.healthcare.operations.mastersGet.run(
+				{ input: { branchId: input.branchId, domain: input.domain } },
+				{ actorId: context.session.user.id },
+			),
+		);
+	});
+
+export const complianceList = authed
+	.input(ComplianceListSchema)
+	.handler(async ({ context, input }) => {
+		requireOrganizationSlug(context.headers);
+		const dbName = await resolveTenantDatabaseName(context.headers);
+		const { pm } = await import("#/aspen/server");
+		return pm.run(dbName, () =>
+			pm.healthcare.operations.complianceList.run(
+				{ input: { branchId: input.branchId, framework: input.framework } },
+				{ actorId: context.session.user.id },
+			),
+		);
+	});
+
+export const reportsList = authed
+	.input(ReportListSchema)
+	.handler(async ({ context, input }) => {
+		requireOrganizationSlug(context.headers);
+		const dbName = await resolveTenantDatabaseName(context.headers);
+		const { pm } = await import("#/aspen/server");
+		return pm.run(dbName, () =>
+			pm.healthcare.operations.reportsList.run(
+				{ input: { branchId: input.branchId, collection: input.collection } },
 				{ actorId: context.session.user.id },
 			),
 		);

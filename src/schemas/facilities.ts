@@ -13,6 +13,26 @@ export const FacilityCategorySchema = picklist([
 	"ward",
 	"tele",
 	"support",
+	// P0-9 OPD/clinic facility categories (backend picklist update pending;
+	// unknown values fall back to "support" server-side until then).
+	"ot",
+	"bed",
+	"mri",
+	"ct",
+	"xray",
+	"usg",
+	"chair",
+	"nadi",
+	"therapy",
+	"counselling",
+]);
+
+// P0-9 maintenance-hold status for blocks/maintenance windows.
+export const FacilityStatusSchema = picklist([
+	"active",
+	"maintenance-hold",
+	"blocked",
+	"closed",
 ]);
 
 export const FacilityCreateSchema = object({
@@ -20,6 +40,7 @@ export const FacilityCreateSchema = object({
 	category: FacilityCategorySchema,
 	code: optional(string()),
 	name: NameSchema,
+	status: optional(FacilityStatusSchema, "active"),
 });
 
 export const FacilityIdSchema = object({ id: FacilityId });
@@ -30,10 +51,16 @@ export const FacilityPatchSchema = object({
 		category: optional(FacilityCategorySchema),
 		code: optional(string()),
 		name: optional(NameSchema),
+		status: optional(FacilityStatusSchema),
 	}),
 });
 
-export const FacilityListSchema = object({ branchId: BranchId });
+export const FacilityListSchema = object({
+	branchId: BranchId,
+	category: optional(FacilityCategorySchema),
+	search: optional(string()),
+	status: optional(FacilityStatusSchema),
+});
 
 export const FacilityScheduleSchema = object({
 	branchId: BranchId,

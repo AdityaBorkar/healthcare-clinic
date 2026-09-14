@@ -7,6 +7,7 @@ import {
 	CancelSchema,
 	CertificateIssueSchema,
 	ConsentCaptureSchema,
+	NoShowSchema,
 	QueueQuerySchema,
 	QueueTokenSchema,
 	RecallIssueSchema,
@@ -24,12 +25,16 @@ export const computeSlots = authed
 		const dbName = await resolveTenantDatabaseName(context.headers);
 		const { pm } = await import("#/aspen/server");
 		try {
+			// Aspen ComputeSlots supports branchId/date/practitionerId/facilityId.
+			// serviceId/durationMin/bufferMin are validated locally (P0-10) and
+			// kept for slot-length display until the backend accepts them.
 			return await pm.run(dbName, () =>
 				pm.healthcare.appointments.computeSlots.run(
 					{
 						input: {
 							branchId: input.branchId,
 							date: input.date,
+							...(input.facilityId ? { facilityId: input.facilityId } : {}),
 							practitionerId: input.practitionerId,
 						},
 					},
@@ -358,6 +363,61 @@ export const issueCertificate = authed
 		} catch (error) {
 			throw new Error(
 				`Certificate issue failed (${error instanceof Error ? error.message : "unknown error"}); verify the appointment and retry`,
+			);
+		}
+	});
+
+// P0-8 no-show lifecycle. No dedicated Aspen workflow exists yet, so this
+// reuses the cancel workflow with a "no-show:" reason prefix (status ends as
+// cancelled with the reason preserved in payload). When recallAt is provided
+// it also issues a recall in the same request (1-click recall hook).
+// Auto-flag note: callers should follow with patients.setFlag
+// (level "watch", label "no-show") so repeat no-shows surface on the queue.
+export const markNoShow = authed
+	.input(NoShowSchema)
+	.handler(async ({ context, input }) => {
+		requireOrganizationSlug(context.headers);
+		const dbName = await resolveTenantDatabaseName(context.headers);
+		const { pm } = await import("#/aspen/server");
+		try {
+			const cancelled = await pm.run(dbName, () =>
+				pm.healthcare.appointments.cancel.run(
+					{
+						input: {
+							id: input.id,
+							reason: `no-show: ${input.reason ?? "patient did not arrive"}`,
+						},
+					},
+					{ actorId: context.session.user.id },
+				),
+			);
+			let recall: unknown = null;
+			if (input.recallAt) {
+				const patientId =
+					(cancelled as { patientId?: string } | null)?.patientId ??
+					(cancelled as { patient_id?: string } | null)?.patient_id;
+				if (patientId) {
+					const branchId =
+						(cancelled as { branchId?: string } | null)?.branchId ?? "main";
+					recall = await pm.run(dbName, () =>
+						pm.healthcare.appointments.issueRecall.run(
+							{
+								input: {
+									at: input.recallAt as string,
+									branchId,
+									patientId,
+									reason: "no-show recall",
+								},
+							},
+							{ actorId: context.session.user.id },
+						),
+					);
+				}
+			}
+			return { appointment: cancelled, recall };
+		} catch (error) {
+			throw new Error(
+				`Mark-no-show failed (${error instanceof Error ? error.message : "unknown error"}); check the ID and retry`,
 			);
 		}
 	});

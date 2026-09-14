@@ -5,10 +5,13 @@ import {
 	EncounterFilterSchema,
 	ExamFindingInputSchema,
 	ImmunizationInputSchema,
+	ProblemListFilterSchema,
+	ProblemUpsertSchema,
 	RegisterEntryInputSchema,
 	SoapNoteInputSchema,
 	TriageEntryInputSchema,
 } from "#/schemas/allopathy";
+import { InteractionCheckSchema } from "#/schemas/encounters";
 import { authed } from "../middlewares/auth";
 import { requireOrganizationSlug } from "../utils/subdomain";
 import { resolveTenantDatabaseName } from "../utils/workspace-organization";
@@ -105,6 +108,48 @@ export const listSoap = authed
 		const { pm } = await import("#/aspen/server");
 		return pm.run(dbName, () =>
 			pm.healthcare.allopathy.listSoap.run(
+				{ input },
+				{ actorId: context.session.user.id },
+			),
+		);
+	});
+
+export const problemUpsert = authed
+	.input(ProblemUpsertSchema)
+	.handler(async ({ context, input }) => {
+		requireOrganizationSlug(context.headers);
+		const dbName = await resolveTenantDatabaseName(context.headers);
+		const { pm } = await import("#/aspen/server");
+		return pm.run(dbName, () =>
+			pm.healthcare.allopathy.problemUpsert.run(
+				{ input },
+				{ actorId: context.session.user.id },
+			),
+		);
+	});
+
+export const problemList = authed
+	.input(ProblemListFilterSchema)
+	.handler(async ({ context, input }) => {
+		requireOrganizationSlug(context.headers);
+		const dbName = await resolveTenantDatabaseName(context.headers);
+		const { pm } = await import("#/aspen/server");
+		return pm.run(dbName, () =>
+			pm.healthcare.allopathy.problemList.run(
+				{ input },
+				{ actorId: context.session.user.id },
+			),
+		);
+	});
+
+export const checkInteraction = authed
+	.input(InteractionCheckSchema)
+	.handler(async ({ context, input }) => {
+		requireOrganizationSlug(context.headers);
+		const dbName = await resolveTenantDatabaseName(context.headers);
+		const { pm } = await import("#/aspen/server");
+		return pm.run(dbName, () =>
+			pm.healthcare.allopathy.checkInteraction.run(
 				{ input },
 				{ actorId: context.session.user.id },
 			),

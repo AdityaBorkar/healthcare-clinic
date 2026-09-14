@@ -20,6 +20,10 @@ export const create = authed
 		const dbName = await resolveTenantDatabaseName(context.headers);
 		const { pm } = await import("#/aspen/server");
 		try {
+			// Backend create accepts basePrice/branchId/code/name/teleExempt
+			// only; department/pathy/modality/duration/payer/GST/billing-code
+			// are validated locally and kept client-side until backend grows.
+			// Dup-block (P1): callers check list(search=code) before create.
 			return await pm.run(dbName, () =>
 				pm.healthcare.services.create.run(
 					{
@@ -68,6 +72,8 @@ export const list = authed
 		const dbName = await resolveTenantDatabaseName(context.headers);
 		const { pm } = await import("#/aspen/server");
 		try {
+			// Backend list accepts branchId only; department/pathy/search are
+			// applied as client-side type-ahead until backend filters land.
 			return await pm.run(dbName, () =>
 				pm.healthcare.services.list.run(
 					{ input: { branchId: input.branchId } },
@@ -88,9 +94,24 @@ export const update = authed
 		const dbName = await resolveTenantDatabaseName(context.headers);
 		const { pm } = await import("#/aspen/server");
 		try {
+			// Strip client-only patch keys before the backend update call.
+			const { patch } = input;
 			return await pm.run(dbName, () =>
 				pm.healthcare.services.update.run(
-					{ input: { id: input.id, patch: input.patch } },
+					{
+						input: {
+							id: input.id,
+							patch: {
+								...(patch.basePrice !== undefined
+									? { basePrice: patch.basePrice }
+									: {}),
+								...(patch.name !== undefined ? { name: patch.name } : {}),
+								...(patch.teleExempt !== undefined
+									? { teleExempt: patch.teleExempt }
+									: {}),
+							},
+						},
+					},
 					{ actorId: context.session.user.id },
 				),
 			);
@@ -202,6 +223,8 @@ export const addDiscountRule = authed
 		const dbName = await resolveTenantDatabaseName(context.headers);
 		const { pm } = await import("#/aspen/server");
 		try {
+			// maxPct/approver are validated locally as the discount note
+			// (max-% + approver) until the backend stores them.
 			return await pm.run(dbName, () =>
 				pm.healthcare.services.addDiscountRule.run(
 					{
@@ -230,6 +253,8 @@ export const definePackage = authed
 		const dbName = await resolveTenantDatabaseName(context.headers);
 		const { pm } = await import("#/aspen/server");
 		try {
+			// sessions/validityDays/scope are validated locally as the package
+			// note (sessions/validity/scope) until the backend stores them.
 			return await pm.run(dbName, () =>
 				pm.healthcare.services.definePackage.run(
 					{

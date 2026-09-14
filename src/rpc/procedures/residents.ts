@@ -1,13 +1,17 @@
 import {
 	BedAllocateSchema,
 	DailyLogSchema,
+	FamilySummarySendSchema,
+	FeedbackSchema,
 	GeriatricScoreSchema,
 	PolypharmacyReviewSchema,
+	RaiseAlertSchema,
 	ResidentAdmitSchema,
 	ResidentIdSchema,
 	ResidentListSchema,
 	RoundSchema,
 	StayBillCompileSchema,
+	StayChargeSchema,
 	VisitLogSchema,
 } from "#/schemas/residents";
 import { authed } from "../middlewares/auth";
@@ -162,6 +166,62 @@ export const listResidents = authed
 		const { pm } = await import("#/aspen/server");
 		return pm.run(dbName, () =>
 			pm.healthcare.residents.listResidents.run(
+				{ input },
+				{ actorId: context.session.user.id },
+			),
+		);
+	});
+
+export const recordStayCharge = authed
+	.input(StayChargeSchema)
+	.handler(async ({ context, input }) => {
+		requireOrganizationSlug(context.headers);
+		const dbName = await resolveTenantDatabaseName(context.headers);
+		const { pm } = await import("#/aspen/server");
+		return pm.run(dbName, () =>
+			pm.healthcare.residents.recordStayCharge.run(
+				{ input },
+				{ actorId: context.session.user.id },
+			),
+		);
+	});
+
+export const feedback = authed
+	.input(FeedbackSchema)
+	.handler(async ({ context, input }) => {
+		requireOrganizationSlug(context.headers);
+		const dbName = await resolveTenantDatabaseName(context.headers);
+		const { pm } = await import("#/aspen/server");
+		return pm.run(dbName, () =>
+			pm.healthcare.residents.feedback.run(
+				{ input },
+				{ actorId: context.session.user.id },
+			),
+		);
+	});
+
+export const raiseAlert = authed
+	.input(RaiseAlertSchema)
+	.handler(async ({ context, input }) => {
+		requireOrganizationSlug(context.headers);
+		const dbName = await resolveTenantDatabaseName(context.headers);
+		const { pm } = await import("#/aspen/server");
+		return pm.run(dbName, () =>
+			pm.healthcare.residents.raiseAlert.run(
+				{ input },
+				{ actorId: context.session.user.id },
+			),
+		);
+	});
+
+export const sendFamilySummary = authed
+	.input(FamilySummarySendSchema)
+	.handler(async ({ context, input }) => {
+		requireOrganizationSlug(context.headers);
+		const dbName = await resolveTenantDatabaseName(context.headers);
+		const { pm } = await import("#/aspen/server");
+		return pm.run(dbName, () =>
+			pm.healthcare.residents.sendFamilySummary.run(
 				{ input },
 				{ actorId: context.session.user.id },
 			),

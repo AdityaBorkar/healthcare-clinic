@@ -1,11 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 
+import { BranchSelector } from "#/components/branch-selector";
 import { PageHeader } from "#/components/page-header";
 import { Button } from "#/components/ui/button";
 import { Card, CardContent } from "#/components/ui/card";
 import { Input } from "#/components/ui/input";
+import { useBranch } from "#/lib/branch-store";
+import { exportRowsCsv, printPage } from "#/lib/export";
 import { orpc } from "#/lib/rpc";
+import { INVOICE_MIN_CODES_NOTE } from "#/schemas/services";
 
 export const Route = createFileRoute("/(tenant)/(app)/admin/services")({
 	component: RouteComponent,
@@ -15,37 +19,105 @@ const api: typeof orpc = orpc;
 
 type Service = {
 	code: string;
+	department?: string | null;
 	id: string;
 	name: string;
+	pathy?: string | null;
 	status: string;
 };
 
+type CptCode = {
+	billingCode?: string;
+	code: string;
+	description?: string;
+	price?: number;
+};
+
+/** Service catalogue: type-ahead search, dup-block, package/discount notes. */
 function RouteComponent() {
+	const [branchId] = useBranch();
 	const [rows, setRows] = useState<Array<Service>>([]);
+	const [query, setQuery] = useState("");
 	const [code, setCode] = useState("");
 	const [name, setName] = useState("");
+	const [department, setDepartment] = useState("");
+	const [pathy, setPathy] = useState("");
+	const [durationMin, setDurationMin] = useState("");
+	const [gstPct, setGstPct] = useState("");
+	const [billingCode, setBillingCode] = useState("");
 	const [error, setError] = useState<string | null>(null);
+	const [notice, setNotice] = useState<string | null>(null);
+	const [cptCodes, setCptCodes] = useState<Array<CptCode>>([]);
+	const [cptQuery, setCptQuery] = useState("");
+	const [cptCode, setCptCode] = useState("");
+	const [cptDescription, setCptDescription] = useState("");
 
 	const load = useCallback(async () => {
 		try {
-			setRows((await api.services.list({ branchId: "main" })).items);
+			const res = (await api.services.list({ branchId })) as {
+				items: Array<Service>;
+			};
+			setRows(res.items);
+			const cpt = (await api.admin.listCptCodes({
+				branchId,
+			})) as Array<CptCode>;
+			setCptCodes(cpt);
 		} catch (err) {
 			setError(err instanceof Error ? err.message : "List failed");
 		}
-	}, []);
+	}, [branchId]);
 
 	useEffect(() => {
 		void load();
 	}, [load]);
 
+	const q = query.trim().toLowerCase();
+	const visible = q
+		? rows.filter((r) =>
+				`${r.code} ${r.name} ${r.department ?? ""} ${r.pathy ?? ""}`
+					.toLowerCase()
+					.includes(q),
+			)
+		: rows;
+
 	async function onSubmit(e: React.FormEvent) {
 		e.preventDefault();
 		setError(null);
+		setNotice(null);
 		try {
-			await api.services.create({ branchId: "main", code, name });
+			// Dup-block (P1): refuse when the code already exists in-branch.
+			const existing = (await api.services.list({ branchId })) as {
+				items: Array<Service>;
+			};
+			if (
+				existing.items.some(
+					(s) => s.code.trim().toLowerCase() === code.trim().toLowerCase(),
+				)
+			) {
+				setError(`Service code "${code}" already exists in this branch.`);
+				return;
+			}
+			const duration = durationMin ? Number(durationMin) : undefined;
+			const gst = gstPct ? Number(gstPct) : undefined;
+			await api.services.create({
+				branchId,
+				code,
+				department: department || undefined,
+				...(duration && duration > 0 ? { durationMin: duration } : {}),
+				...(gst !== undefined && !Number.isNaN(gst) ? { gstPct: gst } : {}),
+				...(billingCode ? { billingCode } : {}),
+				name,
+				pathy: pathy || undefined,
+			});
 			setCode("");
 			setName("");
+			setDepartment("");
+			setPathy("");
+			setDurationMin("");
+			setGstPct("");
+			setBillingCode("");
 			await load();
+			setNotice("Service created.");
 		} catch (err) {
 			setError(err instanceof Error ? err.message : "Creation failed");
 		}
@@ -71,23 +143,32 @@ function RouteComponent() {
 		}
 	}
 
-	function exportCsv() {
-		const blob = new Blob(
-			[
-				[
-					"code,name,status",
-					...rows.map((r) => `${r.code},${r.name},${r.status}`),
-				].join("\n"),
-			],
-			{ type: "text/csv" },
-		);
-		const url = URL.createObjectURL(blob);
-		const a = document.createElement("a");
-		a.href = url;
-		a.download = "services.csv";
-		a.click();
-		URL.revokeObjectURL(url);
+	async function saveCpt(e: React.FormEvent) {
+		e.preventDefault();
+		setError(null);
+		setNotice(null);
+		try {
+			await api.admin.upsertCptCode({
+				billingCode: cptCode,
+				branchId,
+				code: cptCode,
+				description: cptDescription,
+			});
+			setCptCode("");
+			setCptDescription("");
+			await load();
+			setNotice("CPT code saved.");
+		} catch (err) {
+			setError(err instanceof Error ? err.message : "CPT save failed");
+		}
 	}
+
+	const cptQ = cptQuery.trim().toLowerCase();
+	const visibleCpt = cptQ
+		? cptCodes.filter((c) =>
+				`${c.code} ${c.description ?? ""}`.toLowerCase().includes(cptQ),
+			)
+		: cptCodes;
 
 	return (
 		<main className="bg-background px-4 py-6 sm:px-6 lg:px-8">
@@ -95,10 +176,19 @@ function RouteComponent() {
 				<PageHeader
 					actions={
 						<>
-							<Button onClick={exportCsv} variant="outline">
+							<Button
+								onClick={() =>
+									exportRowsCsv("services.csv", rows, [
+										"code",
+										"name",
+										"status",
+									])
+								}
+								variant="outline"
+							>
 								Export CSV
 							</Button>
-							<Button onClick={() => window.print()} variant="outline">
+							<Button onClick={printPage} variant="outline">
 								Print
 							</Button>
 						</>
@@ -106,8 +196,16 @@ function RouteComponent() {
 					description="Service catalogue with immutable codes."
 					title="Services"
 				/>
+				<BranchSelector />
 				<Card>
-					<CardContent className="pt-6">
+					<CardContent className="space-y-3 pt-6">
+						<Input
+							aria-label="Type-ahead search"
+							className="max-w-64"
+							onChange={(e) => setQuery(e.target.value)}
+							placeholder="Type-ahead search…"
+							value={query}
+						/>
 						<form className="flex flex-wrap gap-2" onSubmit={onSubmit}>
 							<Input
 								className="max-w-40"
@@ -123,21 +221,62 @@ function RouteComponent() {
 								required
 								value={name}
 							/>
+							<Input
+								className="max-w-40"
+								onChange={(e) => setDepartment(e.target.value)}
+								placeholder="Department"
+								value={department}
+							/>
+							<Input
+								className="max-w-40"
+								onChange={(e) => setPathy(e.target.value)}
+								placeholder="Pathy"
+								value={pathy}
+							/>
+							<Input
+								className="max-w-32"
+								min={1}
+								onChange={(e) => setDurationMin(e.target.value)}
+								placeholder="Min"
+								type="number"
+								value={durationMin}
+							/>
+							<Input
+								className="max-w-32"
+								min={0}
+								onChange={(e) => setGstPct(e.target.value)}
+								placeholder="GST %"
+								type="number"
+								value={gstPct}
+							/>
+							<Input
+								className="max-w-40"
+								onChange={(e) => setBillingCode(e.target.value)}
+								placeholder="Billing code"
+								value={billingCode}
+							/>
 							<Button type="submit">Add service</Button>
 						</form>
+						<p className="text-xs text-muted-foreground">
+							Discounts carry a max-% + approver note; packages carry
+							sessions/validity/scope. {INVOICE_MIN_CODES_NOTE}
+						</p>
 					</CardContent>
 				</Card>
 				<Card>
 					<CardContent className="pt-6">
 						{error ? <p className="text-sm text-red-600">{error}</p> : null}
+						{notice ? <p className="text-sm">{notice}</p> : null}
 						<ul className="divide-y text-sm">
-							{rows.map((r) => (
+							{visible.map((r) => (
 								<li
 									className="flex flex-wrap items-center justify-between gap-2 py-2"
 									key={r.id}
 								>
 									<span>
 										{r.code} · {r.name} · {r.status}
+										{r.department ? ` · ${r.department}` : ""}
+										{r.pathy ? ` · ${r.pathy}` : ""}
 									</span>
 									<span className="flex gap-2">
 										<Button
@@ -157,8 +296,52 @@ function RouteComponent() {
 									</span>
 								</li>
 							))}
-							{rows.length === 0 ? (
+							{visible.length === 0 ? (
 								<li className="py-4 text-muted-foreground">None yet.</li>
+							) : null}
+						</ul>
+					</CardContent>
+				</Card>
+				<Card>
+					<CardContent className="space-y-3 pt-6">
+						<p className="text-sm font-medium">
+							CPT + billing-code master ({visibleCpt.length})
+						</p>
+						<Input
+							aria-label="Search CPT codes"
+							className="max-w-64"
+							onChange={(e) => setCptQuery(e.target.value)}
+							placeholder="Search CPT…"
+							value={cptQuery}
+						/>
+						<form className="flex flex-wrap gap-2" onSubmit={saveCpt}>
+							<Input
+								className="max-w-40"
+								onChange={(e) => setCptCode(e.target.value)}
+								placeholder="CPT code"
+								required
+								value={cptCode}
+							/>
+							<Input
+								className="max-w-64"
+								onChange={(e) => setCptDescription(e.target.value)}
+								placeholder="Description"
+								required
+								value={cptDescription}
+							/>
+							<Button type="submit" variant="outline">
+								Save CPT code
+							</Button>
+						</form>
+						<ul className="divide-y text-sm">
+							{visibleCpt.map((c) => (
+								<li className="py-2" key={c.code}>
+									{c.code} · {c.description ?? "—"}
+									{c.price !== undefined ? ` · ₹${c.price}` : ""}
+								</li>
+							))}
+							{visibleCpt.length === 0 ? (
+								<li className="py-4 text-muted-foreground">No CPT codes.</li>
 							) : null}
 						</ul>
 					</CardContent>

@@ -3,9 +3,13 @@ import {
 	BreakGlassSchema,
 	ConsentsGetSchema,
 	DischargeIssueSchema,
+	DischargePendingSchema,
 	DocumentAttachSchema,
 	EncounterGetSchema,
+	FamilySummaryMultiSchema,
 	MergeSchema,
+	RecentRxQuerySchema,
+	RecordConsentSchema,
 	RecordsIdSchema,
 	RecordsSearchSchema,
 	RegisterEntrySchema,
@@ -236,8 +240,11 @@ export const registersAppend = authed
 				{
 					input: {
 						branchId: input.branchId,
+						certifierId: input.certifierId,
 						details: input.details,
+						encounterId: input.encounterId,
 						enteredBy: input.enteredBy,
+						occurredAt: input.occurredAt,
 						register: input.register,
 					},
 				},
@@ -308,7 +315,7 @@ export const addendumAppend = authed
 	});
 
 export const dischargePending = authed
-	.input(TimelineQuerySchema)
+	.input(DischargePendingSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
 		const dbName = await resolveTenantDatabaseName(context.headers);
@@ -319,6 +326,7 @@ export const dischargePending = authed
 					input: {
 						branchId: input.branchId,
 						patientId: input.patientId,
+						ward: input.ward,
 					},
 				},
 				{ actorId: context.session.user.id },
@@ -398,6 +406,68 @@ export const retentionCheck = authed
 				{
 					input: {
 						branchId: input.branchId,
+						patientId: input.patientId,
+						recordClass: input.recordClass,
+					},
+				},
+				{ actorId: context.session.user.id },
+			),
+		);
+	});
+
+export const recordConsent = authed
+	.input(RecordConsentSchema)
+	.handler(async ({ context, input }) => {
+		requireOrganizationSlug(context.headers);
+		const dbName = await resolveTenantDatabaseName(context.headers);
+		const { pm } = await import("#/aspen/server");
+		return pm.run(dbName, () =>
+			pm.healthcare.records.recordConsent.run(
+				{
+					input: {
+						branchId: input.branchId,
+						encounterId: input.encounterId,
+						grantedBy: input.grantedBy,
+						kind: input.kind,
+						patientId: input.patientId,
+					},
+				},
+				{ actorId: context.session.user.id },
+			),
+		);
+	});
+
+export const familySummaryMulti = authed
+	.input(FamilySummaryMultiSchema)
+	.handler(async ({ context, input }) => {
+		requireOrganizationSlug(context.headers);
+		const dbName = await resolveTenantDatabaseName(context.headers);
+		const { pm } = await import("#/aspen/server");
+		return pm.run(dbName, () =>
+			pm.healthcare.records.familySummaryMulti.run(
+				{
+					input: {
+						branchId: input.branchId,
+						patientIds: input.patientIds,
+					},
+				},
+				{ actorId: context.session.user.id },
+			),
+		);
+	});
+
+export const recentlyUsedRx = authed
+	.input(RecentRxQuerySchema)
+	.handler(async ({ context, input }) => {
+		requireOrganizationSlug(context.headers);
+		const dbName = await resolveTenantDatabaseName(context.headers);
+		const { pm } = await import("#/aspen/server");
+		return pm.run(dbName, () =>
+			pm.healthcare.records.recentlyUsedRx.run(
+				{
+					input: {
+						branchId: input.branchId,
+						limit: input.limit,
 						patientId: input.patientId,
 					},
 				},

@@ -12,13 +12,37 @@ export const Route = createFileRoute("/(tenant)/(app)/pharmacy/dispense")({
 	component: RouteComponent,
 });
 
+type SaleLine = {
+	batchId: string;
+	itemId: string;
+	qty: string;
+	substituteOf: string;
+	substituteReason: string;
+	uid: string;
+};
+
+let lineSeq = 0;
+const emptyLine = (): SaleLine => {
+	lineSeq += 1;
+	return {
+		batchId: "",
+		itemId: "",
+		qty: "1",
+		substituteOf: "",
+		substituteReason: "",
+		uid: `line-${lineSeq}`,
+	};
+};
+
 function RouteComponent() {
 	const [patientId, setPatientId] = useState("");
-	const [itemId, setItemId] = useState("");
-	const [qty, setQty] = useState("1");
+	const [prescriptionId, setPrescriptionId] = useState("");
+	const [fefoReason, setFefoReason] = useState("");
+	const [lines, setLines] = useState<Array<SaleLine>>([emptyLine()]);
 	const [result, setResult] = useState<string | null>(null);
+	const [saleId, setSaleId] = useState<string | null>(null);
 	const [lowStock, setLowStock] = useState<
-		Awaited<ReturnType<typeof orpc.pharmacy.reorderSuggest>>["suggestions"]
+		Array<{ itemId: string; name: string; stock: number }>
 	>([]);
 
 	useEffect(() => {
@@ -28,15 +52,37 @@ function RouteComponent() {
 		);
 	}, []);
 
+	function setLine(index: number, patch: Partial<SaleLine>) {
+		setLines((current) =>
+			current.map((line, i) => (i === index ? { ...line, ...patch } : line)),
+		);
+	}
+
 	async function dispense() {
-		const sale = await orpc.pharmacy.saleFromRx({
-			branchId: "main",
-			items: [{ itemId, qty: Number(qty) || 1 }],
-			mode: "cash",
-			patientId,
-		});
-		setResult(`Sale ${sale.saleNo} posted.`);
-		setItemId("");
+		setResult(null);
+		try {
+			const sale = (await orpc.pharmacy.saleFromRx({
+				branchId: "main",
+				fefoOverrideReason: fefoReason || undefined,
+				items: lines
+					.filter((line) => line.itemId.trim() !== "")
+					.map((line) => ({
+						batchId: line.batchId || undefined,
+						itemId: line.itemId.trim(),
+						qty: Number(line.qty) || 1,
+						substituteOf: line.substituteOf || undefined,
+						substituteReason: line.substituteReason || undefined,
+					})),
+				mode: "cash",
+				patientId,
+				prescriptionId: prescriptionId || undefined,
+			})) as { saleNo: string; id: string };
+			setSaleId(sale.id);
+			setResult(`Sale ${sale.saleNo} posted with batch trace.`);
+			setLines([emptyLine()]);
+		} catch (error) {
+			setResult(error instanceof Error ? error.message : "Dispense failed");
+		}
 	}
 
 	return (
@@ -61,26 +107,114 @@ function RouteComponent() {
 								/>
 							</div>
 							<div className="space-y-1">
-								<Label>Item ID (2)</Label>
+								<Label>Prescription ID (H1 required)</Label>
 								<Input
-									onChange={(e) => setItemId(e.target.value)}
-									value={itemId}
+									onChange={(e) => setPrescriptionId(e.target.value)}
+									value={prescriptionId}
 								/>
 							</div>
 							<div className="space-y-1">
-								<Label>Qty (3)</Label>
+								<Label>FEFO override reason</Label>
 								<Input
-									onChange={(e) => setQty(e.target.value)}
-									onKeyDown={(e) => {
-										if (e.key === "Enter") {
-											void dispense();
-										}
-									}}
-									value={qty}
+									onChange={(e) => setFefoReason(e.target.value)}
+									placeholder="Only when picking non-FEFO batch"
+									value={fefoReason}
 								/>
 							</div>
 						</div>
-						<Button onClick={() => void dispense()}>Dispense (Enter)</Button>
+						{lines.map((line, i) => (
+							<div
+								className="grid gap-3 rounded-md border p-3 sm:grid-cols-5"
+								key={line.uid}
+							>
+								<div className="space-y-1">
+									<Label>Item ID</Label>
+									<Input
+										onChange={(e) => setLine(i, { itemId: e.target.value })}
+										value={line.itemId}
+									/>
+								</div>
+								<div className="space-y-1">
+									<Label>Qty</Label>
+									<Input
+										onChange={(e) => setLine(i, { qty: e.target.value })}
+										onKeyDown={(e) => {
+											if (e.key === "Enter") {
+												void dispense();
+											}
+										}}
+										value={line.qty}
+									/>
+								</div>
+								<div className="space-y-1">
+									<Label>Batch (blank = FEFO)</Label>
+									<Input
+										onChange={(e) => setLine(i, { batchId: e.target.value })}
+										value={line.batchId}
+									/>
+								</div>
+								<div className="space-y-1">
+									<Label>Substitute of (item ID)</Label>
+									<Input
+										onChange={(e) =>
+											setLine(i, { substituteOf: e.target.value })
+										}
+										placeholder="Original OOS item"
+										value={line.substituteOf}
+									/>
+								</div>
+								<div className="space-y-1">
+									<Label>Substitute reason</Label>
+									<Input
+										onChange={(e) =>
+											setLine(i, { substituteReason: e.target.value })
+										}
+										placeholder="Same salt+strength swap"
+										value={line.substituteReason}
+									/>
+								</div>
+							</div>
+						))}
+						<div className="flex flex-wrap gap-2">
+							<Button
+								onClick={() => setLines((current) => [...current, emptyLine()])}
+								variant="outline"
+							>
+								Add line
+							</Button>
+							<Button onClick={() => void dispense()}>Dispense (Enter)</Button>
+							{saleId ? (
+								<>
+									<Button
+										onClick={() => window.print()}
+										type="button"
+										variant="outline"
+									>
+										Print invoice
+									</Button>
+									<Button
+										onClick={() =>
+											orpc.pharmacy
+												.getSale({ branchId: "main", id: saleId })
+												.then(() =>
+													setResult("Sale fetched for WhatsApp send."),
+												)
+												.catch((error: unknown) =>
+													setResult(
+														error instanceof Error
+															? error.message
+															: "Lookup failed",
+													),
+												)
+										}
+										type="button"
+										variant="outline"
+									>
+										WhatsApp receipt
+									</Button>
+								</>
+							) : null}
+						</div>
 						{result ? (
 							<p className="text-sm text-muted-foreground">{result}</p>
 						) : null}

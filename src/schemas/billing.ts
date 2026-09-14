@@ -1,5 +1,6 @@
 import {
 	array,
+	boolean,
 	maxValue,
 	minLength,
 	minValue,
@@ -45,6 +46,7 @@ export const InvoiceFinalizeSchema = object({
 
 export const InterimTabSchema = object({
 	branchId: BranchId,
+	episodeId: optional(string()),
 	patientId: Id,
 });
 
@@ -56,10 +58,19 @@ export const DiscountSchema = object({
 	requestedBy: Id,
 });
 
+const PayLineSchema = object({
+	amount: pipe(number(), minValue(0)),
+	mode: picklist(["cash", "upi", "card", "cheque", "neft"]),
+	ref: optional(string()),
+});
+
 export const PaySchema = object({
 	amount: pipe(number(), minValue(0)),
 	branchId: BranchId,
+	episodeId: optional(string()),
 	invoiceId: Id,
+	isAdvance: optional(boolean()),
+	lines: optional(array(PayLineSchema)),
 	mode: picklist(["cash", "upi", "card", "cheque", "neft"]),
 	ref: optional(string()),
 });
@@ -109,11 +120,25 @@ export const SettleAdvanceSchema = object({
 	amount: pipe(number(), minValue(0)),
 	branchId: BranchId,
 	direction: picklist(["receive", "adjust"]),
+	episodeId: optional(string()),
 	patientId: Id,
 });
 
 export const DuesAgingSchema = object({
+	asOf: optional(string()),
 	branchId: BranchId,
+});
+
+export const CollectionReportSchema = object({
+	branchId: BranchId,
+	desk: optional(string()),
+	from: optional(string()),
+	to: optional(string()),
+});
+
+export const PackageLiabilitySchema = object({
+	branchId: BranchId,
+	includeExpired: optional(boolean()),
 });
 
 export const GstExportSchema = object({

@@ -24,6 +24,11 @@ function RouteComponent() {
 	const [name, setName] = useState("");
 	const [age, setAge] = useState("");
 	const [phone, setPhone] = useState("");
+	const [stayType, setStayType] = useState("long-stay");
+	const [payerName, setPayerName] = useState("");
+	const [payerPhone, setPayerPhone] = useState("");
+	const [idNumber, setIdNumber] = useState("");
+	const [history, setHistory] = useState("");
 
 	const refresh = useCallback(async () => {
 		try {
@@ -42,15 +47,24 @@ function RouteComponent() {
 			advance: 0,
 			age: Number(age) || 0,
 			branchId: "main",
+			history: history || undefined,
+			idNumber: idNumber || undefined,
 			name,
 			nokName: "-",
 			nokPhone: "-",
+			payerName: payerName || undefined,
+			payerPhone: payerPhone || undefined,
 			phone,
 			sex: "other",
+			stayType: stayType as "long-stay" | "short-stay",
 		});
 		setName("");
 		setAge("");
 		setPhone("");
+		setPayerName("");
+		setPayerPhone("");
+		setIdNumber("");
+		setHistory("");
 		await refresh();
 	}
 
@@ -80,6 +94,42 @@ function RouteComponent() {
 								<Input
 									onChange={(e) => setPhone(e.target.value)}
 									value={phone}
+								/>
+							</div>
+							<div className="space-y-1">
+								<Label>Stay type</Label>
+								<Input
+									onChange={(e) => setStayType(e.target.value)}
+									placeholder="long-stay / short-stay"
+									value={stayType}
+								/>
+							</div>
+							<div className="space-y-1">
+								<Label>Payer name</Label>
+								<Input
+									onChange={(e) => setPayerName(e.target.value)}
+									value={payerName}
+								/>
+							</div>
+							<div className="space-y-1">
+								<Label>Payer phone</Label>
+								<Input
+									onChange={(e) => setPayerPhone(e.target.value)}
+									value={payerPhone}
+								/>
+							</div>
+							<div className="space-y-1">
+								<Label>ID number</Label>
+								<Input
+									onChange={(e) => setIdNumber(e.target.value)}
+									value={idNumber}
+								/>
+							</div>
+							<div className="space-y-1 sm:col-span-2">
+								<Label>Medical history</Label>
+								<Input
+									onChange={(e) => setHistory(e.target.value)}
+									value={history}
 								/>
 							</div>
 						</div>

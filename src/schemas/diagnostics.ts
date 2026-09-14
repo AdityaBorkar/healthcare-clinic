@@ -1,5 +1,6 @@
 import {
 	array,
+	boolean,
 	minLength,
 	number,
 	object,
@@ -12,13 +13,27 @@ import {
 const BranchId = optional(string(), "main");
 const Id = pipe(string(), minLength(1, "ID is required"));
 
+const ReferenceRangeSchema = object({
+	ageMax: optional(number()),
+	ageMin: optional(number()),
+	high: number(),
+	low: number(),
+	sex: optional(picklist(["M", "F", "any"])),
+});
+
 export const TestMasterSchema = object({
+	active: optional(boolean()),
 	branchId: BranchId,
 	code: pipe(string(), minLength(1, "Test code is required")),
+	method: optional(string()),
 	name: pipe(string(), minLength(1, "Test name is required")),
 	price: optional(number()),
+	ranges: optional(array(ReferenceRangeSchema)),
+	refHigh: optional(number()),
+	refLow: optional(number()),
 	specimen: optional(string()),
 	turnaroundHrs: optional(number()),
+	units: optional(string()),
 });
 
 export const PanelSchema = object({
@@ -43,6 +58,50 @@ export const SampleCollectSchema = object({
 	collectedAt: optional(string()),
 	collectedBy: Id,
 	orderId: Id,
+});
+
+export const SampleReceiveSchema = object({
+	barcode: pipe(string(), minLength(1, "Barcode is required")),
+	branchId: BranchId,
+	condition: optional(
+		picklist(["ok", "hemolysed", "insufficient", "clotted", "mislabeled"]),
+	),
+	receivedAt: optional(string()),
+	receivedBy: Id,
+});
+
+export const SampleRejectSchema = object({
+	barcode: pipe(string(), minLength(1, "Barcode is required")),
+	branchId: BranchId,
+	note: optional(string()),
+	reason: picklist([
+		"hemolysed",
+		"insufficient",
+		"clotted",
+		"mislabeled",
+		"other",
+	]),
+	rejectedBy: Id,
+});
+
+export const AddOnTestSchema = object({
+	branchId: BranchId,
+	orderId: Id,
+	requestedBy: Id,
+	tests: array(Id),
+});
+
+export const ProcessingStartSchema = object({
+	branchId: BranchId,
+	orderId: Id,
+	startedBy: Id,
+});
+
+export const TatReportSchema = object({
+	branchId: BranchId,
+	from: optional(string()),
+	limit: optional(number()),
+	to: optional(string()),
 });
 
 export const ResultEntrySchema = object({
@@ -111,10 +170,13 @@ export const RadioAuthorizeSchema = object({
 
 export const QcLogSchema = object({
 	branchId: BranchId,
+	deviations: optional(string()),
 	equipment: pipe(string(), minLength(1, "Equipment is required")),
 	loggedBy: Id,
 	param: pipe(string(), minLength(1, "Parameter is required")),
-	status: picklist(["pass", "fail"]),
+	reagentLots: optional(array(string())),
+	status: picklist(["pass", "flag", "fail"]),
+	testFamily: optional(string()),
 	value: string(),
 });
 

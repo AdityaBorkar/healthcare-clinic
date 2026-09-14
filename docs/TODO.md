@@ -1,5 +1,13 @@
 # TODO
 
+Ensure the @schemas are defined in the modules itself and exported from there for use. Unless it is used in forms, where custom schema/validation is required, use the module's schema.
+
+resolveTenantDatabaseName -> add { subdomain, pm, actorId } to the context
+
+Clearly define module boundaries
+
+Clearly define UI for one module and adapt accordingly for all other modules
+
 Speed: 2 modules per day for 5 days a week. Rest 2 days must be on review fo those modules.
 
 Printing and Sending through WhatsApp is very important

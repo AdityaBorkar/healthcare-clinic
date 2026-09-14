@@ -3,6 +3,9 @@ import {
 	BranchIdSchema,
 	BranchPatchSchema,
 	CompanySchema,
+	CptListSchema,
+	CptUpsertSchema,
+	CptVersionSchema,
 	LogsQuerySchema,
 	MasterVersionSchema,
 	NamedIdSchema,
@@ -285,6 +288,9 @@ export const saveTemplate = authed
 		const dbName = await resolveTenantDatabaseName(context.headers);
 		const { pm } = await import("#/aspen/server");
 		try {
+			// status (draft/approved/retired) is validated locally for the
+			// send-gate; the backend save-template stores body/kind/name only
+			// until its schema grows a status column.
 			return await pm.run(dbName, () =>
 				pm.healthcare.admin.saveTemplate.run(
 					{
@@ -411,6 +417,114 @@ export const logs = authed
 		} catch (error) {
 			throw new Error(
 				`Audit log load failed (${error instanceof Error ? error.message : "unknown error"}); retry`,
+			);
+		}
+	});
+
+// CPT + billing-code master (P0-5, admin domain). Backed by the generic
+// master-version store with domain "cpt": version = CPT code, payload = JSON
+// of { code, description, billingCode, system, price }.
+export const upsertCptCode = authed
+	.input(CptUpsertSchema)
+	.handler(async ({ context, input }) => {
+		requireOrganizationSlug(context.headers);
+		const dbName = await resolveTenantDatabaseName(context.headers);
+		const { pm } = await import("#/aspen/server");
+		try {
+			return await pm.run(dbName, () =>
+				pm.healthcare.admin.saveMasterVersion.run(
+					{
+						input: {
+							branchId: input.branchId,
+							domain: "cpt",
+							payload: JSON.stringify({
+								billingCode: input.billingCode,
+								code: input.code,
+								description: input.description,
+								price: input.price,
+								system: input.system,
+							}),
+							version: input.code,
+						},
+					},
+					{ actorId: context.session.user.id },
+				),
+			);
+		} catch (error) {
+			throw new Error(
+				`CPT save failed (${error instanceof Error ? error.message : "unknown error"}); verify the code and retry`,
+			);
+		}
+	});
+
+export const listCptCodes = authed
+	.input(CptListSchema)
+	.handler(async ({ context, input }) => {
+		requireOrganizationSlug(context.headers);
+		const dbName = await resolveTenantDatabaseName(context.headers);
+		const { pm } = await import("#/aspen/server");
+		try {
+			const rows = (await pm.run(dbName, () =>
+				pm.healthcare.admin.listMasterVersions.run(
+					{ input: {} },
+					{ actorId: context.session.user.id },
+				),
+			)) as Array<{
+				branchId?: string;
+				domain?: string;
+				payload?: string | null;
+				version?: string;
+			}>;
+			const q = (input.search ?? "").trim().toLowerCase();
+			return rows
+				.filter((r) => r.domain === "cpt")
+				.map((r) => {
+					try {
+						return {
+							...JSON.parse(r.payload ?? "{}"),
+							version: r.version,
+						};
+					} catch {
+						return { code: r.version, version: r.version };
+					}
+				})
+				.filter((c: { code?: string; description?: string }) => {
+					if (!q) return true;
+					return (
+						(c.code ?? "").toLowerCase().includes(q) ||
+						(c.description ?? "").toLowerCase().includes(q)
+					);
+				});
+		} catch (error) {
+			throw new Error(
+				`CPT list failed (${error instanceof Error ? error.message : "unknown error"}); retry`,
+			);
+		}
+	});
+
+export const saveCptVersion = authed
+	.input(CptVersionSchema)
+	.handler(async ({ context, input }) => {
+		requireOrganizationSlug(context.headers);
+		const dbName = await resolveTenantDatabaseName(context.headers);
+		const { pm } = await import("#/aspen/server");
+		try {
+			return await pm.run(dbName, () =>
+				pm.healthcare.admin.saveMasterVersion.run(
+					{
+						input: {
+							branchId: input.branchId,
+							domain: "cpt",
+							payload: input.payload,
+							version: input.version,
+						},
+					},
+					{ actorId: context.session.user.id },
+				),
+			);
+		} catch (error) {
+			throw new Error(
+				`CPT version save failed (${error instanceof Error ? error.message : "unknown error"}); verify the version and retry`,
 			);
 		}
 	});

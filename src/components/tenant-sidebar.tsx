@@ -1,4 +1,4 @@
-import { Link, useLocation } from "@tanstack/react-router";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import {
 	Bell,
 	Brain,
@@ -30,10 +30,28 @@ import {
 } from "lucide-react";
 import { LayoutGroup } from "motion/react";
 
+import { BranchSelector } from "#/components/branch-selector";
+import {
+	CommandPalette,
+	openCommandPalette,
+} from "#/components/command-palette";
 import { SidebarHoverItem } from "#/components/sidebar-hover-item";
 import { Avatar, AvatarFallback } from "#/components/ui/avatar";
 import { Button } from "#/components/ui/button";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "#/components/ui/select";
 import { WorkspaceSelector } from "#/components/workspace-selector";
+import {
+	CLINIC_ROLES,
+	isHrefAllowed,
+	roleLabel,
+	useClinicRole,
+} from "#/lib/role-views";
 import { cn } from "#/lib/utils";
 
 type Organization = {
@@ -150,6 +168,18 @@ export function TenantSidebar({
 	organization: Organization | null;
 	user: User;
 }) {
+	const navigate = useNavigate();
+	const [role, setRole] = useClinicRole();
+	const visible = sections
+		.map((section) => ({
+			...section,
+			items: section.items.filter((item) => isHrefAllowed(role, item.href)),
+		}))
+		.filter((section) => section.items.length > 0);
+	const hiddenCount =
+		sections.reduce((n, s) => n + s.items.length, 0) -
+		visible.reduce((n, s) => n + s.items.length, 0);
+
 	return (
 		<aside className="flex w-full shrink-0 flex-col border-b border-border bg-sidebar md:sticky md:top-0 md:h-svh md:w-72 md:min-w-72 md:border-r md:border-b-0 xl:w-80 xl:min-w-80">
 			<div className="border-b border-border px-3 py-3">
@@ -157,8 +187,28 @@ export function TenantSidebar({
 			</div>
 
 			<div className="space-y-2 border-b border-border px-3 py-3">
+				<BranchSelector compact />
+				<label className="flex items-center gap-2 text-xs text-muted-foreground">
+					<span className="shrink-0">View as</span>
+					<Select
+						onValueChange={(v) => setRole(v as Parameters<typeof setRole>[0])}
+						value={role}
+					>
+						<SelectTrigger aria-label="Select role view" className="h-8">
+							<SelectValue />
+						</SelectTrigger>
+						<SelectContent>
+							{CLINIC_ROLES.map((r) => (
+								<SelectItem key={r} value={r}>
+									{roleLabel(r)}
+								</SelectItem>
+							))}
+						</SelectContent>
+					</Select>
+				</label>
 				<Button
 					className="h-9 w-full justify-start gap-2.5 px-3 text-sm font-normal text-muted-foreground"
+					onClick={openCommandPalette}
 					variant="outline"
 				>
 					<Search className="size-4 shrink-0" />
@@ -167,7 +217,10 @@ export function TenantSidebar({
 						Ctrl K
 					</kbd>
 				</Button>
-				<Button className="h-9 w-full justify-center gap-2">
+				<Button
+					className="h-9 w-full justify-center gap-2"
+					onClick={() => void navigate({ to: "/reception/book" })}
+				>
 					<Plus className="size-4 shrink-0" />
 					New
 				</Button>
@@ -178,7 +231,7 @@ export function TenantSidebar({
 				className="min-h-0 w-full flex-1 overflow-y-auto px-3 py-4"
 			>
 				<LayoutGroup>
-					{sections.map((section) => (
+					{visible.map((section) => (
 						<SidebarSection key={section.label} label={section.label}>
 							{section.items.map((item) => (
 								<SidebarItem
@@ -217,7 +270,14 @@ export function TenantSidebar({
 						</SidebarSection>
 					))}
 				</LayoutGroup>
+				{hiddenCount > 0 ? (
+					<p className="px-3 pt-2 text-xs text-muted-foreground">
+						{hiddenCount} item{hiddenCount === 1 ? "" : "s"} hidden for the{" "}
+						{roleLabel(role)} view — switch role to access.
+					</p>
+				) : null}
 			</nav>
+			<CommandPalette />
 
 			<div className="border-t border-border px-3 py-3">
 				<div className="flex items-center gap-3 rounded-lg px-2 py-1.5">

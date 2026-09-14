@@ -1,12 +1,14 @@
 import {
 	BillingCndnSchema,
 	BillingIdSchema,
+	CollectionReportSchema,
 	DiscountSchema,
 	DuesAgingSchema,
 	GstExportSchema,
 	InterimTabSchema,
 	InvoiceFinalizeSchema,
 	InvoiceFromSourcesSchema,
+	PackageLiabilitySchema,
 	PackageSellSchema,
 	PaySchema,
 	PricelistSchema,
@@ -236,6 +238,34 @@ export const getInvoice = authed
 		const { pm } = await import("#/aspen/server");
 		return pm.run(dbName, () =>
 			pm.healthcare.billing.getInvoice.run(
+				{ input },
+				{ actorId: context.session.user.id },
+			),
+		);
+	});
+
+export const collectionReport = authed
+	.input(CollectionReportSchema)
+	.handler(async ({ context, input }) => {
+		requireOrganizationSlug(context.headers);
+		const dbName = await resolveTenantDatabaseName(context.headers);
+		const { pm } = await import("#/aspen/server");
+		return pm.run(dbName, () =>
+			pm.healthcare.billing.collectionReport.run(
+				{ input },
+				{ actorId: context.session.user.id },
+			),
+		);
+	});
+
+export const packageLiability = authed
+	.input(PackageLiabilitySchema)
+	.handler(async ({ context, input }) => {
+		requireOrganizationSlug(context.headers);
+		const dbName = await resolveTenantDatabaseName(context.headers);
+		const { pm } = await import("#/aspen/server");
+		return pm.run(dbName, () =>
+			pm.healthcare.billing.packageLiability.run(
 				{ input },
 				{ actorId: context.session.user.id },
 			),

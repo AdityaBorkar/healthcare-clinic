@@ -1,4 +1,14 @@
-import { boolean, minLength, object, optional, pipe, string } from "valibot";
+import {
+	boolean,
+	integer,
+	minLength,
+	minValue,
+	number,
+	object,
+	optional,
+	pipe,
+	string,
+} from "valibot";
 
 const BranchId = optional(string(), "main");
 const AppointmentId = pipe(
@@ -34,8 +44,14 @@ export const CancelSchema = object({
 
 export const SlotsQuerySchema = object({
 	branchId: BranchId,
+	// P0-10: optional facility/service scoping plus explicit duration+buffer.
+	// Duration/buffer must be positive minutes when provided.
+	bufferMin: optional(pipe(number(), integer(), minValue(0)), 0),
 	date: pipe(string(), minLength(1, "Date is required")),
+	durationMin: optional(pipe(number(), integer(), minValue(1))),
+	facilityId: optional(string()),
 	practitionerId: pipe(string(), minLength(1, "Practitioner ID is required")),
+	serviceId: optional(string()),
 });
 
 export const QueueQuerySchema = object({ branchId: BranchId });
@@ -82,3 +98,17 @@ export const CertificateIssueSchema = object({
 });
 
 export const AppointmentListSchema = object({ branchId: BranchId });
+
+// P0-8 no-show lifecycle: reason required downstream (cancel workflow),
+// recallAt offers a 1-click recall hook. Auto-flag note: callers should also
+// set a patient watch flag via patients.setFlag after marking no-show.
+export const NoShowSchema = object({
+	id: AppointmentId,
+	reason: optional(string(), "no-show"),
+	recallAt: optional(string()),
+});
+
+export const QueueHoldSchema = object({
+	id: AppointmentId,
+	reason: pipe(string(), minLength(1, "Hold reason is required")),
+});

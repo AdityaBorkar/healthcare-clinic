@@ -94,7 +94,7 @@ export const addDiagnosis = authed
 						input: {
 							code: input.code,
 							encounterId: input.encounterId,
-							kind: "provisional",
+							kind: input.kind ?? "provisional",
 							label: input.label,
 							patientId: input.patientId,
 							primary: input.primary,
@@ -121,6 +121,7 @@ export const prescribe = authed
 				pm.healthcare.encounters.prescribe.run(
 					{
 						input: {
+							acknowledgedWarnings: input.acknowledgedWarnings,
 							encounterId: input.encounterId,
 							items: input.items,
 							patientId: input.patientId,
@@ -178,6 +179,7 @@ export const placeOrder = authed
 							kind: input.kind,
 							note: input.note,
 							patientId: input.patientId,
+							receivingUnit: input.receivingUnit,
 						},
 					},
 					{ actorId: context.session.user.id },

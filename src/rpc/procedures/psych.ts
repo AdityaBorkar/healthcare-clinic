@@ -3,6 +3,7 @@
 import {
 	BreakGlassInputSchema,
 	CaregiverConsentInputSchema,
+	CloseReadinessInputSchema,
 	ControlledPrescriptionInputSchema,
 	CounsellingBookInputSchema,
 	InvoluntaryHookInputSchema,
@@ -224,6 +225,20 @@ export const recallList = authed
 		const { pm } = await import("#/aspen/server");
 		return pm.run(dbName, () =>
 			pm.healthcare.psych.recallList.run(
+				{ input },
+				{ actorId: context.session.user.id },
+			),
+		);
+	});
+
+export const closeReadiness = authed
+	.input(CloseReadinessInputSchema)
+	.handler(async ({ context, input }) => {
+		requireOrganizationSlug(context.headers);
+		const dbName = await resolveTenantDatabaseName(context.headers);
+		const { pm } = await import("#/aspen/server");
+		return pm.run(dbName, () =>
+			pm.healthcare.psych.closeReadiness.run(
 				{ input },
 				{ actorId: context.session.user.id },
 			),

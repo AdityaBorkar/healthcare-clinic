@@ -34,7 +34,7 @@ export const Route = createFileRoute("/")({
 	beforeLoad: async ({ search }) => {
 		const { organization, subdomain } = await orpc.organizations
 			.bySubdomain()
-			.catch(() => ({ organization: null }));
+			.catch(() => ({ organization: null, subdomain: null }));
 		if (subdomain && !organization) {
 			throw redirect({ to: "/not-found" });
 		}

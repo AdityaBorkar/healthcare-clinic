@@ -131,22 +131,10 @@ export const sittingsSupport = authed
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
 		const dbName = await resolveTenantDatabaseName(context.headers);
-		// The clinic sitting form captures no consent reference yet; the daycare
-		// workflow requires one. Forward it when a caller supplies it, otherwise
-		// surface the workflow's own guard message instead of a parse error.
-		const consentId =
-			"consentId" in input && typeof input.consentId === "string"
-				? input.consentId
-				: undefined;
-		if (!consentId) {
-			throw new Error(
-				"Daycare sitting needs consent first; capture consent and retry",
-			);
-		}
 		const { pm } = await import("#/aspen/server");
 		return pm.run(dbName, () =>
 			pm.healthcare.nursing.sittingsSupport.run(
-				{ input: { ...input, consentId } },
+				{ input },
 				{ actorId: context.session.user.id },
 			),
 		);

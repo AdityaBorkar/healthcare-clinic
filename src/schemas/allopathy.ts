@@ -61,10 +61,15 @@ export const ExamFindingInputSchema = object({
 });
 
 export const ChronicLogInputSchema = object({
+	antifungals: optional(pipe(string(), maxLength(1000))),
+	bpDys: optional(pipe(number(), minValue(0), maxValue(300))),
+	bpSys: optional(pipe(number(), minValue(0), maxValue(400))),
 	branchId: BranchIdSchema,
 	condition: picklist([
 		"diabetes",
 		"hypertension",
+		"tb",
+		"antenatal",
 		"asthma",
 		"copd",
 		"epilepsy",
@@ -73,6 +78,8 @@ export const ChronicLogInputSchema = object({
 		"other",
 	]),
 	encounterId: optional(pipe(string(), minLength(1))),
+	fundalHeightCm: optional(pipe(number(), minValue(0), maxValue(60))),
+	hba1c: optional(pipe(number(), minValue(0), maxValue(30))),
 	parameter: RequiredText("Parameter"),
 	patientId: RequiredText("Patient"),
 	unit: RequiredText("Unit"),
@@ -120,4 +127,25 @@ export const TriageEntryInputSchema = object({
 	rr: optional(pipe(number(), minValue(0), maxValue(120))),
 	spo2: optional(pipe(number(), minValue(0), maxValue(100))),
 	tempC: optional(pipe(number(), minValue(25), maxValue(46))),
+});
+
+export const ProblemStatusSchema = picklist(["active", "resolved"]);
+
+export const ProblemUpsertSchema = object({
+	branchId: BranchIdSchema,
+	code: RequiredText("ICD-11 code"),
+	encounterId: optional(pipe(string(), minLength(1))),
+	label: optional(pipe(string(), maxLength(500))),
+	patientId: RequiredText("Patient"),
+	problemId: optional(pipe(string(), minLength(1))),
+	status: ProblemStatusSchema,
+	system: picklist(["ICD11", "TM2", "NAMASTE"]),
+});
+
+export const ProblemListFilterSchema = object({
+	branchId: BranchIdSchema,
+	limit: optional(number()),
+	offset: optional(number()),
+	patientId: RequiredText("Patient"),
+	status: optional(ProblemStatusSchema),
 });

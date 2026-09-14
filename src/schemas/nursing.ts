@@ -1,5 +1,6 @@
 import {
 	array,
+	maxLength,
 	maxValue,
 	minLength,
 	minValue,
@@ -56,14 +57,15 @@ export const PainSchema = object({
 
 export const RiskScreenSchema = object({
 	branchId: BranchId,
-	kind: picklist(["Morse", "Braden"]),
+	kind: picklist(["Morse", "Braden", "MNA"]),
 	patientId: Id,
 	score: number(),
 	screenedBy: Id,
 });
 
 export const DrugAdminSchema = object({
-	batchId: Id,
+	allergies: optional(array(string())),
+	batchId: optional(pipe(string(), minLength(1))),
 	branchId: BranchId,
 	doctorOverrideId: optional(string()),
 	dose: pipe(string(), minLength(1, "Dose is required")),
@@ -72,14 +74,33 @@ export const DrugAdminSchema = object({
 	orderId: optional(string()),
 	outcome: picklist(["Given", "Held", "Refused", "Missed"]),
 	patientId: Id,
+	route: optional(pipe(string(), maxLength(50))),
 	witness: optional(string()),
 });
 
 export const SittingSupportSchema = object({
 	branchId: BranchId,
+	consentId: pipe(string(), minLength(1, "Consent is required")),
+	consumables: optional(
+		array(
+			object({
+				item: pipe(string(), minLength(1)),
+				qty: pipe(number(), minValue(1)),
+			}),
+		),
+	),
 	note: optional(string()),
 	patientId: Id,
 	phase: picklist(["pre", "post"]),
+	vitals: optional(
+		object({
+			bpDia: optional(number()),
+			bpSys: optional(number()),
+			pulse: optional(number()),
+			spo2: optional(number()),
+			temp: optional(number()),
+		}),
+	),
 });
 
 export const HandoverSchema = object({
@@ -98,6 +119,7 @@ export const ChecklistSchema = object({
 			label: pipe(string(), minLength(1)),
 		}),
 	),
+	kind: optional(picklist(["discharge", "general", "transfer"])),
 	name: pipe(string(), minLength(1, "Checklist name is required")),
 	patientId: optional(string()),
 });

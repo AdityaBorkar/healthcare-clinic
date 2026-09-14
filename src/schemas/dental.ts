@@ -1,5 +1,6 @@
 import {
 	array,
+	boolean,
 	maxLength,
 	maxValue,
 	minLength,
@@ -57,6 +58,15 @@ export const ToothConditionSchema = picklist([
 	"other",
 ]);
 
+export const ToothSurfaceSchema = picklist([
+	"mesial",
+	"distal",
+	"buccal",
+	"lingual",
+	"occlusal",
+	"incisal",
+]);
+
 export const DentalChartInputSchema = object({
 	branchId: BranchIdSchema,
 	encounterId: RequiredText("Encounter"),
@@ -65,6 +75,7 @@ export const DentalChartInputSchema = object({
 			object({
 				condition: ToothConditionSchema,
 				notes: optional(pipe(string(), maxLength(500))),
+				surface: optional(ToothSurfaceSchema),
 				tooth: FdiToothSchema,
 			}),
 		),
@@ -104,6 +115,8 @@ export const QuoteInputSchema = object({
 	gstPct: optional(Percent("GST")),
 	patientId: RequiredText("Patient"),
 	planId: RequiredText("Treatment plan"),
+	validDays: optional(pipe(number(), minValue(1))),
+	validTill: optional(pipe(string(), minLength(1))),
 });
 
 export const ConsentFormInputSchema = object({
@@ -117,8 +130,10 @@ export const ConsentFormInputSchema = object({
 
 export const ChairSlotInputSchema = object({
 	branchId: BranchIdSchema,
+	bufferMin: optional(pipe(number(), minValue(0))),
 	chairId: RequiredText("Chair"),
 	date: RequiredText("Date"),
+	durationMin: optional(pipe(number(), minValue(1))),
 	encounterId: RequiredText("Encounter"),
 	patientId: RequiredText("Patient"),
 	slot: RequiredText("Slot"),
@@ -126,11 +141,15 @@ export const ChairSlotInputSchema = object({
 
 export const LabJobInputSchema = object({
 	branchId: BranchIdSchema,
+	dueDate: optional(pipe(string(), minLength(1))),
 	encounterId: optional(pipe(string(), minLength(1))),
 	kind: picklist(["crown", "bridge", "denture", "implant", "aligner", "other"]),
 	labName: RequiredText("Lab"),
+	metal: optional(pipe(string(), maxLength(500))),
 	patientId: RequiredText("Patient"),
 	planId: optional(pipe(string(), minLength(1))),
+	qcNote: optional(pipe(string(), maxLength(1000))),
+	shade: optional(pipe(string(), maxLength(100))),
 	status: picklist(["Raised", "InLab", "Trial", "Delivered", "Remake"]),
 	tooth: optional(FdiToothSchema),
 });
@@ -142,12 +161,53 @@ export const LabJobTrackInputSchema = object({
 });
 
 export const PlanStageCloseInputSchema = object({
+	completed: optional(boolean()),
+	nextAppointment: optional(pipe(string(), minLength(1))),
+	note: optional(pipe(string(), maxLength(2000))),
 	planId: RequiredText("Treatment plan"),
 	stageIndex: pipe(
 		number("Stage index must be a number"),
 		minValue(0, "Stage index cannot be negative"),
 	),
 	to: PlanStageSchema,
+});
+
+export const RescheduleStageInputSchema = object({
+	newDate: RequiredText("New date"),
+	newSlot: optional(pipe(string(), minLength(1))),
+	planId: RequiredText("Treatment plan"),
+	reason: optional(pipe(string(), maxLength(1000))),
+	stageIndex: pipe(
+		number("Stage index must be a number"),
+		minValue(0, "Stage index cannot be negative"),
+	),
+});
+
+export const ImplantMilestoneInputSchema = object({
+	healingNote: optional(pipe(string(), maxLength(2000))),
+	milestone: picklist(["placement", "healing", "loading"]),
+	planId: RequiredText("Treatment plan"),
+	stageIndex: pipe(
+		number("Stage index must be a number"),
+		minValue(0, "Stage index cannot be negative"),
+	),
+});
+
+export const DentalPackageInputSchema = object({
+	branchId: BranchIdSchema,
+	name: RequiredText("Package name"),
+	patientId: RequiredText("Patient"),
+	planId: RequiredText("Treatment plan"),
+	price: pipe(number(), minValue(0)),
+});
+
+export const PendingJobsFilterSchema = object({
+	branchId: BranchIdSchema,
+	patientId: optional(pipe(string(), minLength(1))),
+	planId: optional(pipe(string(), minLength(1))),
+	status: optional(
+		picklist(["Raised", "InLab", "Trial", "Delivered", "Remake"]),
+	),
 });
 
 export const BranchFilterSchema = object({

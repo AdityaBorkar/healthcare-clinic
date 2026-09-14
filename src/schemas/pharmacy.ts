@@ -1,5 +1,6 @@
 import {
 	array,
+	boolean,
 	maxValue,
 	minLength,
 	minValue,
@@ -17,6 +18,7 @@ const Qty = pipe(number(), minValue(1, "Quantity must be positive"));
 
 export const ItemUpsertSchema = object({
 	branchId: BranchId,
+	coldChain: optional(boolean()),
 	gstPct: optional(pipe(number(), minValue(0), maxValue(100))),
 	hsn: optional(string()),
 	name: pipe(string(), minLength(1, "Item name is required")),
@@ -46,6 +48,8 @@ export const SaleFromRxSchema = object({
 			batchId: optional(string()),
 			itemId: Id,
 			qty: Qty,
+			substituteOf: optional(string()),
+			substituteReason: optional(string()),
 		}),
 	),
 	mode: picklist(["cash", "upi", "card", "credit"]),
@@ -64,6 +68,8 @@ export const ReturnSchema = object({
 	branchId: BranchId,
 	items: array(
 		object({
+			batchId: optional(string()),
+			disposition: optional(picklist(["restock", "quarantine"])),
 			itemId: Id,
 			qty: Qty,
 		}),
@@ -86,14 +92,18 @@ export const PoCreateSchema = object({
 
 export const GrnVerifySchema = object({
 	branchId: BranchId,
+	damagedQty: optional(pipe(number(), minValue(0))),
 	note: optional(string()),
 	poId: Id,
 	received: array(
 		object({
+			damagedQty: optional(pipe(number(), minValue(0))),
 			itemId: Id,
 			qty: pipe(number(), minValue(0)),
+			shortQty: optional(pipe(number(), minValue(0))),
 		}),
 	),
+	shortQty: optional(pipe(number(), minValue(0))),
 	verifiedBy: Id,
 });
 
@@ -128,12 +138,35 @@ export const TransferSchema = object({
 export const TransferAcceptSchema = object({
 	acceptedBy: Id,
 	branchId: BranchId,
+	decision: optional(picklist(["accept", "reject"]), "accept"),
+	reason: optional(string()),
 	transferId: Id,
 });
 
 export const ReorderSuggestSchema = object({
 	branchId: BranchId,
 	store: optional(string()),
+});
+
+export const ExpiryAlertQuerySchema = object({
+	branchId: BranchId,
+	store: optional(string()),
+	withinDays: optional(pipe(number(), minValue(1)), 90),
+});
+
+export const StockLedgerQuerySchema = object({
+	branchId: BranchId,
+	itemId: optional(string()),
+	limit: optional(pipe(number(), minValue(1))),
+	store: optional(string()),
+});
+
+export const StockCorrectSchema = object({
+	batchId: Id,
+	branchId: BranchId,
+	correctedBy: Id,
+	deltaQty: pipe(number()),
+	reason: pipe(string(), minLength(1, "Correction reason is required")),
 });
 
 export const PharmacyIdSchema = object({

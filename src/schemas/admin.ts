@@ -1,9 +1,12 @@
 import {
 	array,
+	integer,
 	minLength,
+	minValue,
 	number,
 	object,
 	optional,
+	picklist,
 	pipe,
 	string,
 } from "valibot";
@@ -59,11 +62,22 @@ export const MasterVersionSchema = object({
 	version: pipe(string(), minLength(1, "Version is required")),
 });
 
+export const TemplateStatusSchema = picklist(["draft", "approved", "retired"]);
+
 export const TemplateSchema = object({
 	body: pipe(string(), minLength(1, "Template body is required")),
 	branchId: BranchId,
 	kind: pipe(string(), minLength(1, "Template kind is required")),
 	name: NameSchema,
+	// Approval lifecycle (P0-3): new templates start as draft; only
+	// approved templates may be sent (send-gate enforced by operations'
+	// messaging procedure). Retired templates are kept for audit.
+	status: optional(TemplateStatusSchema, "draft"),
+});
+
+export const TemplateApproveSchema = object({
+	id: pipe(string(), minLength(1, "Template ID is required")),
+	status: TemplateStatusSchema,
 });
 
 export const RecallRuleSchema = object({
@@ -81,3 +95,42 @@ export const LogsQuerySchema = object({
 export const NamedIdSchema = object({
 	id: pipe(string(), minLength(1, "ID is required")),
 });
+
+// CPT + billing-code master (P0-5, admin domain). Stored via the generic
+// master-version store with domain "cpt" so no new Aspen workflow is needed;
+// invoices must carry >= 1 code (see INVOICE_MIN_CODES_NOTE).
+export const BillingCodeSystemSchema = picklist(["CPT", "ICD-11", "internal"]);
+
+export const CptCodeSchema = object({
+	billingCode: pipe(string(), minLength(1, "Billing code is required")),
+	code: pipe(string(), minLength(1, "CPT code is required")),
+	description: pipe(string(), minLength(1, "Description is required")),
+	price: optional(number()),
+	system: optional(BillingCodeSystemSchema, "CPT"),
+});
+
+export const CptUpsertSchema = object({
+	billingCode: pipe(string(), minLength(1, "Billing code is required")),
+	branchId: BranchId,
+	code: pipe(string(), minLength(1, "CPT code is required")),
+	description: pipe(string(), minLength(1, "Description is required")),
+	price: optional(number()),
+	system: optional(BillingCodeSystemSchema, "CPT"),
+});
+
+export const CptListSchema = object({
+	branchId: BranchId,
+	search: optional(string()),
+});
+
+export const CptVersionSchema = object({
+	branchId: BranchId,
+	// Master-version payload is a JSON string of CptCodeSchema[].
+	payload: optional(string()),
+	version: pipe(string(), minLength(1, "Version is required")),
+});
+
+export const INVOICE_MIN_CODES_NOTE =
+	"Every invoice must carry at least one billing code (CPT/ICD-11/internal).";
+
+export const PositiveInt = pipe(number(), integer(), minValue(1));

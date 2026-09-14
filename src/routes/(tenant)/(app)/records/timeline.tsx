@@ -45,7 +45,7 @@ function RouteComponent() {
 							</Button>
 						</div>
 						<ul className="divide-y text-sm">
-							{items.map((item) => (
+							{items.map((item: (typeof items)[number]) => (
 								<li className="py-2" key={item.id}>
 									<span className="font-medium">{item.at}</span>
 									<span className="text-muted-foreground">

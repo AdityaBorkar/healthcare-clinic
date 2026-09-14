@@ -3,12 +3,17 @@
 import {
 	AyushCaseSheetInputSchema,
 	AyushDiagnosisInputSchema,
+	AyushPrescriptionInputSchema,
 	DietPlanInputSchema,
 	FollowUpGridInputSchema,
+	FollowUpGridListSchema,
+	NadiBookingInputSchema,
+	PackageOutcomeInputSchema,
 	PackagePauseExtendInputSchema,
 	RepertorizationInputSchema,
 	TherapyPackageInputSchema,
 	TherapySittingInputSchema,
+	YogaAttendanceInputSchema,
 	YogaBatchInputSchema,
 	YogaEnrollmentInputSchema,
 } from "#/schemas/ayush";
@@ -59,7 +64,7 @@ export const dualCode = authed
 	});
 
 export const bookNadi = authed
-	.input(FollowUpGridInputSchema)
+	.input(NadiBookingInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
 		const dbName = await resolveTenantDatabaseName(context.headers);
@@ -164,6 +169,76 @@ export const createYogaBatch = authed
 		const { pm } = await import("#/aspen/server");
 		return pm.run(dbName, () =>
 			pm.healthcare.ayush.createYogaBatch.run(
+				{ input },
+				{ actorId: context.session.user.id },
+			),
+		);
+	});
+
+export const saveFollowUpGrid = authed
+	.input(FollowUpGridInputSchema)
+	.handler(async ({ context, input }) => {
+		requireOrganizationSlug(context.headers);
+		const dbName = await resolveTenantDatabaseName(context.headers);
+		const { pm } = await import("#/aspen/server");
+		return pm.run(dbName, () =>
+			pm.healthcare.ayush.saveFollowUpGrid.run(
+				{ input },
+				{ actorId: context.session.user.id },
+			),
+		);
+	});
+
+export const listFollowUpGrid = authed
+	.input(FollowUpGridListSchema)
+	.handler(async ({ context, input }) => {
+		requireOrganizationSlug(context.headers);
+		const dbName = await resolveTenantDatabaseName(context.headers);
+		const { pm } = await import("#/aspen/server");
+		return pm.run(dbName, () =>
+			pm.healthcare.ayush.listFollowUpGrid.run(
+				{ input },
+				{ actorId: context.session.user.id },
+			),
+		);
+	});
+
+export const markYogaAttendance = authed
+	.input(YogaAttendanceInputSchema)
+	.handler(async ({ context, input }) => {
+		requireOrganizationSlug(context.headers);
+		const dbName = await resolveTenantDatabaseName(context.headers);
+		const { pm } = await import("#/aspen/server");
+		return pm.run(dbName, () =>
+			pm.healthcare.ayush.markYogaAttendance.run(
+				{ input },
+				{ actorId: context.session.user.id },
+			),
+		);
+	});
+
+export const prescribeAyush = authed
+	.input(AyushPrescriptionInputSchema)
+	.handler(async ({ context, input }) => {
+		requireOrganizationSlug(context.headers);
+		const dbName = await resolveTenantDatabaseName(context.headers);
+		const { pm } = await import("#/aspen/server");
+		return pm.run(dbName, () =>
+			pm.healthcare.ayush.prescribe.run(
+				{ input },
+				{ actorId: context.session.user.id },
+			),
+		);
+	});
+
+export const recordPackageOutcome = authed
+	.input(PackageOutcomeInputSchema)
+	.handler(async ({ context, input }) => {
+		requireOrganizationSlug(context.headers);
+		const dbName = await resolveTenantDatabaseName(context.headers);
+		const { pm } = await import("#/aspen/server");
+		return pm.run(dbName, () =>
+			pm.healthcare.ayush.recordPackageOutcome.run(
 				{ input },
 				{ actorId: context.session.user.id },
 			),

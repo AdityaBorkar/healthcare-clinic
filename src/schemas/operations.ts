@@ -14,11 +14,14 @@ const Id = pipe(string(), minLength(1, "ID is required"));
 
 export const StaffUpsertSchema = object({
 	branchId: BranchId,
+	department: optional(string()),
 	doj: optional(string()),
+	exitDate: optional(string()),
 	name: pipe(string(), minLength(1, "Name is required")),
 	phone: optional(string()),
 	role: pipe(string(), minLength(1, "Role is required")),
 	staffId: optional(string()),
+	status: optional(picklist(["active", "on-notice", "exited"])),
 });
 
 export const RosterPlanSchema = object({
@@ -68,7 +71,17 @@ export const BranchCreateSchema = object({
 
 export const SeedPresetsSchema = object({
 	branchId: BranchId,
-	preset: picklist(["pricelist", "tests", "masters"]),
+	preset: picklist([
+		"pricelist",
+		"tests",
+		"masters",
+		"facilities",
+		"facility-mri",
+		"facility-ct",
+		"facility-xray",
+		"facility-usg",
+		"facility-therapy",
+	]),
 });
 
 export const MasterUpsertSchema = object({
@@ -128,7 +141,25 @@ export const ExplorerGrantSchema = object({
 export const ExplorerQuerySchema = object({
 	branchId: BranchId,
 	collection: pipe(string(), minLength(1, "Collection is required")),
+	filters: optional(string()),
 	limit: optional(number()),
+	offset: optional(number()),
+	sort: optional(string()),
+});
+
+export const MasterFilterSchema = object({
+	branchId: BranchId,
+	domain: optional(string()),
+});
+
+export const ComplianceListSchema = object({
+	branchId: BranchId,
+	framework: optional(picklist(["CEA", "NABH", "NABL"])),
+});
+
+export const ReportListSchema = object({
+	branchId: BranchId,
+	collection: optional(string()),
 });
 
 export const OperationsIdSchema = object({

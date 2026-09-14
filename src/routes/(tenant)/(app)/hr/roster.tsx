@@ -15,23 +15,60 @@ export const Route = createFileRoute("/(tenant)/(app)/hr/roster")({
 function RouteComponent() {
 	const [name, setName] = useState("");
 	const [role, setRole] = useState("");
+	const [department, setDepartment] = useState("");
+	const [status, setStatus] = useState("active");
+	const [doj, setDoj] = useState("");
+	const [exitDate, setExitDate] = useState("");
 	const [month, setMonth] = useState("");
+	const [entries, setEntries] = useState("");
 	const [result, setResult] = useState<string | null>(null);
 
 	async function addStaff() {
-		const staff = await orpc.operations.hrStaffUpsert({
-			branchId: "main",
-			name,
-			role,
-		});
-		setResult(`Staff ${(staff as { id: string }).id} saved.`);
-		setName("");
-		setRole("");
+		try {
+			const staff = (await orpc.operations.hrStaffUpsert({
+				branchId: "main",
+				department: department || undefined,
+				doj: doj || undefined,
+				exitDate: exitDate || undefined,
+				name,
+				role,
+				status: status as "active" | "on-notice" | "exited",
+			})) as { id: string };
+			setResult(`Staff ${staff.id} saved.`);
+			setName("");
+			setRole("");
+		} catch (error) {
+			setResult(error instanceof Error ? error.message : "Save failed");
+		}
 	}
 
 	async function planRoster() {
-		await orpc.operations.rosterPlan({ branchId: "main", entries: [], month });
-		setResult(`Roster shell for ${month} saved — add entries next.`);
+		try {
+			const parsed = entries
+				.split("\n")
+				.map((line) => line.trim())
+				.filter(Boolean)
+				.map((line) => {
+					const [staffId, date, shift] = line.split(/\s+/);
+					return {
+						date: date ?? "",
+						shift: (shift ?? "morning") as
+							| "morning"
+							| "evening"
+							| "night"
+							| "off",
+						staffId: staffId ?? "",
+					};
+				});
+			await orpc.operations.rosterPlan({
+				branchId: "main",
+				entries: parsed,
+				month,
+			});
+			setResult(`Roster for ${month} saved (${parsed.length} entries).`);
+		} catch (error) {
+			setResult(error instanceof Error ? error.message : "Roster failed");
+		}
 	}
 
 	async function exportPayroll() {
@@ -51,8 +88,10 @@ function RouteComponent() {
 				/>
 				<Card className="shadow-xs">
 					<CardContent className="space-y-4 py-6">
-						<CardTitle className="text-base font-semibold">Add staff</CardTitle>
-						<div className="grid gap-3 sm:grid-cols-2">
+						<CardTitle className="text-base font-semibold">
+							Add staff (role · dept · branch · join/exit)
+						</CardTitle>
+						<div className="grid gap-3 sm:grid-cols-3">
 							<div className="space-y-1">
 								<Label>Name</Label>
 								<Input onChange={(e) => setName(e.target.value)} value={name} />
@@ -60,6 +99,37 @@ function RouteComponent() {
 							<div className="space-y-1">
 								<Label>Role</Label>
 								<Input onChange={(e) => setRole(e.target.value)} value={role} />
+							</div>
+							<div className="space-y-1">
+								<Label>Department</Label>
+								<Input
+									onChange={(e) => setDepartment(e.target.value)}
+									value={department}
+								/>
+							</div>
+							<div className="space-y-1">
+								<Label>Status</Label>
+								<Input
+									onChange={(e) => setStatus(e.target.value)}
+									placeholder="active / on-notice / exited"
+									value={status}
+								/>
+							</div>
+							<div className="space-y-1">
+								<Label>Join date</Label>
+								<Input
+									onChange={(e) => setDoj(e.target.value)}
+									placeholder="YYYY-MM-DD"
+									value={doj}
+								/>
+							</div>
+							<div className="space-y-1">
+								<Label>Exit date</Label>
+								<Input
+									onChange={(e) => setExitDate(e.target.value)}
+									placeholder="YYYY-MM-DD"
+									value={exitDate}
+								/>
 							</div>
 						</div>
 						<Button onClick={() => void addStaff()}>Save staff</Button>
@@ -73,6 +143,14 @@ function RouteComponent() {
 						<div className="space-y-1">
 							<Label>Month (YYYY-MM)</Label>
 							<Input onChange={(e) => setMonth(e.target.value)} value={month} />
+						</div>
+						<div className="space-y-1">
+							<Label>Roster entries (staffId YYYY-MM-DD shift per line)</Label>
+							<Input
+								onChange={(e) => setEntries(e.target.value)}
+								placeholder={"staff-1 2026-09-15 morning"}
+								value={entries}
+							/>
 						</div>
 						<div className="flex gap-3">
 							<Button onClick={() => void planRoster()}>Plan roster</Button>

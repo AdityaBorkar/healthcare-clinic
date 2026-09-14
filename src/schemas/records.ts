@@ -1,4 +1,15 @@
-import { minLength, object, optional, picklist, pipe, string } from "valibot";
+import {
+	array,
+	maxLength,
+	minLength,
+	minValue,
+	number,
+	object,
+	optional,
+	picklist,
+	pipe,
+	string,
+} from "valibot";
 
 const BranchId = optional(string(), "main");
 const Id = pipe(string(), minLength(1, "ID is required"));
@@ -39,8 +50,11 @@ export const BreakGlassSchema = object({
 
 export const RegisterEntrySchema = object({
 	branchId: BranchId,
+	certifierId: optional(string()),
 	details: pipe(string(), minLength(1, "Entry details are required")),
+	encounterId: optional(string()),
 	enteredBy: Id,
+	occurredAt: optional(string()),
 	register: picklist([
 		"opd",
 		"lab",
@@ -70,6 +84,36 @@ export const MergeSchema = object({
 export const RetentionCheckSchema = object({
 	branchId: BranchId,
 	patientId: optional(string()),
+	recordClass: optional(picklist(["ipd", "mlc", "opd"])),
+});
+
+export const DischargePendingSchema = object({
+	branchId: BranchId,
+	patientId: optional(string()),
+	ward: optional(string()),
+});
+
+export const FamilySummaryMultiSchema = object({
+	branchId: BranchId,
+	patientIds: pipe(
+		array(pipe(string(), minLength(1))),
+		minLength(1, "Select at least one resident"),
+		maxLength(200, "Too many residents in one summary"),
+	),
+});
+
+export const RecentRxQuerySchema = object({
+	branchId: BranchId,
+	limit: optional(pipe(number(), minValue(1))),
+	patientId: Id,
+});
+
+export const RecordConsentSchema = object({
+	branchId: BranchId,
+	encounterId: optional(string()),
+	grantedBy: optional(string()),
+	kind: pipe(string(), minLength(1, "Consent kind is required")),
+	patientId: Id,
 });
 
 export const TimelineQuerySchema = object({

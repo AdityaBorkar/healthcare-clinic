@@ -1,10 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { PageHeader } from "#/components/page-header";
 import { Button } from "#/components/ui/button";
 import { Card, CardContent, CardTitle } from "#/components/ui/card";
 import { Input } from "#/components/ui/input";
+import { Label } from "#/components/ui/label";
+import { useBranch } from "#/lib/branch-store";
+import { printPage } from "#/lib/export";
 import { orpc } from "#/lib/rpc";
 
 export const Route = createFileRoute("/(tenant)/(app)/admin/company")({
@@ -14,10 +17,15 @@ export const Route = createFileRoute("/(tenant)/(app)/admin/company")({
 const api: typeof orpc = orpc;
 
 function RouteComponent() {
+	const [branchId] = useBranch();
 	const [name, setName] = useState("");
 	const [slug, setSlug] = useState("");
 	const [logo, setLogo] = useState("");
 	const [status, setStatus] = useState<string | null>(null);
+	const [versions, setVersions] = useState<Array<Record<string, unknown>>>([]);
+	const [domain, setDomain] = useState("");
+	const [version, setVersion] = useState("");
+	const [payload, setPayload] = useState("");
 
 	useEffect(() => {
 		let live = true;
@@ -52,12 +60,48 @@ function RouteComponent() {
 		}
 	}
 
+	const loadVersions = useCallback(async () => {
+		try {
+			const res = (await api.admin.listMasterVersions()) as
+				| Array<Record<string, unknown>>
+				| { items: Array<Record<string, unknown>> };
+			setVersions(Array.isArray(res) ? res : (res.items ?? []));
+		} catch {
+			setVersions([]);
+		}
+	}, []);
+
+	useEffect(() => {
+		void loadVersions();
+	}, [loadVersions]);
+
+	async function saveVersion() {
+		setStatus(null);
+		try {
+			await api.admin.saveMasterVersion({
+				branchId,
+				domain,
+				payload: payload || undefined,
+				version,
+			});
+			setStatus(
+				`Master ${domain}@${version} saved — effective forward only, history kept.`,
+			);
+			setDomain("");
+			setVersion("");
+			setPayload("");
+			await loadVersions();
+		} catch (err) {
+			setStatus(err instanceof Error ? err.message : "Version save failed");
+		}
+	}
+
 	return (
 		<main className="bg-background px-4 py-6 sm:px-6 lg:px-8">
 			<div className="mx-auto max-w-3xl space-y-6">
 				<PageHeader
 					actions={
-						<Button onClick={() => window.print()} variant="outline">
+						<Button onClick={printPage} variant="outline">
 							Print
 						</Button>
 					}
@@ -86,6 +130,50 @@ function RouteComponent() {
 							<Button type="submit">Save company</Button>
 						</form>
 						{status ? <p className="text-sm">{status}</p> : null}
+					</CardContent>
+				</Card>
+				<Card>
+					<CardContent className="space-y-4 pt-6">
+						<CardTitle className="text-base font-semibold">
+							Masters versioning ({versions.length})
+						</CardTitle>
+						<p className="text-sm text-muted-foreground">
+							Price/master edits are effective-date forward only — historical
+							invoices never rewrite.
+						</p>
+						<div className="grid gap-3 sm:grid-cols-3">
+							<div className="space-y-1">
+								<Label>Domain</Label>
+								<Input
+									onChange={(e) => setDomain(e.target.value)}
+									value={domain}
+								/>
+							</div>
+							<div className="space-y-1">
+								<Label>Version</Label>
+								<Input
+									onChange={(e) => setVersion(e.target.value)}
+									value={version}
+								/>
+							</div>
+							<div className="space-y-1">
+								<Label>Payload (JSON)</Label>
+								<Input
+									onChange={(e) => setPayload(e.target.value)}
+									value={payload}
+								/>
+							</div>
+						</div>
+						<Button onClick={() => void saveVersion()} variant="outline">
+							Save version
+						</Button>
+						<ul className="divide-y text-sm">
+							{versions.map((v, i) => (
+								<li className="py-2" key={String(v.id ?? i)}>
+									{String(v.domain ?? "—")} @ {String(v.version ?? "—")}
+								</li>
+							))}
+						</ul>
 					</CardContent>
 				</Card>
 			</div>

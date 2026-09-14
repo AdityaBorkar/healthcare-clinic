@@ -3,12 +3,15 @@ import {
 	ArrowLeft,
 	BookOpen,
 	ClipboardList,
+	Database,
 	FileBarChart,
 	History,
 	LogOut,
 	type LucideIcon,
+	Mail,
 	Settings2,
 	Shield,
+	ShieldCheck,
 	SlidersHorizontal,
 	Ticket,
 	Users,
@@ -58,8 +61,16 @@ const sections = [
 			},
 			{ href: "/settings/audit-log", icon: ClipboardList, label: "Audit Log" },
 			{ href: "/settings/reports", icon: FileBarChart, label: "Reports" },
+			{ href: "/settings/explorer", icon: Database, label: "Data Explorer" },
 		],
 		label: "Audit",
+	},
+	{
+		items: [
+			{ href: "/settings/compliance", icon: ShieldCheck, label: "Compliance" },
+			{ href: "/settings/messaging", icon: Mail, label: "Messaging" },
+		],
+		label: "Operations",
 	},
 	{
 		items: [

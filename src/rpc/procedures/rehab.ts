@@ -3,12 +3,14 @@ import {
 	DischargeSummaryInputSchema,
 	ExercisePrescriptionInputSchema,
 	OutcomeScoreInputSchema,
+	ProgressChartInputSchema,
 	RehabAssessmentInputSchema,
 	RehabEpisodeInputSchema,
 	RehabGoalPlanInputSchema,
 	RehabPackageInputSchema,
 	RehabSittingBookInputSchema,
 	RehabSittingRecordInputSchema,
+	ShareExerciseSheetInputSchema,
 } from "#/schemas/rehab";
 import { authed } from "../middlewares/auth";
 import { requireOrganizationSlug } from "../utils/subdomain";
@@ -148,6 +150,34 @@ export const dayBoard = authed
 		const { pm } = await import("#/aspen/server");
 		return pm.run(dbName, () =>
 			pm.healthcare.rehab.dayBoard.run(
+				{ input },
+				{ actorId: context.session.user.id },
+			),
+		);
+	});
+
+export const progressChart = authed
+	.input(ProgressChartInputSchema)
+	.handler(async ({ context, input }) => {
+		requireOrganizationSlug(context.headers);
+		const dbName = await resolveTenantDatabaseName(context.headers);
+		const { pm } = await import("#/aspen/server");
+		return pm.run(dbName, () =>
+			pm.healthcare.rehab.progressChart.run(
+				{ input },
+				{ actorId: context.session.user.id },
+			),
+		);
+	});
+
+export const shareExerciseSheet = authed
+	.input(ShareExerciseSheetInputSchema)
+	.handler(async ({ context, input }) => {
+		requireOrganizationSlug(context.headers);
+		const dbName = await resolveTenantDatabaseName(context.headers);
+		const { pm } = await import("#/aspen/server");
+		return pm.run(dbName, () =>
+			pm.healthcare.rehab.shareExerciseSheet.run(
 				{ input },
 				{ actorId: context.session.user.id },
 			),

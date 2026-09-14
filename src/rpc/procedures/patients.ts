@@ -209,6 +209,7 @@ export const addAllergy = authed
 							name: input.name,
 							note: input.note,
 							patientId: input.patientId,
+							reaction: input.reaction,
 							severity: input.severity,
 						},
 					},

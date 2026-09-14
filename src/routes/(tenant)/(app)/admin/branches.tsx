@@ -3,8 +3,11 @@ import { useCallback, useEffect, useState } from "react";
 
 import { PageHeader } from "#/components/page-header";
 import { Button } from "#/components/ui/button";
-import { Card, CardContent } from "#/components/ui/card";
+import { Card, CardContent, CardTitle } from "#/components/ui/card";
 import { Input } from "#/components/ui/input";
+import { Label } from "#/components/ui/label";
+import { useBranch } from "#/lib/branch-store";
+import { exportRowsCsv, printPage } from "#/lib/export";
 import { orpc } from "#/lib/rpc";
 
 export const Route = createFileRoute("/(tenant)/(app)/admin/branches")({
@@ -16,10 +19,14 @@ const api: typeof orpc = orpc;
 type Branch = { id: string; name: string; subdomain: string };
 
 function RouteComponent() {
+	const [branchId] = useBranch();
 	const [branches, setBranches] = useState<Array<Branch>>([]);
 	const [name, setName] = useState("");
 	const [subdomain, setSubdomain] = useState("");
+	const [goLiveBranch, setGoLiveBranch] = useState("");
+	const [pricelistName, setPricelistName] = useState("cash");
 	const [error, setError] = useState<string | null>(null);
+	const [status, setStatus] = useState<string | null>(null);
 
 	const load = useCallback(async () => {
 		try {
@@ -46,22 +53,29 @@ function RouteComponent() {
 		}
 	}
 
-	function exportCsv() {
-		const blob = new Blob(
-			[
-				[
-					"id,name,subdomain",
-					...branches.map((b) => `${b.id},${b.name},${b.subdomain}`),
-				].join("\n"),
-			],
-			{ type: "text/csv" },
-		);
-		const url = URL.createObjectURL(blob);
-		const a = document.createElement("a");
-		a.href = url;
-		a.download = "branches.csv";
-		a.click();
-		URL.revokeObjectURL(url);
+	async function goLive() {
+		setError(null);
+		try {
+			const target = goLiveBranch || branchId;
+			await api.operations.seedPresets({
+				branchId: target,
+				preset: "facilities",
+			});
+			await api.operations.seedPresets({
+				branchId: target,
+				preset: "pricelist",
+			});
+			await api.billing.pricelistUpsert({
+				branchId: target,
+				name: pricelistName,
+				rates: [],
+			});
+			setStatus(
+				`Branch ${target} live: subdomain + facility presets + ${pricelistName} pricelist — no deploy.`,
+			);
+		} catch (err) {
+			setError(err instanceof Error ? err.message : "Go-live failed");
+		}
 	}
 
 	return (
@@ -70,10 +84,19 @@ function RouteComponent() {
 				<PageHeader
 					actions={
 						<>
-							<Button onClick={exportCsv} variant="outline">
+							<Button
+								onClick={() =>
+									exportRowsCsv("branches.csv", branches, [
+										"id",
+										"name",
+										"subdomain",
+									])
+								}
+								variant="outline"
+							>
 								Export CSV
 							</Button>
-							<Button onClick={() => window.print()} variant="outline">
+							<Button onClick={printPage} variant="outline">
 								Print
 							</Button>
 						</>
@@ -100,6 +123,38 @@ function RouteComponent() {
 							/>
 							<Button type="submit">Add branch</Button>
 						</form>
+					</CardContent>
+				</Card>
+				<Card>
+					<CardContent className="space-y-4 pt-6">
+						<CardTitle className="text-base font-semibold">
+							Go live (no deploy)
+						</CardTitle>
+						<p className="text-sm text-muted-foreground">
+							New branch + subdomain + pricelist goes live through UI config
+							alone: seed facility presets, seed the base pricelist, attach a
+							named rate card. Login stays subdomain-compulsory.
+						</p>
+						<div className="grid gap-3 sm:grid-cols-2">
+							<div className="space-y-1">
+								<Label>Branch ID (blank = current)</Label>
+								<Input
+									onChange={(e) => setGoLiveBranch(e.target.value)}
+									value={goLiveBranch}
+								/>
+							</div>
+							<div className="space-y-1">
+								<Label>Pricelist name</Label>
+								<Input
+									onChange={(e) => setPricelistName(e.target.value)}
+									value={pricelistName}
+								/>
+							</div>
+						</div>
+						<Button onClick={() => void goLive()} variant="outline">
+							Seed presets + attach pricelist
+						</Button>
+						{status ? <p className="text-sm">{status}</p> : null}
 					</CardContent>
 				</Card>
 				<Card>

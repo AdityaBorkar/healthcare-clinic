@@ -14,6 +14,46 @@ import { authed } from "../middlewares/auth";
 import { requireOrganizationSlug } from "../utils/subdomain";
 import { resolveTenantDatabaseName } from "../utils/workspace-organization";
 
+// P0-9: map extended OPD/clinic categories to the closest backend-supported
+// bucket until the Aspen FacilityCategory picklist grows them.
+type BackendCategory =
+	| "consultation"
+	| "diagnostics"
+	| "pharmacy"
+	| "procedure"
+	| "support"
+	| "tele"
+	| "ward";
+
+function toBackendCategory(category: string): BackendCategory {
+	switch (category) {
+		case "ot":
+		case "chair":
+		case "therapy":
+			return "procedure";
+		case "bed":
+			return "ward";
+		case "mri":
+		case "ct":
+		case "xray":
+		case "usg":
+			return "diagnostics";
+		case "nadi":
+		case "counselling":
+			return "consultation";
+		case "consultation":
+		case "diagnostics":
+		case "pharmacy":
+		case "procedure":
+		case "support":
+		case "tele":
+		case "ward":
+			return category;
+		default:
+			return "support";
+	}
+}
+
 export const create = authed
 	.input(FacilityCreateSchema)
 	.handler(async ({ context, input }) => {
@@ -21,12 +61,14 @@ export const create = authed
 		const dbName = await resolveTenantDatabaseName(context.headers);
 		const { pm } = await import("#/aspen/server");
 		try {
+			// status (incl. maintenance-hold) is validated locally; the backend
+			// create stores branch/category/code/name only.
 			return await pm.run(dbName, () =>
 				pm.healthcare.facilities.create.run(
 					{
 						input: {
 							branchId: input.branchId,
-							category: input.category,
+							category: toBackendCategory(input.category),
 							code: input.code,
 							name: input.name,
 						},
@@ -88,9 +130,22 @@ export const update = authed
 		const dbName = await resolveTenantDatabaseName(context.headers);
 		const { pm } = await import("#/aspen/server");
 		try {
+			// Strip client-only status; map extended categories for the backend.
+			const { patch } = input;
 			return await pm.run(dbName, () =>
 				pm.healthcare.facilities.update.run(
-					{ input: { id: input.id, patch: input.patch } },
+					{
+						input: {
+							id: input.id,
+							patch: {
+								...(patch.category !== undefined
+									? { category: toBackendCategory(patch.category) }
+									: {}),
+								...(patch.code !== undefined ? { code: patch.code } : {}),
+								...(patch.name !== undefined ? { name: patch.name } : {}),
+							},
+						},
+					},
 					{ actorId: context.session.user.id },
 				),
 			);

@@ -23,17 +23,23 @@ export const create = authed
 		const dbName = await resolveTenantDatabaseName(context.headers);
 		const { pm } = await import("#/aspen/server");
 		try {
+			// Backend create accepts branchId/email/languages/name/overallYrs/
+			// phone/specialistYrs/specialty only; photo/bio/signature/board/
+			// fees/presence are kept client-side until the backend grows them.
+			// Multi-specialization: first entry doubles as legacy specialty.
 			return await pm.run(dbName, () =>
 				pm.healthcare.practitioners.create.run(
 					{
 						input: {
 							branchId: input.branchId,
 							email: input.email,
+							languages: input.languages,
 							name: input.name,
 							overallYrs: input.overallYrs,
 							phone: input.phone,
 							specialistYrs: input.specialistYrs,
-							specialty: input.specialty,
+							specialty:
+								input.specialty ?? input.specializations?.[0] ?? undefined,
 						},
 					},
 					{ actorId: context.session.user.id },
@@ -73,6 +79,8 @@ export const list = authed
 		const dbName = await resolveTenantDatabaseName(context.headers);
 		const { pm } = await import("#/aspen/server");
 		try {
+			// Backend list accepts branchId only; search/specialty filters are
+			// applied client-side in the admin UI until backend filters land.
 			return await pm.run(dbName, () =>
 				pm.healthcare.practitioners.list.run(
 					{ input: { branchId: input.branchId } },
@@ -93,9 +101,35 @@ export const update = authed
 		const dbName = await resolveTenantDatabaseName(context.headers);
 		const { pm } = await import("#/aspen/server");
 		try {
+			// Strip client-only patch keys (photo/bio/signature/board/fees/
+			// presence/specializations) before the backend update call.
+			const { patch } = input;
 			return await pm.run(dbName, () =>
 				pm.healthcare.practitioners.update.run(
-					{ input: { id: input.id, patch: input.patch } },
+					{
+						input: {
+							id: input.id,
+							patch: {
+								...(patch.email !== undefined ? { email: patch.email } : {}),
+								...(patch.languages !== undefined
+									? { languages: patch.languages }
+									: {}),
+								...(patch.name !== undefined ? { name: patch.name } : {}),
+								...(patch.overallYrs !== undefined
+									? { overallYrs: patch.overallYrs }
+									: {}),
+								...(patch.phone !== undefined ? { phone: patch.phone } : {}),
+								...(patch.specialistYrs !== undefined
+									? { specialistYrs: patch.specialistYrs }
+									: {}),
+								...(patch.specialty !== undefined
+									? { specialty: patch.specialty }
+									: patch.specializations?.[0] !== undefined
+										? { specialty: patch.specializations[0] }
+										: {}),
+							},
+						},
+					},
 					{ actorId: context.session.user.id },
 				),
 			);
@@ -133,6 +167,7 @@ export const addRegistration = authed
 		const dbName = await resolveTenantDatabaseName(context.headers);
 		const { pm } = await import("#/aspen/server");
 		try {
+			// renewalDate is tracked client-side until the backend schema grows it.
 			return await pm.run(dbName, () =>
 				pm.healthcare.practitioners.addRegistration.run(
 					{
@@ -250,6 +285,8 @@ export const setFee = authed
 		const dbName = await resolveTenantDatabaseName(context.headers);
 		const { pm } = await import("#/aspen/server");
 		try {
+			// Fee head (new/revisit/tele) is tracked client-side; the backend
+			// stores one amount per practitioner/service effective date.
 			return await pm.run(dbName, () =>
 				pm.healthcare.practitioners.setFee.run(
 					{

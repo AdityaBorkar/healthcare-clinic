@@ -1,4 +1,5 @@
 import {
+	AddOnTestSchema,
 	AuthorizeSchema,
 	CancelOrderSchema,
 	CriticalAckSchema,
@@ -6,6 +7,7 @@ import {
 	DiagnosticsIdSchema,
 	OrderLabsSchema,
 	PanelSchema,
+	ProcessingStartSchema,
 	QcLogSchema,
 	RadioAuthorizeSchema,
 	RadioBookSchema,
@@ -14,6 +16,9 @@ import {
 	RadioRescheduleSchema,
 	ResultEntrySchema,
 	SampleCollectSchema,
+	SampleReceiveSchema,
+	SampleRejectSchema,
+	TatReportSchema,
 	TestMasterSchema,
 } from "#/schemas/diagnostics";
 import { authed } from "../middlewares/auth";
@@ -77,13 +82,69 @@ export const collectSample = authed
 	});
 
 export const receiveSample = authed
-	.input(SampleCollectSchema)
+	.input(SampleReceiveSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
 		const dbName = await resolveTenantDatabaseName(context.headers);
 		const { pm } = await import("#/aspen/server");
 		return pm.run(dbName, () =>
 			pm.healthcare.diagnostics.receiveSample.run(
+				{ input },
+				{ actorId: context.session.user.id },
+			),
+		);
+	});
+
+export const sampleReject = authed
+	.input(SampleRejectSchema)
+	.handler(async ({ context, input }) => {
+		requireOrganizationSlug(context.headers);
+		const dbName = await resolveTenantDatabaseName(context.headers);
+		const { pm } = await import("#/aspen/server");
+		return pm.run(dbName, () =>
+			pm.healthcare.diagnostics.sampleReject.run(
+				{ input },
+				{ actorId: context.session.user.id },
+			),
+		);
+	});
+
+export const addonTest = authed
+	.input(AddOnTestSchema)
+	.handler(async ({ context, input }) => {
+		requireOrganizationSlug(context.headers);
+		const dbName = await resolveTenantDatabaseName(context.headers);
+		const { pm } = await import("#/aspen/server");
+		return pm.run(dbName, () =>
+			pm.healthcare.diagnostics.addonTest.run(
+				{ input },
+				{ actorId: context.session.user.id },
+			),
+		);
+	});
+
+export const processingStart = authed
+	.input(ProcessingStartSchema)
+	.handler(async ({ context, input }) => {
+		requireOrganizationSlug(context.headers);
+		const dbName = await resolveTenantDatabaseName(context.headers);
+		const { pm } = await import("#/aspen/server");
+		return pm.run(dbName, () =>
+			pm.healthcare.diagnostics.processingStart.run(
+				{ input },
+				{ actorId: context.session.user.id },
+			),
+		);
+	});
+
+export const tatReport = authed
+	.input(TatReportSchema)
+	.handler(async ({ context, input }) => {
+		requireOrganizationSlug(context.headers);
+		const dbName = await resolveTenantDatabaseName(context.headers);
+		const { pm } = await import("#/aspen/server");
+		return pm.run(dbName, () =>
+			pm.healthcare.diagnostics.tatReport.run(
 				{ input },
 				{ actorId: context.session.user.id },
 			),

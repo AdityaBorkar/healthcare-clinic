@@ -1,5 +1,6 @@
 import {
 	BatchReceiveSchema,
+	ExpiryAlertQuerySchema,
 	GrnVerifySchema,
 	ItemUpsertSchema,
 	PartialCloseSchema,
@@ -10,6 +11,8 @@ import {
 	ReorderSuggestSchema,
 	ReturnSchema,
 	SaleFromRxSchema,
+	StockCorrectSchema,
+	StockLedgerQuerySchema,
 	TransferAcceptSchema,
 	TransferSchema,
 } from "#/schemas/pharmacy";
@@ -193,6 +196,48 @@ export const getSale = authed
 		const { pm } = await import("#/aspen/server");
 		return pm.run(dbName, () =>
 			pm.healthcare.pharmacy.getSale.run(
+				{ input },
+				{ actorId: context.session.user.id },
+			),
+		);
+	});
+
+export const expiryAlerts = authed
+	.input(ExpiryAlertQuerySchema)
+	.handler(async ({ context, input }) => {
+		requireOrganizationSlug(context.headers);
+		const dbName = await resolveTenantDatabaseName(context.headers);
+		const { pm } = await import("#/aspen/server");
+		return pm.run(dbName, () =>
+			pm.healthcare.pharmacy.expiryAlerts.run(
+				{ input },
+				{ actorId: context.session.user.id },
+			),
+		);
+	});
+
+export const stockLedger = authed
+	.input(StockLedgerQuerySchema)
+	.handler(async ({ context, input }) => {
+		requireOrganizationSlug(context.headers);
+		const dbName = await resolveTenantDatabaseName(context.headers);
+		const { pm } = await import("#/aspen/server");
+		return pm.run(dbName, () =>
+			pm.healthcare.pharmacy.stockLedger.run(
+				{ input },
+				{ actorId: context.session.user.id },
+			),
+		);
+	});
+
+export const stockCorrect = authed
+	.input(StockCorrectSchema)
+	.handler(async ({ context, input }) => {
+		requireOrganizationSlug(context.headers);
+		const dbName = await resolveTenantDatabaseName(context.headers);
+		const { pm } = await import("#/aspen/server");
+		return pm.run(dbName, () =>
+			pm.healthcare.pharmacy.stockCorrect.run(
 				{ input },
 				{ actorId: context.session.user.id },
 			),
