@@ -1,18 +1,31 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import {
 	Bell,
+	Brain,
+	Calendar,
+	ClipboardList,
 	ContactRound,
 	Files,
+	FileText,
+	FlaskConical,
+	HeartHandshake,
+	Home,
 	LayoutList,
+	Leaf,
 	ListChecks,
 	LogOut,
 	type LucideIcon,
 	MessageSquare,
+	Pill,
 	Pin,
 	Plus,
+	Receipt,
 	Search,
+	Settings,
+	Stethoscope,
 	Tags,
 	Trash2,
+	Users,
 	Workflow,
 } from "lucide-react";
 import { LayoutGroup } from "motion/react";
@@ -33,6 +46,59 @@ type User = {
 };
 
 const sections = [
+	{
+		items: [
+			{ href: "/reception/book", icon: Calendar, label: "Book Appointment" },
+			{ href: "/reception/queue", icon: Users, label: "OPD Queue" },
+			{ href: "/appointments/calendar", icon: Calendar, label: "Calendar" },
+		],
+		label: "Reception",
+	},
+	{
+		items: [
+			{ href: "/opd/encounters", icon: Stethoscope, label: "OPD Encounters" },
+			{ href: "/dental/chart", icon: Plus, label: "Dental Chart" },
+			{ href: "/ayush/case", icon: Leaf, label: "AYUSH Case" },
+			{ href: "/psych/assessment", icon: Brain, label: "Psychiatry" },
+		],
+		label: "Clinical",
+	},
+	{
+		items: [
+			{ href: "/pharmacy/dispense", icon: Pill, label: "Pharmacy" },
+			{ href: "/lab/orders", icon: FlaskConical, label: "Lab Orders" },
+			{ href: "/radiology/book", icon: Search, label: "Radiology" },
+			{ href: "/billing/desk", icon: Receipt, label: "Billing Desk" },
+			{ href: "/nursing/board", icon: ClipboardList, label: "Nursing Board" },
+		],
+		label: "Support",
+	},
+	{
+		items: [
+			{ href: "/records/timeline", icon: FileText, label: "Medical Records" },
+			{
+				href: "/old-age-home/residents",
+				icon: HeartHandshake,
+				label: "Old Age Home",
+			},
+			{ href: "/hr/roster", icon: Users, label: "HR Roster" },
+		],
+		label: "Care",
+	},
+	{
+		items: [
+			{ href: "/admin/company", icon: Home, label: "Company" },
+			{ href: "/admin/branches", icon: Home, label: "Branches" },
+			{
+				href: "/admin/practitioners",
+				icon: Stethoscope,
+				label: "Practitioners",
+			},
+			{ href: "/admin/facilities-map", icon: Pin, label: "Facilities Map" },
+			{ href: "/admin/services", icon: Settings, label: "Services" },
+		],
+		label: "Admin",
+	},
 	{
 		items: [
 			{ href: "/notifications", icon: Bell, label: "Notifications" },

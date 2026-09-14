@@ -1,3 +1,4 @@
+import { Healthcare } from "@aspen-os/healthcare";
 import { ManagementPlane } from "@aspen-os/management";
 import {
 	type IsolatedTenantConfig,
@@ -88,11 +89,12 @@ const db = {
 // Modules
 
 const managementPlane = ManagementPlane.create(undefined);
+const healthcare = Healthcare.create();
 
 // Platform
 
-export const pm: IsolatedTenantPlatformInstance<[ManagementPlane]> =
+export const pm: IsolatedTenantPlatformInstance<[ManagementPlane, Healthcare]> =
 	IsolatedTenantPlatform.create(
 		{ auth, db, kvStore, logs, pubsub, rpc, storage },
-		[managementPlane],
+		[managementPlane, healthcare],
 	);
