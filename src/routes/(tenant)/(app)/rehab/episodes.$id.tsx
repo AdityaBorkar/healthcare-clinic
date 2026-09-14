@@ -79,7 +79,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.rehab.assess({
+			const res = await api.rehab.assessments({
 				branchId: "main",
 				details: details || undefined,
 				episodeId,
@@ -109,7 +109,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.rehab.bookSitting({
+			const res = await api.rehab.sittings.book({
 				branchId: "main",
 				date: sittingDate,
 				episodeId,
@@ -135,7 +135,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.rehab.setGoals({
+			const res = await api.rehab.goals.set({
 				branchId: "main",
 				episodeId,
 				goals: [
@@ -161,7 +161,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.rehab.buildPackage({
+			const res = await api.rehab.packages.build({
 				branchId: "main",
 				episodeId,
 				frequency: pkgFrequency,
@@ -189,7 +189,7 @@ function RouteComponent() {
 		setStatus(null);
 		try {
 			const vitals = { bpDys: 80, bpSys: 120, pulse: 72 };
-			const res = await api.rehab.recordSitting({
+			const res = await api.rehab.sittings.record({
 				branchId: "main",
 				dosage: recordDosage || undefined,
 				durationMins: recordDuration ? Number(recordDuration) : undefined,
@@ -212,7 +212,7 @@ function RouteComponent() {
 	async function loadChart() {
 		setStatus(null);
 		try {
-			const res = await api.rehab.progressChart({
+			const res = await api.rehab.progress.chart({
 				branchId: "main",
 				episodeId,
 			});

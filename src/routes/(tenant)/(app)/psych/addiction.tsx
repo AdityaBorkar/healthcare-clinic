@@ -48,7 +48,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.psych.chartWithdrawal({
+			const res = await api.psych.withdrawal.chart({
 				branchId: "main",
 				encounterId: encounterId || undefined,
 				lastUseAt: lastUse || undefined,
@@ -71,7 +71,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			await api.psych.relapsePlan({
+			await api.psych.relapsePlans({
 				branchId: "main",
 				followUpDates: followUps
 					? followUps
@@ -100,7 +100,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.psych.prescribeControlled({
+			const res = await api.psych.prescriptions.controlled({
 				branchId: "main",
 				daysSupply: Number(days),
 				encounterId,
@@ -121,7 +121,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			await api.psych.sideEffectCheck({
+			await api.psych.sideEffects.check({
 				branchId: "main",
 				effects: effects
 					.split(",")

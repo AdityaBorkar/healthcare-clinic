@@ -30,20 +30,6 @@ export function toWorkspaceUser(member: WorkspaceMember): WorkspaceUser {
 	};
 }
 
-export async function listWorkspaceMembers(
-	headers: Headers,
-	organizationSlug: string,
-): Promise<WorkspaceUser[]> {
-	const { pm } = await import("#/aspen/server");
-	const result = await pm.run("$global", () =>
-		pm.auth.service.api.listMembers({
-			headers,
-			query: { organizationSlug },
-		}),
-	);
-	return result.members.map(toWorkspaceUser);
-}
-
 /**
  * better-auth exposes no get-member-by-id endpoint, so single-member reads go
  * through the list endpoint with a server-side id filter instead of fetching

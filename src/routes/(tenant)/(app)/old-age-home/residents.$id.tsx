@@ -67,7 +67,7 @@ function RouteComponent() {
 
 	async function refresh() {
 		try {
-			const res = await orpc.residents.getResident({ branchId: "main", id });
+			const res = await orpc.residents.get({ branchId: "main", id });
 			setDetail(res as ResidentDetail);
 		} catch {
 			setDetail(null);
@@ -76,7 +76,7 @@ function RouteComponent() {
 
 	useEffect(() => {
 		void orpc.residents
-			.getResident({ branchId: "main", id })
+			.get({ branchId: "main", id })
 			.then((res) => setDetail(res as ResidentDetail))
 			.catch(() => setDetail(null));
 	}, [id]);
@@ -85,7 +85,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await orpc.residents.logDaily({
+			const res = await orpc.residents.daily.log({
 				bpDys: bpDys ? Number(bpDys) : undefined,
 				bpSys: bpSys ? Number(bpSys) : undefined,
 				branchId: "main",
@@ -110,7 +110,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await orpc.residents.round({
+			const res = await orpc.residents.rounds({
 				branchId: "main",
 				doneBy: "mo",
 				findings,
@@ -130,7 +130,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			await orpc.residents.visitLog({
+			await orpc.residents.visits.log({
 				branchId: "main",
 				purpose: "family visit",
 				residentId: id,
@@ -148,7 +148,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			await orpc.residents.recordStayCharge({
+			await orpc.residents.stays.recordCharge({
 				amount: Number(chargeAmount),
 				branchId: "main",
 				chargeDate: new Date().toISOString().slice(0, 10),
@@ -166,7 +166,7 @@ function RouteComponent() {
 	async function compile() {
 		setStatus(null);
 		try {
-			const res = await orpc.residents.compileStayBill({
+			const res = await orpc.residents.stays.compileBill({
 				branchId: "main",
 				residentId: id,
 			});
@@ -179,7 +179,7 @@ function RouteComponent() {
 	async function send() {
 		setStatus(null);
 		try {
-			await orpc.residents.sendFamilySummary({
+			await orpc.residents.family.sendSummary({
 				branchId: "main",
 				channel: "whatsapp",
 				id,
@@ -215,7 +215,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			await orpc.residents.raiseAlert({
+			await orpc.residents.alerts.raise({
 				branchId: "main",
 				kind: alertKind as "fall",
 				note: alertNote,

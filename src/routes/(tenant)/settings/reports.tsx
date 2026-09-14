@@ -38,7 +38,7 @@ function ReportsPage() {
 
 	const load = useCallback(async () => {
 		try {
-			const res = (await api.operations.reportsList({
+			const res = (await api.operations.reports.list({
 				branchId,
 			})) as Array<ReportDef>;
 			setDefs(res);
@@ -54,7 +54,7 @@ function ReportsPage() {
 	async function define(preset?: { collection: string; name: string }) {
 		setError(null);
 		try {
-			await api.operations.reportsDefine({
+			await api.operations.reports.define({
 				branchId,
 				collection: preset?.collection ?? collection,
 				filters: filters || undefined,
@@ -70,7 +70,7 @@ function ReportsPage() {
 	async function run(reportId: string) {
 		setError(null);
 		try {
-			const res = (await api.operations.reportsRun({
+			const res = (await api.operations.reports.run({
 				branchId,
 				limit: 200,
 				reportId,

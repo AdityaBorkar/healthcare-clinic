@@ -49,8 +49,8 @@ function RouteComponent() {
 			};
 			const res =
 				mode === "tele"
-					? await api.psych.bookTele(payload)
-					: await api.psych.bookCounselling(payload);
+					? await api.psych.tele.book(payload)
+					: await api.psych.counselling.book(payload);
 			const detail = res as { id?: string; billingSlab?: string };
 			setStatus(
 				`Session booked (${detail?.id ?? "ok"}). Duration billing slab: ${detail?.billingSlab ?? `${duration}min`}.`,

@@ -40,7 +40,7 @@ function RouteComponent() {
 	async function load() {
 		setError(null);
 		try {
-			setTokens(await api.appointments.queueBoard({ branchId }));
+			setTokens(await api.appointments.queue.board({ branchId }));
 		} catch (err) {
 			setError(err instanceof Error ? err.message : "Queue load failed");
 		}
@@ -49,7 +49,7 @@ function RouteComponent() {
 	async function callNext() {
 		setError(null);
 		try {
-			await api.appointments.callNext({ branchId });
+			await api.appointments.queue.callNext({ branchId });
 			await load();
 		} catch (err) {
 			setError(err instanceof Error ? err.message : "Call-next failed");
@@ -60,7 +60,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setError(null);
 		try {
-			await api.appointments.walkinToken({
+			await api.appointments.walkins.create({
 				branchId,
 				patientId: patientId || undefined,
 				practitionerId: practitionerId || undefined,
@@ -83,7 +83,7 @@ function RouteComponent() {
 			const token = tokens.find((t) => t.id === id);
 			if (token?.patientId) {
 				try {
-					await api.patients.setFlag({
+					await api.patients.flags.set({
 						branchId,
 						label: "no-show",
 						level: "watch",
@@ -107,7 +107,7 @@ function RouteComponent() {
 			const at = new Date(Date.now() + 24 * 3600 * 1000)
 				.toISOString()
 				.slice(0, 16);
-			await api.appointments.issueRecall({
+			await api.appointments.recalls.create({
 				at,
 				branchId,
 				patientId: patientIdValue,

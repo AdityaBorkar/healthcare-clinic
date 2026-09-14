@@ -49,7 +49,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.psych.caregiverConsent({
+			const res = await api.psych.consents.caregiver({
 				branchId: "main",
 				caregiverName: caregiver,
 				idNumber: idNumber || undefined,
@@ -71,7 +71,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			await api.psych.involuntaryHook({
+			await api.psych.involuntary({
 				authority: authority || undefined,
 				branchId: "main",
 				legalRef,
@@ -88,7 +88,7 @@ function RouteComponent() {
 	async function loadRecall() {
 		setStatus(null);
 		try {
-			const res = await api.psych.recallList({
+			const res = await api.psych.recalls.list({
 				branchId: "main",
 				minDaysOverdue: minOverdue ? Number(minOverdue) : undefined,
 			});

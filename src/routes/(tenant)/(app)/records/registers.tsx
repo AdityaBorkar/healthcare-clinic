@@ -49,7 +49,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			await orpc.records.registersAppend({
+			await orpc.records.registers.append({
 				branchId: "main",
 				details,
 				enteredBy: "mro",
@@ -64,7 +64,7 @@ function RouteComponent() {
 	async function loadPending() {
 		setStatus(null);
 		try {
-			const res = await orpc.records.dischargePending({
+			const res = await orpc.records.discharges.pending({
 				branchId: "main",
 				ward: ward || undefined,
 			});
@@ -77,7 +77,7 @@ function RouteComponent() {
 	async function checkRetention() {
 		setStatus(null);
 		try {
-			const res = await orpc.records.retentionCheck({
+			const res = await orpc.records.retention.check({
 				branchId: "main",
 				recordClass: recordClass as "opd",
 			});
@@ -90,7 +90,7 @@ function RouteComponent() {
 	async function summarize() {
 		setStatus(null);
 		try {
-			const res = await orpc.records.familySummaryMulti({
+			const res = await orpc.records.family.summaryMulti({
 				branchId: "main",
 				patientIds: residentIds
 					.split(",")
@@ -107,7 +107,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			await orpc.records.shareWhatsapp({
+			await orpc.records.sharing.whatsapp({
 				branchId: "main",
 				channel: "whatsapp",
 				recipient: shareRecipient,

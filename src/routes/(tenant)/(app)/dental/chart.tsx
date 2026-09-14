@@ -241,7 +241,7 @@ function RouteComponent() {
 					| undefined,
 				tooth,
 			}));
-			const res = await api.dental.chart({
+			const res = await api.dental.charts({
 				branchId: "main",
 				encounterId,
 				entries,
@@ -267,7 +267,7 @@ function RouteComponent() {
 					stage: "Planned" as const,
 					tooth,
 				}));
-			const res = await api.dental.buildPlan({
+			const res = await api.dental.plans.build({
 				branchId: "main",
 				encounterId,
 				patientId,
@@ -284,7 +284,7 @@ function RouteComponent() {
 	async function signConsent() {
 		setStatus(null);
 		try {
-			const res = await api.dental.consent({
+			const res = await api.dental.consents({
 				branchId: "main",
 				encounterId,
 				patientId,
@@ -301,7 +301,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.records.docsAttach({
+			const res = await api.records.docs.attach({
 				branchId: "main",
 				encounterId: encounterId || undefined,
 				filePath: image.filePath,
@@ -322,7 +322,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.dental.quote({
+			const res = await api.dental.quotes({
 				branchId: "main",
 				discountPct: quote.discount ? Number(quote.discount) : undefined,
 				gstPct: quote.gst ? Number(quote.gst) : undefined,
@@ -348,7 +348,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.dental.bookChair({
+			const res = await api.dental.chairs.book({
 				branchId: "main",
 				bufferMin: chair.bufferMin ? Number(chair.bufferMin) : undefined,
 				chairId: chair.chairId,
@@ -370,7 +370,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.dental.raiseLabJob({
+			const res = await api.dental.labJobs.raise({
 				branchId: "main",
 				dueDate: lab.dueDate || undefined,
 				encounterId: encounterId || undefined,
@@ -406,7 +406,7 @@ function RouteComponent() {
 
 	async function refreshJobs() {
 		try {
-			const rows = (await api.dental.pendingJobs({
+			const rows = (await api.dental.labJobs.pending({
 				branchId: "main",
 				patientId: patientId || undefined,
 				planId: planId || undefined,
@@ -421,7 +421,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.dental.closeStage({
+			const res = await api.dental.stages.close({
 				completed: stageClose.completed || undefined,
 				nextAppointment: stageClose.nextAppointment || undefined,
 				note: stageClose.note || undefined,
@@ -445,7 +445,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.dental.rescheduleStage({
+			const res = await api.dental.stages.reschedule({
 				newDate: reschedule.newDate,
 				newSlot: reschedule.newSlot || undefined,
 				planId,
@@ -464,7 +464,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.dental.implantMilestone({
+			const res = await api.dental.implants.milestone({
 				healingNote: implant.healingNote || undefined,
 				milestone: implant.milestone as "placement" | "healing" | "loading",
 				planId,
@@ -480,7 +480,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.dental.sellPackage({
+			const res = await api.dental.packages.sell({
 				branchId: "main",
 				name: pkg.name,
 				patientId,

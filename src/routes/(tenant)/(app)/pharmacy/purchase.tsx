@@ -35,7 +35,7 @@ function RouteComponent() {
 
 	async function saveVendor() {
 		try {
-			await orpc.operations.mastersUpsert({
+			await orpc.operations.masters.upsert({
 				branchId: "main",
 				domain: "pharmacy-vendor",
 				key: vendorName,
@@ -51,7 +51,7 @@ function RouteComponent() {
 
 	async function savePricelist() {
 		try {
-			await orpc.operations.mastersUpsert({
+			await orpc.operations.masters.upsert({
 				branchId: "main",
 				domain: "purchase-pricelist",
 				key: pricelistVendor,
@@ -73,7 +73,7 @@ function RouteComponent() {
 					const [itemId, qty] = line.split(/\s+/);
 					return { itemId: itemId ?? "", qty: Number(qty) || 1 };
 				});
-			const po = (await orpc.pharmacy.poCreate({
+			const po = (await orpc.pharmacy.purchases.create({
 				branchId: "main",
 				items,
 				vendor: poVendor,
@@ -100,7 +100,7 @@ function RouteComponent() {
 						shortQty: Number(shortQty) || 0,
 					};
 				});
-			const grn = (await orpc.pharmacy.grnVerify({
+			const grn = (await orpc.pharmacy.purchases.verifyGrn({
 				branchId: "main",
 				damagedQty: Number(damaged) || 0,
 				poId,
@@ -122,7 +122,7 @@ function RouteComponent() {
 
 	async function bookPi() {
 		try {
-			await orpc.pharmacy.piBook({
+			await orpc.pharmacy.purchases.bookInvoice({
 				amount: Number(piAmount) || 0,
 				branchId: "main",
 				grnId,

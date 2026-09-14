@@ -9,7 +9,7 @@ export const Route = createFileRoute("/support")({
 	component: SupportPage,
 	loader: async () => {
 		try {
-			const result = await orpc.organizations.bySubdomain();
+			const result = await orpc.organizations.getBySubdomain();
 			return {
 				organization: result.organization
 					? {

@@ -121,7 +121,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.ayush.saveCaseSheet({
+			const res = await api.ayush.caseSheets.save({
 				agni: agni || undefined,
 				branchId: "main",
 				complaints,
@@ -155,7 +155,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.ayush.dualCode({
+			const res = await api.ayush.diagnoses.dualCode({
 				branchId: "main",
 				caseId,
 				encounterId,
@@ -173,7 +173,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.ayush.bookNadi({
+			const res = await api.ayush.nadi.book({
 				branchId: "main",
 				caseId: caseId || undefined,
 				date: nadiBooking.date,
@@ -196,7 +196,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.ayush.repertorize({
+			const res = await api.ayush.repertory.query({
 				branchId: "main",
 				caseId,
 				dose: repert.dose || undefined,
@@ -226,7 +226,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.ayush.saveFollowUpGrid({
+			const res = await api.ayush.followUps.save({
 				branchId: "main",
 				caseId,
 				improvement: grid.improvement as
@@ -247,7 +247,7 @@ function RouteComponent() {
 
 	async function refreshGrid() {
 		try {
-			const rows = (await api.ayush.listFollowUpGrid({
+			const rows = (await api.ayush.followUps.list({
 				branchId: "main",
 				caseId,
 			})) as Array<GridRow>;
@@ -261,7 +261,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.ayush.sellPackage({
+			const res = await api.ayush.packages.sell({
 				branchId: "main",
 				caseId: caseId || undefined,
 				name: therapyPkg.name as
@@ -301,7 +301,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.ayush.pauseExtendPackage({
+			const res = await api.ayush.packages.pauseExtend({
 				action: pause.action as "pause" | "resume" | "extend" | "complete",
 				extendDays: pause.extendDays ? Number(pause.extendDays) : undefined,
 				outcomeNote: pause.outcomeNote || undefined,
@@ -318,7 +318,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.ayush.scheduleTherapy({
+			const res = await api.ayush.therapy.schedule({
 				branchId: "main",
 				date: sitting.date,
 				equipmentId: sitting.equipmentId || undefined,
@@ -343,7 +343,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.ayush.recordSitting({
+			const res = await api.ayush.sittings.record({
 				branchId: "main",
 				chargeLines: undefined,
 				consumables: sitting.consumables
@@ -374,7 +374,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.ayush.recordPackageOutcome({
+			const res = await api.ayush.packages.outcomes.record({
 				branchId: "main",
 				outcomeNote: pause.outcomeNote,
 				packageId: therapyPkg.packageId,
@@ -392,7 +392,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.ayush.issueDiet({
+			const res = await api.ayush.diet.issue({
 				branchId: "main",
 				caseId: caseId || undefined,
 				chart: diet.chart,
@@ -418,7 +418,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.ayush.createYogaBatch({
+			const res = await api.ayush.yoga.batches.create({
 				branchId: "main",
 				capacity: Number(yoga.capacity) || 1,
 				name: yoga.name,
@@ -436,12 +436,12 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			await api.ayush.enrollYoga({
+			await api.ayush.yoga.enroll({
 				batchId: yoga.batchId,
 				branchId: "main",
 				patientId,
 			});
-			const res = await api.ayush.markYogaAttendance({
+			const res = await api.ayush.yoga.attendance.mark({
 				attended: true,
 				batchId: yoga.batchId,
 				branchId: "main",
@@ -475,7 +475,7 @@ function RouteComponent() {
 							| "proprietary",
 					};
 				});
-			const res = await api.ayush.prescribe({
+			const res = await api.ayush.prescriptions.create({
 				anupana: ayushRx.anupana || undefined,
 				branchId: "main",
 				caseId: caseId || undefined,

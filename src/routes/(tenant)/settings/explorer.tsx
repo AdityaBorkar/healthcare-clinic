@@ -40,7 +40,7 @@ function ExplorerPage() {
 	async function grant() {
 		setError(null);
 		try {
-			await api.operations.explorerGrant({
+			await api.operations.explorer.grant({
 				branchId,
 				granteeId: "self",
 				scope: collection,
@@ -53,7 +53,7 @@ function ExplorerPage() {
 	async function query() {
 		setError(null);
 		try {
-			const res = (await api.operations.explorerQuery({
+			const res = (await api.operations.explorer.query({
 				branchId,
 				collection,
 				filters: filters || undefined,
@@ -69,7 +69,7 @@ function ExplorerPage() {
 	async function exportCsv() {
 		setError(null);
 		try {
-			const res = (await api.operations.explorerExportCsv({
+			const res = (await api.operations.explorer.exportCsv({
 				branchId,
 				collection,
 				filters: filters || undefined,

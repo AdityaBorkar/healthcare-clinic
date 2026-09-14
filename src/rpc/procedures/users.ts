@@ -7,7 +7,6 @@ import { authMiddleware } from "../middlewares/auth";
 import { requireOrganizationSlug } from "../utils/subdomain";
 import {
 	findWorkspaceMember,
-	listWorkspaceMembers,
 	toWorkspaceUser,
 } from "../utils/workspace-members";
 import {
@@ -17,8 +16,17 @@ import {
 } from "../utils/workspace-organization";
 
 export const listUsers = authMiddleware.handler(async ({ context }) => {
-	const organizationSlug = requireOrganizationSlug(context.headers);
-	return listWorkspaceMembers(context.headers, organizationSlug);
+	const headers = context.headers;
+	const organizationSlug = requireOrganizationSlug(headers);
+
+	const { pm } = await import("#/aspen/server");
+	const result = await pm.run("$global", () =>
+		pm.auth.service.api.listMembers({
+			headers,
+			query: { organizationSlug },
+		}),
+	);
+	return result.members.map(toWorkspaceUser);
 });
 
 export const getUser = authMiddleware

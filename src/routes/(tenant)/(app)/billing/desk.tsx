@@ -82,7 +82,7 @@ function RouteComponent() {
 
 	async function openTab() {
 		try {
-			const res = (await orpc.billing.interimTab({
+			const res = (await orpc.billing.tabs.interim({
 				branchId: "main",
 				episodeId: episodeId || undefined,
 				patientId,
@@ -114,7 +114,7 @@ function RouteComponent() {
 							| "stay",
 					};
 				});
-			const invoice = (await orpc.billing.invoiceRaise({
+			const invoice = (await orpc.billing.invoices.create({
 				branchId: "main",
 				encounterId: episodeId || undefined,
 				lines: parsed,
@@ -132,7 +132,7 @@ function RouteComponent() {
 
 	async function finalize() {
 		try {
-			await orpc.billing.invoiceFinalize({ branchId: "main", invoiceId });
+			await orpc.billing.invoices.finalize({ branchId: "main", invoiceId });
 			setResult("Invoice finalized.");
 			await openTab();
 		} catch (error) {
@@ -142,7 +142,7 @@ function RouteComponent() {
 
 	async function applyDiscount() {
 		try {
-			await orpc.billing.applyDiscount({
+			await orpc.billing.discounts.apply({
 				approver: discount.approver || undefined,
 				branchId: "main",
 				discountPct: Number(discount.pct) || 0,
@@ -157,7 +157,7 @@ function RouteComponent() {
 
 	async function reprice() {
 		try {
-			await orpc.billing.repriceOnPayerSwitch({
+			await orpc.billing.repricing.onPayerSwitch({
 				branchId: "main",
 				invoiceId,
 				pricelistId,
@@ -187,7 +187,7 @@ function RouteComponent() {
 							| "neft",
 					};
 				});
-			const res = (await orpc.billing.collect({
+			const res = (await orpc.billing.payments.collect({
 				amount: Number(amount) || 0,
 				branchId: "main",
 				episodeId: episodeId || undefined,
@@ -209,7 +209,7 @@ function RouteComponent() {
 
 	async function settle() {
 		try {
-			const res = (await orpc.billing.settle({
+			const res = (await orpc.billing.payments.settle({
 				branchId: "main",
 				episodeId: episodeId || undefined,
 				patientId,
@@ -225,7 +225,7 @@ function RouteComponent() {
 
 	async function settleAdvance() {
 		try {
-			await orpc.billing.settleAdvance({
+			await orpc.billing.payments.advances.settle({
 				amount: Number(advance.amount) || 0,
 				branchId: "main",
 				direction: advance.direction as "receive" | "adjust",
@@ -240,7 +240,7 @@ function RouteComponent() {
 
 	async function sellPackage() {
 		try {
-			await orpc.billing.packageSell({
+			await orpc.billing.packages.sell({
 				branchId: "main",
 				packageId: pkg.packageId,
 				patientId,
@@ -254,7 +254,7 @@ function RouteComponent() {
 
 	async function redeem() {
 		try {
-			await orpc.billing.packageRedeem({
+			await orpc.billing.packages.redeem({
 				branchId: "main",
 				packageSaleId: pkg.saleId,
 				qty: Number(pkg.redeemQty) || 1,
@@ -268,8 +268,8 @@ function RouteComponent() {
 
 	async function expireRun() {
 		try {
-			await orpc.billing.packageExpireRun({ branchId: "main" });
-			const lib = (await orpc.billing.packageLiability({
+			await orpc.billing.packages.expire({ branchId: "main" });
+			const lib = (await orpc.billing.packages.liability({
 				branchId: "main",
 				includeExpired: true,
 			})) as {
@@ -286,7 +286,7 @@ function RouteComponent() {
 
 	async function issueCndn() {
 		try {
-			await orpc.billing.cndnIssue({
+			await orpc.billing.creditNotes.issue({
 				amount: Number(cndn.amount) || 0,
 				approver: cndn.approver,
 				branchId: "main",
@@ -302,7 +302,9 @@ function RouteComponent() {
 
 	async function loadAging() {
 		try {
-			const res = (await orpc.billing.duesAging({ branchId: "main" })) as {
+			const res = (await orpc.billing.reports.duesAging({
+				branchId: "main",
+			})) as {
 				asOf?: string;
 				buckets?: Record<string, number>;
 				rows?: Array<{
@@ -322,7 +324,7 @@ function RouteComponent() {
 
 	async function loadCollection() {
 		try {
-			const res = (await orpc.billing.collectionReport({
+			const res = (await orpc.billing.reports.collection({
 				branchId: "main",
 			})) as {
 				byMode?: Record<string, number>;
@@ -337,7 +339,7 @@ function RouteComponent() {
 
 	async function exportGst() {
 		try {
-			await orpc.billing.gstExport({ branchId: "main" });
+			await orpc.billing.reports.gstExport({ branchId: "main" });
 			setResult("GST export generated (invoice/CN/DN reconciled).");
 		} catch (error) {
 			fail(error);

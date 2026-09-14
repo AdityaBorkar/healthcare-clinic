@@ -39,7 +39,7 @@ function RouteComponent() {
 		try {
 			const duration = durationMin ? Number(durationMin) : undefined;
 			setSlots(
-				(await api.appointments.computeSlots({
+				(await api.appointments.slots.list({
 					branchId,
 					date,
 					...(facilityId ? { facilityId } : {}),

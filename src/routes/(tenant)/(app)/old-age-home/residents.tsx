@@ -32,7 +32,7 @@ function RouteComponent() {
 
 	const refresh = useCallback(async () => {
 		try {
-			setResidents(await orpc.residents.listResidents({ branchId: "main" }));
+			setResidents(await orpc.residents.list({ branchId: "main" }));
 		} catch {
 			setResidents([]);
 		}
@@ -43,7 +43,7 @@ function RouteComponent() {
 	}, [refresh]);
 
 	async function admit() {
-		await orpc.residents.admit({
+		await orpc.residents.create({
 			advance: 0,
 			age: Number(age) || 0,
 			branchId: "main",

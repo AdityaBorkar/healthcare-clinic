@@ -1,11 +1,6 @@
 import { env } from "#/env";
 import { UpdateOrganizationInputSchema } from "#/schemas/organizations";
 import { authMiddleware, base } from "../middlewares/auth";
-import {
-	findOrganizationBrandingBySlug,
-	listMyOrganizationBranding,
-	listOrganizationBranding,
-} from "../utils/organization-branding";
 import { extractSubdomain, requireOrganizationSlug } from "../utils/subdomain";
 import { getWorkspaceOrganization } from "../utils/workspace-organization";
 
@@ -16,18 +11,47 @@ export const getOrganizationBySubdomain = base.handler(async ({ context }) => {
 		return { organization: null, subdomain: null };
 	}
 
-	const organization = await findOrganizationBrandingBySlug(subdomain);
+	const { pm } = await import("#/aspen/server");
+	const tenant = await pm.run("$global", () =>
+		pm.management.tenants.getBySlug.run({ slug: subdomain }),
+	);
+	if (!tenant) {
+		return null;
+	}
+	const organization = {
+		createdAt: tenant.createdAt.toISOString(),
+		id: tenant.id,
+		logo: tenant.logo,
+		metadata: tenant.metadata,
+		name: tenant.name,
+		slug: tenant.slug,
+	};
+
 	return { organization, subdomain };
 });
 
 export const listOrganizations = base.handler(async () => {
-	const organizations = await listOrganizationBranding();
+	const { pm } = await import("#/aspen/server");
+	const organizations = pm.run("$global", () =>
+		pm.management.tenants.listBranding.run({}),
+	);
 	return { organizations };
 });
 
 export const listMyOrganizations = authMiddleware.handler(
 	async ({ context }) => {
-		const organizations = await listMyOrganizationBranding(context.headers);
+		const headers = context.headers;
+		const { pm } = await import("#/aspen/server");
+		const orgs = await pm.run("$global", () =>
+			pm.auth.service.api.listOrganizations({ headers }),
+		);
+		const organizations = orgs.map((org) => ({
+			id: org.id,
+			logo: org.logo ?? null,
+			name: org.name,
+			slug: org.slug,
+		}));
+
 		return { organizations };
 	},
 );

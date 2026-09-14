@@ -56,7 +56,7 @@ function CompliancePage() {
 
 	const load = useCallback(async () => {
 		try {
-			const res = (await api.operations.complianceList({
+			const res = (await api.operations.compliance.list({
 				branchId,
 				framework,
 			})) as Array<Evidence>;
@@ -75,7 +75,7 @@ function CompliancePage() {
 	async function attach() {
 		setError(null);
 		try {
-			await api.operations.complianceEvidence({
+			await api.operations.compliance.evidence({
 				branchId,
 				control,
 				evidencePath: path,

@@ -36,7 +36,7 @@ function RouteComponent() {
 		setError(null);
 		setStatus(null);
 		try {
-			const hits = (await api.patients.dedupeCheck({
+			const hits = (await api.patients.dedupe.check({
 				abha: abha || undefined,
 				branchId,
 				phone: phone || undefined,
@@ -74,7 +74,7 @@ function RouteComponent() {
 		setError(null);
 		setStatus(null);
 		try {
-			const created = (await api.patients.register({
+			const created = (await api.patients.create({
 				abha: abha || undefined,
 				branchId,
 				dob: dob || undefined,

@@ -44,7 +44,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.psych.screenRisk({
+			const res = await api.psych.risks.screen({
 				branchId: "main",
 				encounterId,
 				factors: factors
@@ -66,7 +66,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			await api.psych.saveSafetyPlan({
+			await api.psych.safetyPlans.save({
 				branchId: "main",
 				contacts: contacts
 					.split(",")
@@ -88,7 +88,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			await api.psych.alertSenior({
+			await api.psych.seniors.alert({
 				branchId: "main",
 				encounterId: encounterId || undefined,
 				patientId,
@@ -103,7 +103,7 @@ function RouteComponent() {
 	async function check() {
 		setStatus(null);
 		try {
-			const res = await api.psych.closeReadiness({
+			const res = await api.psych.readiness.close({
 				branchId: "main",
 				encounterId,
 				patientId,

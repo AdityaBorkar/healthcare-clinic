@@ -33,7 +33,7 @@ function RouteComponent() {
 
 	async function mark() {
 		try {
-			await orpc.operations.attendanceMark({
+			await orpc.operations.hr.attendance.mark({
 				branchId: "main",
 				date: att.date,
 				staffId: att.staffId,
@@ -47,7 +47,7 @@ function RouteComponent() {
 
 	async function request() {
 		try {
-			const res = (await orpc.operations.leaveRequest({
+			const res = (await orpc.operations.hr.leave.request({
 				branchId: "main",
 				from: leave.from,
 				reason: leave.reason,
@@ -63,7 +63,7 @@ function RouteComponent() {
 
 	async function decideLeave() {
 		try {
-			await orpc.operations.leaveDecide({
+			await orpc.operations.hr.leave.decide({
 				branchId: "main",
 				decidedBy: decide.by,
 				decision: decide.decision as "approve" | "reject",

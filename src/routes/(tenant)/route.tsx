@@ -4,7 +4,7 @@ import { orpc } from "#/lib/rpc";
 
 export const Route = createFileRoute("/(tenant)")({
 	beforeLoad: async ({ location }) => {
-		const data = await orpc.auth.getSession();
+		const data = await orpc.auth.session.get();
 		if (!data) {
 			throw redirect({
 				search: { redirect: location.href },
@@ -13,7 +13,7 @@ export const Route = createFileRoute("/(tenant)")({
 		}
 
 		const { organization } = await orpc.organizations
-			.bySubdomain()
+			.getBySubdomain()
 			.catch(() => ({ organization: null }));
 		if (!organization) {
 			throw redirect({ to: "/account/organizations" });

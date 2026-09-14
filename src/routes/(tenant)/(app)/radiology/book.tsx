@@ -30,7 +30,7 @@ function RouteComponent() {
 
 	async function book() {
 		try {
-			const booking = (await orpc.diagnostics.radioBook({
+			const booking = (await orpc.diagnostics.radiology.bookings.create({
 				branchId: "main",
 				patientId,
 				service,
@@ -45,7 +45,10 @@ function RouteComponent() {
 
 	async function checkin() {
 		try {
-			await orpc.diagnostics.radioCheckin({ bookingId, branchId: "main" });
+			await orpc.diagnostics.radiology.bookings.checkin({
+				bookingId,
+				branchId: "main",
+			});
 			setResult("Patient checked in.");
 		} catch (error) {
 			fail(error);
@@ -54,7 +57,7 @@ function RouteComponent() {
 
 	async function reschedule() {
 		try {
-			await orpc.diagnostics.radioReschedule({
+			await orpc.diagnostics.radiology.bookings.reschedule({
 				bookingId,
 				branchId: "main",
 				newSlot,
@@ -68,7 +71,7 @@ function RouteComponent() {
 
 	async function attach() {
 		try {
-			await orpc.diagnostics.radioReportAttach({
+			await orpc.diagnostics.radiology.bookings.reportAttach({
 				bookingId,
 				branchId: "main",
 				impression: impression || undefined,
@@ -82,7 +85,7 @@ function RouteComponent() {
 
 	async function authorizeRadio() {
 		try {
-			await orpc.diagnostics.radioAuthorize({
+			await orpc.diagnostics.radiology.bookings.authorize({
 				authorizedBy: authorizer,
 				bookingId,
 				branchId: "main",
@@ -95,7 +98,7 @@ function RouteComponent() {
 
 	async function cancelBooking() {
 		try {
-			await orpc.diagnostics.cancelOrder({
+			await orpc.diagnostics.orders.cancel({
 				bookingId,
 				branchId: "main",
 				cancelledBy: authorizer || "desk",

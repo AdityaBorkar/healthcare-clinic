@@ -145,7 +145,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.allopathy.triageEntry({
+			const res = await api.allopathy.triage.create({
 				branchId: "main",
 				encounterId: encounterId || undefined,
 				patientId,
@@ -165,7 +165,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.allopathy.saveSoap({
+			const res = await api.allopathy.soap.save({
 				assessment: soap.assessment,
 				branchId: "main",
 				diagnoses: [{ code: soap.code, label: soap.code, system: "ICD11" }],
@@ -185,7 +185,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.patients.addAllergy({
+			const res = await api.patients.allergies.add({
 				branchId: "main",
 				name: allergy.name,
 				patientId,
@@ -211,7 +211,7 @@ function RouteComponent() {
 				.split(",")
 				.map((d) => d.trim())
 				.filter(Boolean);
-			const res = await api.allopathy.checkInteraction({
+			const res = await api.allopathy.interactions.check({
 				acknowledged: acked,
 				allergies: banner.map((a) => a.name),
 				branchId: "main",
@@ -241,7 +241,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.allopathy.problemUpsert({
+			const res = await api.allopathy.problems.upsert({
 				branchId: "main",
 				code: problem.code,
 				encounterId: encounterId || undefined,
@@ -259,7 +259,7 @@ function RouteComponent() {
 
 	async function refreshProblems() {
 		try {
-			const rows = (await api.allopathy.problemList({
+			const rows = (await api.allopathy.problems.list({
 				branchId: "main",
 				patientId,
 			})) as Array<ProblemRow>;
@@ -272,7 +272,7 @@ function RouteComponent() {
 	async function resolveProblem(id: string) {
 		setStatus(null);
 		try {
-			await api.allopathy.problemUpsert({
+			await api.allopathy.problems.upsert({
 				branchId: "main",
 				code: "resolved",
 				patientId,
@@ -291,7 +291,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.encounters.addDiagnosis({
+			const res = await api.encounters.diagnoses.add({
 				code: diagnosis.code,
 				encounterId,
 				kind: diagnosis.kind as "provisional" | "confirmed",
@@ -310,7 +310,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.encounters.prescribe({
+			const res = await api.encounters.prescriptions.create({
 				acknowledgedWarnings: acked.length > 0 ? acked : undefined,
 				encounterId,
 				items: rxItems
@@ -339,7 +339,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.encounters.refill({
+			const res = await api.encounters.prescriptions.refill({
 				encounterId,
 				patientId,
 				prescriptionId,
@@ -356,7 +356,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.encounters.recordVitals({
+			const res = await api.encounters.vitals.record({
 				bp: vitals.bp || undefined,
 				encounterId,
 				patientId,
@@ -375,7 +375,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.allopathy.saveExam({
+			const res = await api.allopathy.exams.save({
 				branchId: "main",
 				encounterId,
 				finding: exam.finding,
@@ -403,7 +403,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.allopathy.recordImmunization({
+			const res = await api.allopathy.immunizations.record({
 				branchId: "main",
 				doseNo: Number(immun.doseNo) || 1,
 				patientId,
@@ -420,7 +420,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.allopathy.logChronic({
+			const res = await api.allopathy.chronic.log({
 				bpDys: chronic.bpDys ? Number(chronic.bpDys) : undefined,
 				bpSys: chronic.bpSys ? Number(chronic.bpSys) : undefined,
 				branchId: "main",
@@ -455,7 +455,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.encounters.placeOrder({
+			const res = await api.encounters.orders.place({
 				encounterId,
 				item: order.item,
 				kind: order.kind as
@@ -486,7 +486,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.records.registersAppend({
+			const res = await api.records.registers.append({
 				branchId: "main",
 				certifierId: register.certifierId || undefined,
 				details: register.details,
@@ -508,7 +508,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.encounters.setFollowUp({
+			const res = await api.encounters.followUps.set({
 				at: followUp.at,
 				encounterId,
 				note: followUp.note || undefined,

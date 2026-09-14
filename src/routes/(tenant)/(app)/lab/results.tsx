@@ -59,7 +59,7 @@ function RouteComponent() {
 
 	async function enterResult() {
 		try {
-			await orpc.diagnostics.resultEnter({
+			await orpc.diagnostics.results.enter({
 				branchId: "main",
 				enteredBy: entry.by,
 				flag: entry.flag as "normal" | "L" | "H" | "critical",
@@ -75,7 +75,7 @@ function RouteComponent() {
 
 	async function ackCritical() {
 		try {
-			await orpc.diagnostics.criticalAck({
+			await orpc.diagnostics.results.acknowledgeCritical({
 				ackBy: ack.by,
 				branchId: "main",
 				note: ack.note || undefined,
@@ -90,7 +90,7 @@ function RouteComponent() {
 
 	async function preview() {
 		try {
-			const order = (await orpc.diagnostics.getOrder({
+			const order = (await orpc.diagnostics.orders.get({
 				branchId: "main",
 				id: auth.orderId,
 			})) as { status?: string };
@@ -106,7 +106,7 @@ function RouteComponent() {
 
 	async function authorize() {
 		try {
-			await orpc.diagnostics.authorize({
+			await orpc.diagnostics.results.authorize({
 				authorizedBy: auth.by,
 				branchId: "main",
 				orderId: auth.orderId,
@@ -121,7 +121,7 @@ function RouteComponent() {
 
 	async function deliverReport() {
 		try {
-			await orpc.diagnostics.deliver({
+			await orpc.diagnostics.results.deliver({
 				branchId: "main",
 				channel: deliver.channel as "print" | "whatsapp" | "email" | "portal",
 				orderId: deliver.orderId,
@@ -137,7 +137,7 @@ function RouteComponent() {
 
 	const loadTat = useCallback(async () => {
 		try {
-			const report = (await orpc.diagnostics.tatReport({
+			const report = (await orpc.diagnostics.reports.tat({
 				branchId: "main",
 				limit: 100,
 			})) as {

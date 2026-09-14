@@ -46,7 +46,7 @@ function RouteComponent() {
 	async function loadEncounter() {
 		setStatus(null);
 		try {
-			const res = await orpc.records.encounterGet({
+			const res = await orpc.records.encounters.get({
 				branchId: "main",
 				encounterId,
 			});
@@ -59,7 +59,7 @@ function RouteComponent() {
 	async function loadRx() {
 		setStatus(null);
 		try {
-			const res = await orpc.records.recentlyUsedRx({
+			const res = await orpc.records.prescriptions.recentlyUsed({
 				branchId: "main",
 				patientId,
 			});
@@ -73,7 +73,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			await orpc.records.recordConsent({
+			await orpc.records.consents.record({
 				branchId: "main",
 				kind: consentKind,
 				patientId,

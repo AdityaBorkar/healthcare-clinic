@@ -80,7 +80,7 @@ function RouteComponent() {
 
 	const loadAlerts = useCallback(async () => {
 		try {
-			const res = (await orpc.pharmacy.expiryAlerts({
+			const res = (await orpc.pharmacy.alerts.expiry({
 				branchId: "main",
 				withinDays: 90,
 			})) as { alerts: Array<Alert> };
@@ -92,7 +92,7 @@ function RouteComponent() {
 
 	const loadLedger = useCallback(async () => {
 		try {
-			const res = (await orpc.pharmacy.stockLedger({
+			const res = (await orpc.pharmacy.stock.ledger({
 				branchId: "main",
 				limit: 100,
 			})) as { movements: Array<Movement> };
@@ -113,7 +113,7 @@ function RouteComponent() {
 
 	async function saveItem() {
 		try {
-			await orpc.pharmacy.itemUpsert({
+			await orpc.pharmacy.items.upsert({
 				branchId: "main",
 				coldChain: item.coldChain,
 				name: item.name,
@@ -130,7 +130,7 @@ function RouteComponent() {
 
 	async function receiveBatch() {
 		try {
-			await orpc.pharmacy.batchReceive({
+			await orpc.pharmacy.batches.receive({
 				branchId: "main",
 				expiry: batch.expiry,
 				itemId: batch.itemId,
@@ -148,7 +148,7 @@ function RouteComponent() {
 
 	async function moveStock() {
 		try {
-			const res = (await orpc.pharmacy.transfer({
+			const res = (await orpc.pharmacy.transfers.create({
 				branchId: "main",
 				itemId: transfer.itemId,
 				qty: Number(transfer.qty) || 1,
@@ -166,7 +166,7 @@ function RouteComponent() {
 
 	async function decideTransfer(decision: "accept" | "reject") {
 		try {
-			await orpc.pharmacy.transferAccept({
+			await orpc.pharmacy.transfers.accept({
 				acceptedBy: transfer.decidedBy,
 				branchId: "main",
 				decision,
@@ -182,7 +182,7 @@ function RouteComponent() {
 
 	async function correctStock() {
 		try {
-			await orpc.pharmacy.stockCorrect({
+			await orpc.pharmacy.stock.correct({
 				batchId: correction.batchId,
 				branchId: "main",
 				correctedBy: correction.by,
@@ -199,7 +199,7 @@ function RouteComponent() {
 
 	async function returnBill() {
 		try {
-			await orpc.pharmacy.returnAgainstBill({
+			await orpc.pharmacy.sales.return({
 				branchId: "main",
 				items: [
 					{

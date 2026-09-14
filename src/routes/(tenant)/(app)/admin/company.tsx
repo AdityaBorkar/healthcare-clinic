@@ -29,8 +29,8 @@ function RouteComponent() {
 
 	useEffect(() => {
 		let live = true;
-		api.admin
-			.getCompany()
+		api.admin.company
+			.get()
 			.then((c: unknown) => {
 				if (live && c) {
 					const company = c as { logo?: string; name?: string; slug?: string };
@@ -49,7 +49,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			await api.admin.saveCompany({
+			await api.admin.company.update({
 				logo: logo || undefined,
 				name,
 				slug: slug || undefined,
@@ -62,7 +62,7 @@ function RouteComponent() {
 
 	const loadVersions = useCallback(async () => {
 		try {
-			const res = (await api.admin.listMasterVersions()) as
+			const res = (await api.admin.masters.versions.list()) as
 				| Array<Record<string, unknown>>
 				| { items: Array<Record<string, unknown>> };
 			setVersions(Array.isArray(res) ? res : (res.items ?? []));
@@ -78,7 +78,7 @@ function RouteComponent() {
 	async function saveVersion() {
 		setStatus(null);
 		try {
-			await api.admin.saveMasterVersion({
+			await api.admin.masters.versions.save({
 				branchId,
 				domain,
 				payload: payload || undefined,

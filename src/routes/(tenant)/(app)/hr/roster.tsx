@@ -25,7 +25,7 @@ function RouteComponent() {
 
 	async function addStaff() {
 		try {
-			const staff = (await orpc.operations.hrStaffUpsert({
+			const staff = (await orpc.operations.hr.staff.upsert({
 				branchId: "main",
 				department: department || undefined,
 				doj: doj || undefined,
@@ -60,7 +60,7 @@ function RouteComponent() {
 						staffId: staffId ?? "",
 					};
 				});
-			await orpc.operations.rosterPlan({
+			await orpc.operations.hr.roster.plan({
 				branchId: "main",
 				entries: parsed,
 				month,
@@ -72,7 +72,7 @@ function RouteComponent() {
 	}
 
 	async function exportPayroll() {
-		const rows = await orpc.operations.payrollExport({
+		const rows = await orpc.operations.hr.payroll.export({
 			branchId: "main",
 			month,
 		});

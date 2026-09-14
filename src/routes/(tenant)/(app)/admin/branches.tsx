@@ -30,7 +30,7 @@ function RouteComponent() {
 
 	const load = useCallback(async () => {
 		try {
-			setBranches((await api.admin.listBranches()) as Array<Branch>);
+			setBranches((await api.admin.branches.list()) as Array<Branch>);
 		} catch (err) {
 			setError(err instanceof Error ? err.message : "Branch load failed");
 		}
@@ -44,7 +44,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setError(null);
 		try {
-			await api.admin.createBranch({ name, subdomain });
+			await api.admin.branches.create({ name, subdomain });
 			setName("");
 			setSubdomain("");
 			await load();
@@ -57,15 +57,15 @@ function RouteComponent() {
 		setError(null);
 		try {
 			const target = goLiveBranch || branchId;
-			await api.operations.seedPresets({
+			await api.operations.presets.seed({
 				branchId: target,
 				preset: "facilities",
 			});
-			await api.operations.seedPresets({
+			await api.operations.presets.seed({
 				branchId: target,
 				preset: "pricelist",
 			});
-			await api.billing.pricelistUpsert({
+			await api.billing.pricelists.upsert({
 				branchId: target,
 				name: pricelistName,
 				rates: [],

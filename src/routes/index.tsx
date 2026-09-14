@@ -33,13 +33,13 @@ import { orpc } from "#/lib/rpc";
 export const Route = createFileRoute("/")({
 	beforeLoad: async ({ search }) => {
 		const { organization, subdomain } = await orpc.organizations
-			.bySubdomain()
+			.getBySubdomain()
 			.catch(() => ({ organization: null, subdomain: null }));
 		if (subdomain && !organization) {
 			throw redirect({ to: "/not-found" });
 		}
 
-		const session = await orpc.auth.getSession();
+		const session = await orpc.auth.session.get();
 		if (session) {
 			if (organization) {
 				throw redirect({ to: search?.redirect ?? "/dashboard" });

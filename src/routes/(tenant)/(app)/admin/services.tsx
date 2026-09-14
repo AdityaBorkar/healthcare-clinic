@@ -58,7 +58,7 @@ function RouteComponent() {
 				items: Array<Service>;
 			};
 			setRows(res.items);
-			const cpt = (await api.admin.listCptCodes({
+			const cpt = (await api.admin.cptCodes.list({
 				branchId,
 			})) as Array<CptCode>;
 			setCptCodes(cpt);
@@ -148,7 +148,7 @@ function RouteComponent() {
 		setError(null);
 		setNotice(null);
 		try {
-			await api.admin.upsertCptCode({
+			await api.admin.cptCodes.upsert({
 				billingCode: cptCode,
 				branchId,
 				code: cptCode,

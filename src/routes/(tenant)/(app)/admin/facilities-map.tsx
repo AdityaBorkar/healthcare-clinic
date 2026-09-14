@@ -62,7 +62,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			await api.services.mapFacilities({
+			await api.services.facilities.map({
 				branchId,
 				facilityId,
 				serviceId,
@@ -97,7 +97,7 @@ function RouteComponent() {
 	async function seedPreset(preset: string) {
 		setStatus(null);
 		try {
-			await api.operations.seedPresets({
+			await api.operations.presets.seed({
 				branchId,
 				preset: preset as
 					| "pricelist"

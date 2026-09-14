@@ -31,7 +31,7 @@ function AuditLogPage() {
 	async function load() {
 		setError(null);
 		try {
-			const res = (await api.admin.logs({ branchId, limit: 100 })) as
+			const res = (await api.admin.auditLogs.list({ branchId, limit: 100 })) as
 				| Array<LogRow>
 				| { items: Array<LogRow> };
 			setRows(Array.isArray(res) ? res : (res.items ?? []));

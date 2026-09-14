@@ -24,7 +24,7 @@ function RouteComponent() {
 
 	const load = useCallback(async () => {
 		try {
-			setBranches((await api.admin.listBranches()) as Array<Branch>);
+			setBranches((await api.admin.branches.list()) as Array<Branch>);
 		} catch (err) {
 			setError(err instanceof Error ? err.message : "Branch load failed");
 		}
@@ -38,7 +38,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setError(null);
 		try {
-			await api.admin.createBranch({ name, subdomain });
+			await api.admin.branches.create({ name, subdomain });
 			setName("");
 			setSubdomain("");
 			await load();

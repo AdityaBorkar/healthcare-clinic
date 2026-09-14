@@ -44,7 +44,7 @@ function RouteComponent() {
 
 	async function saveTest() {
 		try {
-			await orpc.diagnostics.testMasterUpsert({
+			await orpc.diagnostics.masters.upsert({
 				active: test.active,
 				branchId: "main",
 				code: test.code,
@@ -65,7 +65,7 @@ function RouteComponent() {
 
 	async function savePanel() {
 		try {
-			await orpc.diagnostics.panelCreate({
+			await orpc.diagnostics.masters.panels.create({
 				branchId: "main",
 				name: panel.name,
 				testIds: panel.testIds
@@ -81,7 +81,7 @@ function RouteComponent() {
 
 	async function logQc() {
 		try {
-			await orpc.diagnostics.qcLog({
+			await orpc.diagnostics.qc.log({
 				branchId: "main",
 				deviations: qc.deviations || undefined,
 				equipment: qc.equipment,

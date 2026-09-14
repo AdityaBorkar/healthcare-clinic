@@ -36,8 +36,8 @@ function MessagingPage() {
 	const load = useCallback(async () => {
 		try {
 			const [t, r] = await Promise.all([
-				api.admin.listTemplates(),
-				api.admin.listRecallRules(),
+				api.admin.templates.list(),
+				api.admin.recalls.rules.list(),
 			]);
 			setTemplates(t as Array<Template>);
 			setRules(r as Array<Rule>);
@@ -53,7 +53,7 @@ function MessagingPage() {
 	async function saveTemplate() {
 		setError(null);
 		try {
-			await api.admin.saveTemplate({
+			await api.admin.templates.save({
 				body: tpl.body,
 				branchId,
 				kind: tpl.kind,
@@ -69,7 +69,7 @@ function MessagingPage() {
 	async function sendMessage() {
 		setError(null);
 		try {
-			await api.operations.messagingSend({
+			await api.operations.messaging.send({
 				branchId,
 				channel: send.channel as "sms" | "whatsapp",
 				template: send.template,
@@ -83,7 +83,7 @@ function MessagingPage() {
 	async function saveRule() {
 		setError(null);
 		try {
-			await api.admin.saveRecallRule({
+			await api.admin.recalls.rules.save({
 				branchId,
 				daysAfter: Number(rule.daysAfter) || 0,
 				message: rule.message,
@@ -99,7 +99,7 @@ function MessagingPage() {
 	async function loadLog() {
 		setError(null);
 		try {
-			await api.operations.explorerGrant({
+			await api.operations.explorer.grant({
 				branchId,
 				granteeId: "self",
 				scope: "healthcare_message_log",
@@ -108,7 +108,7 @@ function MessagingPage() {
 			// grant may already exist
 		}
 		try {
-			const res = (await api.operations.explorerQuery({
+			const res = (await api.operations.explorer.query({
 				branchId,
 				collection: "healthcare_message_log",
 				limit: 100,
@@ -122,7 +122,7 @@ function MessagingPage() {
 
 	async function retry(messageId: string) {
 		try {
-			await api.operations.messagingRetry({ branchId, messageId });
+			await api.operations.messaging.retry({ branchId, messageId });
 			await loadLog();
 		} catch (err) {
 			setError(err instanceof Error ? err.message : "Retry failed");

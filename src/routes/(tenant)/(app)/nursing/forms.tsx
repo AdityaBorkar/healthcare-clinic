@@ -55,7 +55,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await orpc.nursing.vitalsChart({
+			const res = await orpc.nursing.charts.vitals({
 				branchId: "main",
 				patientId,
 				pulse: pulse ? Number(pulse) : undefined,
@@ -75,7 +75,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await orpc.nursing.ioChart({
+			const res = await orpc.nursing.charts.io({
 				branchId: "main",
 				intakeMl: intake ? Number(intake) : undefined,
 				outputMl: output ? Number(output) : undefined,
@@ -94,7 +94,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await orpc.nursing.painScore({
+			const res = await orpc.nursing.charts.pain({
 				branchId: "main",
 				patientId,
 				phase: painPhase as "pre" | "post",
@@ -111,7 +111,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			await orpc.nursing.riskScreen({
+			await orpc.nursing.assessments.risk({
 				branchId: "main",
 				kind: riskKind as "Morse",
 				patientId,
@@ -128,7 +128,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await orpc.nursing.drugAdminister({
+			const res = await orpc.nursing.medications.administer({
 				allergies: allergies
 					? allergies
 							.split(",")
@@ -156,7 +156,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			await orpc.nursing.sittingsSupport({
+			await orpc.nursing.sittings.support({
 				branchId: "main",
 				consentId,
 				patientId,
@@ -177,7 +177,7 @@ function RouteComponent() {
 				.map((label) => label.trim())
 				.filter(Boolean)
 				.map((label) => ({ done: "yes" as const, label }));
-			const res = await orpc.nursing.checklistRecord({
+			const res = await orpc.nursing.checklists.record({
 				branchId: "main",
 				items,
 				kind: checklistKind as "general",
@@ -197,7 +197,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			await orpc.nursing.triageTag({
+			await orpc.nursing.triage.tag({
 				branchId: "main",
 				patientId,
 				reason: triageReason,
@@ -217,7 +217,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await orpc.nursing.handoverCompile({
+			const res = await orpc.nursing.handovers.compile({
 				branchId: "main",
 				fromShift: fromShift as "morning",
 				notes: handoverNotes,

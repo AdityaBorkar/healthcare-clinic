@@ -67,7 +67,7 @@ export function GlobalSearch({ autoFocus = false }: { autoFocus?: boolean }) {
 				orpc.patients.list({ branchId }),
 				orpc.services.list({ branchId }),
 				orpc.practitioners.list({ branchId }),
-				orpc.billing.duesAging({ branchId }),
+				orpc.billing.reports.duesAging({ branchId }),
 			]);
 			const items = ((p as { items?: Array<PatientHit> }).items ?? []) as Array<
 				PatientHit & { fullName?: string }

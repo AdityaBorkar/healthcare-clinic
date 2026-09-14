@@ -50,7 +50,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await orpc.rehab.openEpisode({
+			const res = await orpc.rehab.episodes.open({
 				branchId: "main",
 				condition,
 				discipline: discipline as "occupational" | "physio" | "speech",
@@ -66,8 +66,8 @@ function RouteComponent() {
 	}
 
 	useEffect(() => {
-		orpc.rehab
-			.dayBoard({ branchId: "main" })
+		orpc.rehab.board
+			.day({ branchId: "main" })
 			.then((b) => setBoard(b as DayBoard))
 			.catch(() => setBoard(null));
 	}, []);

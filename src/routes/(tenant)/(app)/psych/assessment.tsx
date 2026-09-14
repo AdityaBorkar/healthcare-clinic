@@ -66,7 +66,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.psych.assess({
+			const res = await api.psych.assessments({
 				branchId: "main",
 				chiefComplaint: complaint,
 				encounterId,
@@ -85,7 +85,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.psych.scoreScale({
+			const res = await api.psych.scales.score({
 				branchId: "main",
 				encounterId,
 				maxScore: Number(maxScore),
@@ -112,7 +112,7 @@ function RouteComponent() {
 		e.preventDefault();
 		setStatus(null);
 		try {
-			const res = await api.psych.screenRisk({
+			const res = await api.psych.risks.screen({
 				branchId: "main",
 				encounterId,
 				factors: riskFactors

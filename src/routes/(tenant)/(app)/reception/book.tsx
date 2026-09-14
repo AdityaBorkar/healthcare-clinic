@@ -49,7 +49,7 @@ function RouteComponent() {
 		setError(null);
 		try {
 			if (tele) {
-				const booked = (await api.appointments.bookVideo({
+				const booked = (await api.appointments.video.create({
 					branchId,
 					note: note || undefined,
 					patientId,
@@ -61,7 +61,7 @@ function RouteComponent() {
 					`Video booked${booked.id ? ` ${booked.id}` : ""}${booked.slotStart ? ` for ${booked.slotStart}` : ""}`,
 				);
 			} else {
-				const booked = (await api.appointments.book({
+				const booked = (await api.appointments.create({
 					branchId,
 					note: note || undefined,
 					patientId,

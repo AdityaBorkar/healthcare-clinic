@@ -24,7 +24,7 @@ function AccessHistoryPage() {
 	async function load() {
 		setError(null);
 		try {
-			const res = (await api.operations.auditQuery({
+			const res = (await api.operations.audit.query({
 				branchId,
 				id: "access-history",
 			})) as Array<AccessRow>;

@@ -2,6 +2,7 @@ import {
 	logs as adminLogs,
 	createBranch,
 	createRole,
+	deleteRecallRule,
 	deleteRole,
 	deleteTemplate,
 	disableUser,
@@ -347,343 +348,686 @@ import {
 
 export const router = {
 	admin: {
-		createBranch,
-		createRole,
-		deleteRole,
-		deleteTemplate,
-		disableUser,
-		getCompany,
-		listBranches,
-		listCptCodes,
-		listMasterVersions,
-		listRecallRules,
-		listRoles,
-		listTemplates,
-		logs: adminLogs,
-		saveCompany,
-		saveCptVersion,
-		saveMasterVersion,
-		saveRecallRule,
-		saveTemplate,
-		updateBranch,
-		upsertCptCode,
+		auditLogs: {
+			list: adminLogs,
+		},
+		branches: {
+			create: createBranch,
+			list: listBranches,
+			update: updateBranch,
+		},
+		company: {
+			get: getCompany,
+			update: saveCompany,
+		},
+		cptCodes: {
+			list: listCptCodes,
+			upsert: upsertCptCode,
+		},
+		cptVersions: {
+			save: saveCptVersion,
+		},
+		masters: {
+			versions: {
+				list: listMasterVersions,
+				save: saveMasterVersion,
+			},
+		},
+		recalls: {
+			rules: {
+				list: listRecallRules,
+				remove: deleteRecallRule,
+				save: saveRecallRule,
+			},
+		},
+		roles: {
+			create: createRole,
+			list: listRoles,
+			remove: deleteRole,
+		},
+		templates: {
+			list: listTemplates,
+			remove: deleteTemplate,
+			save: saveTemplate,
+		},
+		users: {
+			disable: disableUser,
+		},
 	},
 	allopathy: {
-		checkInteraction: checkAllopathyInteraction,
-		listSoap,
-		logChronic,
-		problemList: listAllopathyProblems,
-		problemUpsert: upsertAllopathyProblem,
-		recordImmunization,
-		registerEntry: allopathyRegisterEntry,
-		saveExam: saveAllopathyExam,
-		saveSoap,
-		triageEntry,
+		chronic: {
+			log: logChronic,
+		},
+		exams: {
+			save: saveAllopathyExam,
+		},
+		immunizations: {
+			record: recordImmunization,
+		},
+		interactions: {
+			check: checkAllopathyInteraction,
+		},
+		problems: {
+			list: listAllopathyProblems,
+			upsert: upsertAllopathyProblem,
+		},
+		registers: {
+			create: allopathyRegisterEntry,
+		},
+		soap: {
+			list: listSoap,
+			save: saveSoap,
+		},
+		triage: {
+			create: triageEntry,
+		},
 	},
 	appointments: {
-		book: bookAppointment,
-		bookVideo: bookVideoAppointment,
-		callNext: callNextToken,
 		cancel: cancelAppointment,
-		captureConsent: captureVideoConsent,
+		certificates: {
+			create: issueCertificate,
+		},
 		checkin: checkinAppointment,
-		computeSlots,
+		create: bookAppointment,
 		get: getAppointment,
-		issueCertificate,
-		issueRecall,
 		list: listAppointments,
 		markNoShow: markAppointmentNoShow,
-		queueBoard,
+		queue: {
+			board: queueBoard,
+			callNext: callNextToken,
+		},
+		recalls: {
+			create: issueRecall,
+		},
 		reschedule: rescheduleAppointment,
-		walkinToken,
+		slots: {
+			list: computeSlots,
+		},
+		video: {
+			consents: {
+				create: captureVideoConsent,
+			},
+			create: bookVideoAppointment,
+		},
+		walkins: {
+			create: walkinToken,
+		},
 	},
 	auth: {
-		getSession,
+		session: {
+			get: getSession,
+		},
 	},
 	ayush: {
-		bookNadi,
-		createYogaBatch,
-		dualCode: dualCodeAyush,
-		enrollYoga,
-		issueDiet,
-		listFollowUpGrid: listAyushFollowUpGrid,
-		markYogaAttendance: markAyushYogaAttendance,
-		pauseExtendPackage: pauseExtendAyushPackage,
-		prescribe: prescribeAyush,
-		recordPackageOutcome: recordAyushPackageOutcome,
-		recordSitting: recordAyushSitting,
-		repertorize,
-		saveCaseSheet,
-		saveFollowUpGrid: saveAyushFollowUpGrid,
-		scheduleTherapy,
-		sellPackage: sellAyushPackage,
+		caseSheets: {
+			save: saveCaseSheet,
+		},
+		diagnoses: {
+			dualCode: dualCodeAyush,
+		},
+		diet: {
+			issue: issueDiet,
+		},
+		followUps: {
+			list: listAyushFollowUpGrid,
+			save: saveAyushFollowUpGrid,
+		},
+		nadi: {
+			book: bookNadi,
+		},
+		packages: {
+			outcomes: {
+				record: recordAyushPackageOutcome,
+			},
+			pauseExtend: pauseExtendAyushPackage,
+			sell: sellAyushPackage,
+		},
+		prescriptions: {
+			create: prescribeAyush,
+		},
+		repertory: {
+			query: repertorize,
+		},
+		sittings: {
+			record: recordAyushSitting,
+		},
+		therapy: {
+			schedule: scheduleTherapy,
+		},
+		yoga: {
+			attendance: {
+				mark: markAyushYogaAttendance,
+			},
+			batches: {
+				create: createYogaBatch,
+			},
+			enroll: enrollYoga,
+		},
 	},
 	billing: {
-		applyDiscount: applyBillingDiscount,
-		cndnIssue: billingCndnIssue,
-		collect: collectBilling,
-		collectionReport,
-		duesAging,
-		getInvoice,
-		gstExport,
-		interimTab,
-		invoiceFinalize,
-		invoiceRaise,
-		packageExpireRun,
-		packageLiability,
-		packageRedeem,
-		packageSell,
-		pricelistUpsert,
-		repriceOnPayerSwitch,
-		settle: settleBilling,
-		settleAdvance,
+		creditNotes: {
+			issue: billingCndnIssue,
+		},
+		discounts: {
+			apply: applyBillingDiscount,
+		},
+		invoices: {
+			create: invoiceRaise,
+			finalize: invoiceFinalize,
+			get: getInvoice,
+		},
+		packages: {
+			expire: packageExpireRun,
+			liability: packageLiability,
+			redeem: packageRedeem,
+			sell: packageSell,
+		},
+		payments: {
+			advances: {
+				settle: settleAdvance,
+			},
+			collect: collectBilling,
+			settle: settleBilling,
+		},
+		pricelists: {
+			upsert: pricelistUpsert,
+		},
+		reports: {
+			collection: collectionReport,
+			duesAging,
+			gstExport,
+		},
+		repricing: {
+			onPayerSwitch: repriceOnPayerSwitch,
+		},
+		tabs: {
+			interim: interimTab,
+		},
 	},
 	dental: {
-		bookChair,
-		buildPlan: buildDentalPlan,
-		chart: chartDental,
-		closeStage: closeDentalStage,
-		consent: dentalConsent,
-		implantMilestone: dentalImplantMilestone,
-		pendingJobs: pendingDentalJobs,
-		quote: dentalQuote,
-		raiseLabJob,
-		rescheduleStage: rescheduleDentalStage,
-		sellPackage: sellDentalPackage,
-		trackLabJob,
+		chairs: {
+			book: bookChair,
+		},
+		charts: chartDental,
+		consents: dentalConsent,
+		implants: {
+			milestone: dentalImplantMilestone,
+		},
+		labJobs: {
+			pending: pendingDentalJobs,
+			raise: raiseLabJob,
+			track: trackLabJob,
+		},
+		packages: {
+			sell: sellDentalPackage,
+		},
+		plans: {
+			build: buildDentalPlan,
+		},
+		quotes: dentalQuote,
+		stages: {
+			close: closeDentalStage,
+			reschedule: rescheduleDentalStage,
+		},
 	},
 	diagnostics: {
-		addonTest,
-		authorize: authorizeLab,
-		cancelOrder: cancelDiagnosticOrder,
-		collectSample,
-		criticalAck,
-		deliver: deliverLab,
-		getOrder: getDiagnosticOrder,
-		orderLabs,
-		panelCreate,
-		processingStart,
-		qcLog,
+		masters: {
+			panels: {
+				create: panelCreate,
+			},
+			upsert: testMasterUpsert,
+		},
+		orders: {
+			addTest: addonTest,
+			cancel: cancelDiagnosticOrder,
+			create: orderLabs,
+			get: getDiagnosticOrder,
+		},
+		processing: {
+			start: processingStart,
+		},
+		qc: {
+			log: qcLog,
+		},
 		queue: diagnosticsQueue,
-		radioAuthorize,
-		radioBook,
-		radioCheckin,
-		radioReportAttach,
-		radioReschedule,
-		receiveSample,
-		resultEnter,
-		sampleReject,
-		tatReport,
-		testMasterUpsert,
+		radiology: {
+			bookings: {
+				authorize: radioAuthorize,
+				checkin: radioCheckin,
+				create: radioBook,
+				reportAttach: radioReportAttach,
+				reschedule: radioReschedule,
+			},
+		},
+		reports: {
+			tat: tatReport,
+		},
+		results: {
+			acknowledgeCritical: criticalAck,
+			authorize: authorizeLab,
+			deliver: deliverLab,
+			enter: resultEnter,
+		},
+		samples: {
+			collect: collectSample,
+			receive: receiveSample,
+			reject: sampleReject,
+		},
 	},
 	encounters: {
-		addDiagnosis: addEncounterDiagnosis,
-		addendum: addEncounterAddendum,
+		addenda: {
+			create: addEncounterAddendum,
+		},
 		create: createEncounter,
+		diagnoses: {
+			add: addEncounterDiagnosis,
+		},
+		followUps: {
+			set: setEncounterFollowUp,
+		},
 		get: getEncounter,
-		placeOrder: placeEncounterOrder,
-		prescribe: prescribeEncounter,
-		recordVitals: recordEncounterVitals,
-		refill: refillEncounter,
-		setFollowUp: setEncounterFollowUp,
+		orders: {
+			place: placeEncounterOrder,
+		},
+		prescriptions: {
+			create: prescribeEncounter,
+			refill: refillEncounter,
+		},
 		sign: signEncounter,
+		vitals: {
+			record: recordEncounterVitals,
+		},
 	},
 	facilities: {
-		addBlock: addFacilityBlock,
+		availability: {
+			checkOverlap: facilityOverlap,
+		},
+		blocks: {
+			add: addFacilityBlock,
+		},
 		create: createFacility,
 		get: getFacility,
 		list: listFacilities,
-		logSterilization,
-		occupy: occupyFacility,
-		overlap: facilityOverlap,
-		release: releaseFacility,
-		setSchedule: setFacilitySchedule,
-		statusBoard: facilityStatusBoard,
+		occupancy: {
+			occupy: occupyFacility,
+			release: releaseFacility,
+		},
+		schedules: {
+			set: setFacilitySchedule,
+		},
+		status: {
+			board: facilityStatusBoard,
+		},
+		sterilization: {
+			log: logSterilization,
+		},
 		update: updateFacility,
 	},
 	nursing: {
+		assessments: {
+			risk: screenNursingRisk,
+		},
 		board: nursingBoard,
-		checklistRecord: recordNursingChecklist,
-		drugAdminister: administerNursingDrug,
-		handoverCompile: compileNursingHandover,
-		handoverSign: signNursingHandover,
-		ioChart: chartNursingIo,
-		missedEscalate: escalateNursingMissed,
-		painScore: scoreNursingPain,
-		riskScreen: screenNursingRisk,
-		sittingsSupport: supportNursingSitting,
-		tasksFromOrders: tasksFromNursingOrders,
-		triageTag: tagNursingTriage,
-		vitalsChart: chartNursingVitals,
+		charts: {
+			io: chartNursingIo,
+			pain: scoreNursingPain,
+			vitals: chartNursingVitals,
+		},
+		checklists: {
+			record: recordNursingChecklist,
+		},
+		escalations: {
+			missed: escalateNursingMissed,
+		},
+		handovers: {
+			compile: compileNursingHandover,
+			sign: signNursingHandover,
+		},
+		medications: {
+			administer: administerNursingDrug,
+		},
+		sittings: {
+			support: supportNursingSitting,
+		},
+		tasks: {
+			fromOrders: tasksFromNursingOrders,
+		},
+		triage: {
+			tag: tagNursingTriage,
+		},
 	},
 	operations: {
-		attendanceMark,
-		auditQuery,
-		branchesCreate,
-		complianceEvidence,
-		complianceList,
-		explorerExportCsv,
-		explorerGrant,
-		explorerQuery,
-		hrStaffUpsert,
-		leaveDecide,
-		leaveRequest,
-		mastersGet,
-		mastersUpsert,
-		messagingOptOut,
-		messagingRetry,
-		messagingSend,
-		payrollExport,
-		reportsDefine,
-		reportsList,
-		reportsRun,
-		rosterPlan,
-		seedPresets,
+		audit: {
+			query: auditQuery,
+		},
+		branches: {
+			create: branchesCreate,
+		},
+		compliance: {
+			evidence: complianceEvidence,
+			list: complianceList,
+		},
+		explorer: {
+			exportCsv: explorerExportCsv,
+			grant: explorerGrant,
+			query: explorerQuery,
+		},
+		hr: {
+			attendance: {
+				mark: attendanceMark,
+			},
+			leave: {
+				decide: leaveDecide,
+				request: leaveRequest,
+			},
+			payroll: {
+				export: payrollExport,
+			},
+			roster: {
+				plan: rosterPlan,
+			},
+			staff: {
+				upsert: hrStaffUpsert,
+			},
+		},
+		masters: {
+			get: mastersGet,
+			upsert: mastersUpsert,
+		},
+		messaging: {
+			optOut: messagingOptOut,
+			retry: messagingRetry,
+			send: messagingSend,
+		},
+		presets: {
+			seed: seedPresets,
+		},
+		reports: {
+			define: reportsDefine,
+			list: reportsList,
+			run: reportsRun,
+		},
 	},
 	organizations: {
-		bySubdomain: getOrganizationBySubdomain,
-		current: getCurrentOrganization,
+		current: {
+			get: getCurrentOrganization,
+			update: updateCurrentOrganization,
+		},
+		getBySubdomain: getOrganizationBySubdomain,
 		list: listOrganizations,
 		listMine: listMyOrganizations,
-		update: updateCurrentOrganization,
 	},
 	patients: {
-		addAllergy,
-		approveMerge,
-		archiveConsent,
-		dedupeCheck,
-		enrolRecall,
+		allergies: {
+			add: addAllergy,
+		},
+		communications: {
+			log: logCommunication,
+		},
+		consents: {
+			archive: archiveConsent,
+		},
+		create: registerPatient,
+		dedupe: {
+			check: dedupeCheck,
+		},
+		family: {
+			link: linkFamily,
+		},
+		flags: {
+			set: setFlag,
+		},
 		get: getPatient,
-		linkFamily,
 		list: listPatients,
-		logCommunication,
-		register: registerPatient,
-		requestMerge,
-		setFlag,
-		shareSlip,
+		merges: {
+			approve: approveMerge,
+			request: requestMerge,
+		},
+		recalls: {
+			enroll: enrolRecall,
+		},
+		slips: {
+			share: shareSlip,
+		},
 		timeline: patientTimeline,
 	},
 	pharmacy: {
-		batchReceive,
-		cndnIssue: pharmacyCndnIssue,
-		expiryAlerts,
-		getSale,
-		grnVerify,
-		itemUpsert,
-		partialClose: partialCloseSale,
-		piBook,
-		poCreate,
-		reorderSuggest,
-		returnAgainstBill,
-		saleFromRx,
-		stockCorrect,
-		stockLedger,
-		transfer: transferStock,
-		transferAccept: acceptStockTransfer,
+		alerts: {
+			expiry: expiryAlerts,
+			reorder: reorderSuggest,
+		},
+		batches: {
+			receive: batchReceive,
+		},
+		creditNotes: {
+			issue: pharmacyCndnIssue,
+		},
+		items: {
+			upsert: itemUpsert,
+		},
+		purchases: {
+			bookInvoice: piBook,
+			create: poCreate,
+			verifyGrn: grnVerify,
+		},
+		sales: {
+			createFromRx: saleFromRx,
+			get: getSale,
+			partialClose: partialCloseSale,
+			return: returnAgainstBill,
+		},
+		stock: {
+			correct: stockCorrect,
+			ledger: stockLedger,
+		},
+		transfers: {
+			accept: acceptStockTransfer,
+			create: transferStock,
+		},
 	},
 	practitioners: {
-		addEducation,
-		addPosting,
-		addRegistration,
-		blockLeave,
-		conflict: practitionerConflict,
+		availability: {
+			conflict: practitionerConflict,
+			nextFreeSlot,
+		},
 		create: createPractitioner,
+		credentials: {
+			education: {
+				add: addEducation,
+			},
+			postings: {
+				add: addPosting,
+			},
+			registrations: {
+				add: addRegistration,
+			},
+		},
 		deactivate: deactivatePractitioner,
+		fees: {
+			set: setFee,
+		},
 		get: getPractitioner,
+		leave: {
+			block: blockLeave,
+		},
 		list: listPractitioners,
-		nextFreeSlot,
-		setFee,
-		setSchedule: setPractitionerSchedule,
+		schedules: {
+			set: setPractitionerSchedule,
+		},
 		update: updatePractitioner,
 	},
 	psych: {
-		alertSenior: alertPsychSenior,
-		assess: assessPsych,
-		bookCounselling,
-		bookTele: bookPsychTele,
+		assessments: assessPsych,
 		breakGlass: psychBreakGlass,
-		caregiverConsent,
-		chartWithdrawal,
-		closeReadiness: closePsychReadiness,
-		involuntaryHook,
-		prescribeControlled,
-		recallList: psychRecallList,
-		relapsePlan,
-		saveSafetyPlan,
-		scoreScale: scorePsychScale,
-		screenRisk: screenPsychRisk,
-		sideEffectCheck,
+		consents: {
+			caregiver: caregiverConsent,
+		},
+		counselling: {
+			book: bookCounselling,
+		},
+		involuntary: involuntaryHook,
+		prescriptions: {
+			controlled: prescribeControlled,
+		},
+		readiness: {
+			close: closePsychReadiness,
+		},
+		recalls: {
+			list: psychRecallList,
+		},
+		relapsePlans: relapsePlan,
+		risks: {
+			screen: screenPsychRisk,
+		},
+		safetyPlans: {
+			save: saveSafetyPlan,
+		},
+		scales: {
+			score: scorePsychScale,
+		},
+		seniors: {
+			alert: alertPsychSenior,
+		},
+		sideEffects: {
+			check: sideEffectCheck,
+		},
+		tele: {
+			book: bookPsychTele,
+		},
+		withdrawal: {
+			chart: chartWithdrawal,
+		},
 	},
 	records: {
-		addendumAppend: appendRecordAddendum,
+		addenda: {
+			append: appendRecordAddendum,
+		},
 		breakglass: recordsBreakglass,
-		consentsGet: getRecordConsents,
-		dischargeIssue: issueRecordDischarge,
-		dischargePending: pendingRecordDischarges,
-		docsAttach: attachRecordDocs,
-		docsVerify: verifyRecordDocs,
-		encounterGet: getRecordEncounter,
-		familySummary: recordsFamilySummary,
-		familySummaryMulti: multiResidentFamilySummary,
+		consents: {
+			get: getRecordConsents,
+			record: recordRecordConsent,
+		},
+		discharges: {
+			issue: issueRecordDischarge,
+			pending: pendingRecordDischarges,
+		},
+		docs: {
+			attach: attachRecordDocs,
+			verify: verifyRecordDocs,
+		},
+		encounters: {
+			get: getRecordEncounter,
+		},
+		family: {
+			summary: recordsFamilySummary,
+			summaryMulti: multiResidentFamilySummary,
+		},
 		merge: mergeRecords,
-		notesMask: maskRecordNotes,
-		recentlyUsedRx: recordsRecentlyUsedRx,
-		recordConsent: recordRecordConsent,
-		registersAppend: appendRecordRegister,
-		registersExport: exportRecordRegisters,
-		registersVoid: voidRecordRegister,
-		retentionCheck: checkRecordRetention,
+		notes: {
+			mask: maskRecordNotes,
+		},
+		prescriptions: {
+			recentlyUsed: recordsRecentlyUsedRx,
+		},
+		registers: {
+			append: appendRecordRegister,
+			export: exportRecordRegisters,
+			void: voidRecordRegister,
+		},
+		retention: {
+			check: checkRecordRetention,
+		},
 		search: searchRecords,
-		sharePrint: shareRecordPrint,
-		shareWhatsapp: shareRecordWhatsapp,
+		sharing: {
+			print: shareRecordPrint,
+			whatsapp: shareRecordWhatsapp,
+		},
 		timeline: recordsTimeline,
 	},
 	rehab: {
-		assess: assessRehab,
-		bookSitting: bookRehabSitting,
-		buildPackage: buildRehabPackage,
-		dayBoard: rehabDayBoard,
+		assessments: assessRehab,
+		board: {
+			day: rehabDayBoard,
+		},
 		discharge: dischargeRehab,
-		exerciseSheet,
-		openEpisode: openRehabEpisode,
-		progressChart: rehabProgressChart,
-		recordSitting: recordRehabSitting,
-		rescore: rescoreRehab,
-		setGoals: setRehabGoals,
-		shareExerciseSheet: shareRehabExerciseSheet,
+		episodes: {
+			open: openRehabEpisode,
+		},
+		exercises: {
+			share: shareRehabExerciseSheet,
+			sheet: exerciseSheet,
+		},
+		goals: {
+			set: setRehabGoals,
+		},
+		packages: {
+			build: buildRehabPackage,
+		},
+		progress: {
+			chart: rehabProgressChart,
+		},
+		scores: {
+			rescore: rescoreRehab,
+		},
+		sittings: {
+			book: bookRehabSitting,
+			record: recordRehabSitting,
+		},
 	},
 	residents: {
-		admit: admitResident,
-		allocateBed: allocateResidentBed,
-		compileStayBill,
-		familySummary: residentFamilySummary,
+		alerts: {
+			raise: raiseResidentAlert,
+		},
+		assessments: {
+			geriatric: scoreGeriatric,
+			polypharmacy: polypharmacyReview,
+		},
+		beds: {
+			allocate: allocateResidentBed,
+		},
+		create: admitResident,
+		daily: {
+			log: logResidentDaily,
+		},
+		family: {
+			sendSummary: sendResidentFamilySummary,
+			summary: residentFamilySummary,
+		},
 		feedback: feedbackResident,
-		getResident,
-		listResidents,
-		logDaily: logResidentDaily,
-		polypharmacyReview,
-		raiseAlert: raiseResidentAlert,
-		recordStayCharge: recordResidentStayCharge,
-		round: residentRound,
-		scoreGeriatric,
-		sendFamilySummary: sendResidentFamilySummary,
-		visitLog: appendResidentVisitLog,
+		get: getResident,
+		list: listResidents,
+		rounds: residentRound,
+		stays: {
+			compileBill: compileStayBill,
+			recordCharge: recordResidentStayCharge,
+		},
+		visits: {
+			log: appendResidentVisitLog,
+		},
 	},
 	serviceProviders: {
 		create: createServiceProvider,
 		list: listServiceProviders,
 	},
 	services: {
-		addDiscountRule,
 		create: createService,
-		definePackage,
+		discounts: {
+			addRule: addDiscountRule,
+		},
+		facilities: {
+			map: mapServiceFacilities,
+		},
 		get: getService,
 		list: listServices,
-		mapFacilities: mapServiceFacilities,
+		packages: {
+			define: definePackage,
+			redeem: redeemPackage,
+		},
+		prices: {
+			set: setServicePrice,
+		},
 		publish: publishService,
-		redeem: redeemPackage,
 		retire: retireService,
-		setPrice: setServicePrice,
 		update: updateService,
 	},
 	tenants: {
@@ -698,3 +1042,5 @@ export const router = {
 		update: updateUser,
 	},
 };
+
+export type Router = typeof router;

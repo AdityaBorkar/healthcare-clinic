@@ -55,7 +55,7 @@ function RouteComponent() {
 
 	async function order() {
 		try {
-			await api.diagnostics.orderLabs({
+			await api.diagnostics.orders.create({
 				branchId: "main",
 				patientId,
 				priority: "routine",
@@ -70,7 +70,7 @@ function RouteComponent() {
 
 	async function collect() {
 		try {
-			await api.diagnostics.collectSample({
+			await api.diagnostics.samples.collect({
 				barcode,
 				branchId: "main",
 				collectedBy: staffId,
@@ -86,7 +86,7 @@ function RouteComponent() {
 
 	async function receive() {
 		try {
-			await api.diagnostics.receiveSample({
+			await api.diagnostics.samples.receive({
 				barcode,
 				branchId: "main",
 				condition: "ok",
@@ -101,7 +101,7 @@ function RouteComponent() {
 
 	async function reject() {
 		try {
-			await api.diagnostics.sampleReject({
+			await api.diagnostics.samples.reject({
 				barcode,
 				branchId: "main",
 				reason: rejectReason as
@@ -123,7 +123,7 @@ function RouteComponent() {
 
 	async function addon() {
 		try {
-			await api.diagnostics.addonTest({
+			await api.diagnostics.orders.addTest({
 				branchId: "main",
 				orderId,
 				requestedBy: staffId,
@@ -138,7 +138,7 @@ function RouteComponent() {
 
 	async function startProcessing() {
 		try {
-			await api.diagnostics.processingStart({
+			await api.diagnostics.processing.start({
 				branchId: "main",
 				orderId,
 				startedBy: staffId,
@@ -152,7 +152,7 @@ function RouteComponent() {
 
 	async function cancel(id: string) {
 		try {
-			await api.diagnostics.cancelOrder({
+			await api.diagnostics.orders.cancel({
 				branchId: "main",
 				cancelledBy: staffId || "desk",
 				orderId: id,

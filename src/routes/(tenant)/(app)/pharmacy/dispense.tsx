@@ -46,7 +46,7 @@ function RouteComponent() {
 	>([]);
 
 	useEffect(() => {
-		orpc.pharmacy.reorderSuggest({ branchId: "main" }).then(
+		orpc.pharmacy.alerts.reorder({ branchId: "main" }).then(
 			(rows) => setLowStock(rows.suggestions),
 			() => setLowStock([]),
 		);
@@ -61,7 +61,7 @@ function RouteComponent() {
 	async function dispense() {
 		setResult(null);
 		try {
-			const sale = (await orpc.pharmacy.saleFromRx({
+			const sale = (await orpc.pharmacy.sales.createFromRx({
 				branchId: "main",
 				fefoOverrideReason: fefoReason || undefined,
 				items: lines
@@ -194,8 +194,8 @@ function RouteComponent() {
 									</Button>
 									<Button
 										onClick={() =>
-											orpc.pharmacy
-												.getSale({ branchId: "main", id: saleId })
+											orpc.pharmacy.sales
+												.get({ branchId: "main", id: saleId })
 												.then(() =>
 													setResult("Sale fetched for WhatsApp send."),
 												)

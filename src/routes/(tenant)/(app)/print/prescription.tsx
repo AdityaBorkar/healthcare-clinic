@@ -64,7 +64,7 @@ function RouteComponent() {
 					drug,
 					frequency: frequency || undefined,
 				}));
-			const check = await api.allopathy.checkInteraction({
+			const check = await api.allopathy.interactions.check({
 				acknowledged: [],
 				allergies,
 				branchId: "main",
@@ -79,7 +79,7 @@ function RouteComponent() {
 				);
 				return;
 			}
-			const res = await api.encounters.prescribe({
+			const res = await api.encounters.prescriptions.create({
 				encounterId,
 				items,
 				patientId,
@@ -94,7 +94,7 @@ function RouteComponent() {
 	async function sendWhatsApp() {
 		setStatus(null);
 		try {
-			const res = await api.records.shareWhatsapp({
+			const res = await api.records.sharing.whatsapp({
 				branchId: "main",
 				channel: "whatsapp",
 				patientId: patientId || undefined,

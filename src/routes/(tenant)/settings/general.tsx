@@ -22,7 +22,7 @@ export const Route = createFileRoute("/(tenant)/settings/general")({
 	component: GeneralPage,
 	loader: async () => {
 		try {
-			return await orpc.organizations.current();
+			return await orpc.organizations.current.get();
 		} catch (error) {
 			console.error("Failed to load organization", error);
 			return null;
@@ -40,7 +40,7 @@ function GeneralPage() {
 
 	const handleSubmit = useCallback(
 		async (values: OrganizationFormValues) => {
-			await orpc.organizations.update({
+			await orpc.organizations.current.update({
 				logo: values.logo || null,
 				name: values.name,
 				slug: values.slug,
