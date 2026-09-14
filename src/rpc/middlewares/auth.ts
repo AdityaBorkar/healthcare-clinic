@@ -4,7 +4,7 @@ export const base = os.$context<{
 	headers: Headers;
 }>();
 
-export const authed = base.use(async ({ context, next }) => {
+export const authMiddleware = base.use(async ({ context, next }) => {
 	const headers = context.headers;
 	const { pm } = await import("#/aspen/server");
 

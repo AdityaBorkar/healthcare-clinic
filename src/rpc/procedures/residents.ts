@@ -14,11 +14,11 @@ import {
 	StayChargeSchema,
 	VisitLogSchema,
 } from "#/schemas/residents";
-import { authed } from "../middlewares/auth";
+import { authMiddleware } from "../middlewares/auth";
 import { requireOrganizationSlug } from "../utils/subdomain";
 import { resolveTenantDatabaseName } from "../utils/workspace-organization";
 
-export const admit = authed
+export const admit = authMiddleware
 	.input(ResidentAdmitSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -32,7 +32,7 @@ export const admit = authed
 		);
 	});
 
-export const allocateBed = authed
+export const allocateBed = authMiddleware
 	.input(BedAllocateSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -46,7 +46,7 @@ export const allocateBed = authed
 		);
 	});
 
-export const scoreGeriatric = authed
+export const scoreGeriatric = authMiddleware
 	.input(GeriatricScoreSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -60,7 +60,7 @@ export const scoreGeriatric = authed
 		);
 	});
 
-export const polypharmacyReview = authed
+export const polypharmacyReview = authMiddleware
 	.input(PolypharmacyReviewSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -74,7 +74,7 @@ export const polypharmacyReview = authed
 		);
 	});
 
-export const logDaily = authed
+export const logDaily = authMiddleware
 	.input(DailyLogSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -88,7 +88,7 @@ export const logDaily = authed
 		);
 	});
 
-export const round = authed
+export const round = authMiddleware
 	.input(RoundSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -102,7 +102,7 @@ export const round = authed
 		);
 	});
 
-export const visitLog = authed
+export const visitLog = authMiddleware
 	.input(VisitLogSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -116,7 +116,7 @@ export const visitLog = authed
 		);
 	});
 
-export const familySummary = authed
+export const familySummary = authMiddleware
 	.input(ResidentIdSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -130,7 +130,7 @@ export const familySummary = authed
 		);
 	});
 
-export const compileStayBill = authed
+export const compileStayBill = authMiddleware
 	.input(StayBillCompileSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -144,7 +144,7 @@ export const compileStayBill = authed
 		);
 	});
 
-export const getResident = authed
+export const getResident = authMiddleware
 	.input(ResidentIdSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -158,7 +158,7 @@ export const getResident = authed
 		);
 	});
 
-export const listResidents = authed
+export const listResidents = authMiddleware
 	.input(ResidentListSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -172,7 +172,7 @@ export const listResidents = authed
 		);
 	});
 
-export const recordStayCharge = authed
+export const recordStayCharge = authMiddleware
 	.input(StayChargeSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -186,7 +186,7 @@ export const recordStayCharge = authed
 		);
 	});
 
-export const feedback = authed
+export const feedback = authMiddleware
 	.input(FeedbackSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -200,7 +200,7 @@ export const feedback = authed
 		);
 	});
 
-export const raiseAlert = authed
+export const raiseAlert = authMiddleware
 	.input(RaiseAlertSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -214,7 +214,7 @@ export const raiseAlert = authed
 		);
 	});
 
-export const sendFamilySummary = authed
+export const sendFamilySummary = authMiddleware
 	.input(FamilySummarySendSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);

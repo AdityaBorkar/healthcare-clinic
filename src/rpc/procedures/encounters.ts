@@ -9,11 +9,11 @@ import {
 	RefillSchema,
 	VitalsSchema,
 } from "#/schemas/encounters";
-import { authed } from "../middlewares/auth";
+import { authMiddleware } from "../middlewares/auth";
 import { requireOrganizationSlug } from "../utils/subdomain";
 import { resolveTenantDatabaseName } from "../utils/workspace-organization";
 
-export const create = authed
+export const create = authMiddleware
 	.input(EncounterCreateSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -41,7 +41,7 @@ export const create = authed
 		}
 	});
 
-export const get = authed
+export const get = authMiddleware
 	.input(EncounterIdSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -61,7 +61,7 @@ export const get = authed
 		}
 	});
 
-export const sign = authed
+export const sign = authMiddleware
 	.input(EncounterIdSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -81,7 +81,7 @@ export const sign = authed
 		}
 	});
 
-export const addDiagnosis = authed
+export const addDiagnosis = authMiddleware
 	.input(DiagnosisSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -110,7 +110,7 @@ export const addDiagnosis = authed
 		}
 	});
 
-export const prescribe = authed
+export const prescribe = authMiddleware
 	.input(PrescriptionSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -137,7 +137,7 @@ export const prescribe = authed
 		}
 	});
 
-export const refill = authed
+export const refill = authMiddleware
 	.input(RefillSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -163,7 +163,7 @@ export const refill = authed
 		}
 	});
 
-export const placeOrder = authed
+export const placeOrder = authMiddleware
 	.input(OrderSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -192,7 +192,7 @@ export const placeOrder = authed
 		}
 	});
 
-export const recordVitals = authed
+export const recordVitals = authMiddleware
 	.input(VitalsSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -222,7 +222,7 @@ export const recordVitals = authed
 		}
 	});
 
-export const setFollowUp = authed
+export const setFollowUp = authMiddleware
 	.input(FollowUpSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -249,7 +249,7 @@ export const setFollowUp = authed
 		}
 	});
 
-export const addendum = authed
+export const addendum = authMiddleware
 	.input(AddendumSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);

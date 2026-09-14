@@ -16,11 +16,11 @@ import {
 	TransferAcceptSchema,
 	TransferSchema,
 } from "#/schemas/pharmacy";
-import { authed } from "../middlewares/auth";
+import { authMiddleware } from "../middlewares/auth";
 import { requireOrganizationSlug } from "../utils/subdomain";
 import { resolveTenantDatabaseName } from "../utils/workspace-organization";
 
-export const itemUpsert = authed
+export const itemUpsert = authMiddleware
 	.input(ItemUpsertSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -34,7 +34,7 @@ export const itemUpsert = authed
 		);
 	});
 
-export const batchReceive = authed
+export const batchReceive = authMiddleware
 	.input(BatchReceiveSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -48,7 +48,7 @@ export const batchReceive = authed
 		);
 	});
 
-export const saleFromRx = authed
+export const saleFromRx = authMiddleware
 	.input(SaleFromRxSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -62,7 +62,7 @@ export const saleFromRx = authed
 		);
 	});
 
-export const partialClose = authed
+export const partialClose = authMiddleware
 	.input(PartialCloseSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -76,7 +76,7 @@ export const partialClose = authed
 		);
 	});
 
-export const returnAgainstBill = authed
+export const returnAgainstBill = authMiddleware
 	.input(ReturnSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -90,7 +90,7 @@ export const returnAgainstBill = authed
 		);
 	});
 
-export const poCreate = authed
+export const poCreate = authMiddleware
 	.input(PoCreateSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -104,7 +104,7 @@ export const poCreate = authed
 		);
 	});
 
-export const grnVerify = authed
+export const grnVerify = authMiddleware
 	.input(GrnVerifySchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -118,7 +118,7 @@ export const grnVerify = authed
 		);
 	});
 
-export const piBook = authed
+export const piBook = authMiddleware
 	.input(PiBookSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -132,7 +132,7 @@ export const piBook = authed
 		);
 	});
 
-export const cndnIssue = authed
+export const cndnIssue = authMiddleware
 	.input(PharmacyCndnSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -146,7 +146,7 @@ export const cndnIssue = authed
 		);
 	});
 
-export const transfer = authed
+export const transfer = authMiddleware
 	.input(TransferSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -160,7 +160,7 @@ export const transfer = authed
 		);
 	});
 
-export const transferAccept = authed
+export const transferAccept = authMiddleware
 	.input(TransferAcceptSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -174,7 +174,7 @@ export const transferAccept = authed
 		);
 	});
 
-export const reorderSuggest = authed
+export const reorderSuggest = authMiddleware
 	.input(ReorderSuggestSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -188,7 +188,7 @@ export const reorderSuggest = authed
 		);
 	});
 
-export const getSale = authed
+export const getSale = authMiddleware
 	.input(PharmacyIdSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -202,7 +202,7 @@ export const getSale = authed
 		);
 	});
 
-export const expiryAlerts = authed
+export const expiryAlerts = authMiddleware
 	.input(ExpiryAlertQuerySchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -216,7 +216,7 @@ export const expiryAlerts = authed
 		);
 	});
 
-export const stockLedger = authed
+export const stockLedger = authMiddleware
 	.input(StockLedgerQuerySchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -230,7 +230,7 @@ export const stockLedger = authed
 		);
 	});
 
-export const stockCorrect = authed
+export const stockCorrect = authMiddleware
 	.input(StockCorrectSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);

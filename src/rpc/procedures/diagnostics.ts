@@ -21,11 +21,11 @@ import {
 	TatReportSchema,
 	TestMasterSchema,
 } from "#/schemas/diagnostics";
-import { authed } from "../middlewares/auth";
+import { authMiddleware } from "../middlewares/auth";
 import { requireOrganizationSlug } from "../utils/subdomain";
 import { resolveTenantDatabaseName } from "../utils/workspace-organization";
 
-export const testMasterUpsert = authed
+export const testMasterUpsert = authMiddleware
 	.input(TestMasterSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -39,7 +39,7 @@ export const testMasterUpsert = authed
 		);
 	});
 
-export const panelCreate = authed
+export const panelCreate = authMiddleware
 	.input(PanelSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -53,7 +53,7 @@ export const panelCreate = authed
 		);
 	});
 
-export const orderLabs = authed
+export const orderLabs = authMiddleware
 	.input(OrderLabsSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -67,7 +67,7 @@ export const orderLabs = authed
 		);
 	});
 
-export const collectSample = authed
+export const collectSample = authMiddleware
 	.input(SampleCollectSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -81,7 +81,7 @@ export const collectSample = authed
 		);
 	});
 
-export const receiveSample = authed
+export const receiveSample = authMiddleware
 	.input(SampleReceiveSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -95,7 +95,7 @@ export const receiveSample = authed
 		);
 	});
 
-export const sampleReject = authed
+export const sampleReject = authMiddleware
 	.input(SampleRejectSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -109,7 +109,7 @@ export const sampleReject = authed
 		);
 	});
 
-export const addonTest = authed
+export const addonTest = authMiddleware
 	.input(AddOnTestSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -123,7 +123,7 @@ export const addonTest = authed
 		);
 	});
 
-export const processingStart = authed
+export const processingStart = authMiddleware
 	.input(ProcessingStartSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -137,7 +137,7 @@ export const processingStart = authed
 		);
 	});
 
-export const tatReport = authed
+export const tatReport = authMiddleware
 	.input(TatReportSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -151,7 +151,7 @@ export const tatReport = authed
 		);
 	});
 
-export const resultEnter = authed
+export const resultEnter = authMiddleware
 	.input(ResultEntrySchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -165,7 +165,7 @@ export const resultEnter = authed
 		);
 	});
 
-export const criticalAck = authed
+export const criticalAck = authMiddleware
 	.input(CriticalAckSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -179,7 +179,7 @@ export const criticalAck = authed
 		);
 	});
 
-export const authorize = authed
+export const authorize = authMiddleware
 	.input(AuthorizeSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -193,7 +193,7 @@ export const authorize = authed
 		);
 	});
 
-export const deliver = authed
+export const deliver = authMiddleware
 	.input(DeliverSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -207,7 +207,7 @@ export const deliver = authed
 		);
 	});
 
-export const radioBook = authed
+export const radioBook = authMiddleware
 	.input(RadioBookSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -221,7 +221,7 @@ export const radioBook = authed
 		);
 	});
 
-export const radioReschedule = authed
+export const radioReschedule = authMiddleware
 	.input(RadioRescheduleSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -235,7 +235,7 @@ export const radioReschedule = authed
 		);
 	});
 
-export const radioCheckin = authed
+export const radioCheckin = authMiddleware
 	.input(RadioCheckinSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -249,7 +249,7 @@ export const radioCheckin = authed
 		);
 	});
 
-export const radioReportAttach = authed
+export const radioReportAttach = authMiddleware
 	.input(RadioReportAttachSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -263,7 +263,7 @@ export const radioReportAttach = authed
 		);
 	});
 
-export const radioAuthorize = authed
+export const radioAuthorize = authMiddleware
 	.input(RadioAuthorizeSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -277,7 +277,7 @@ export const radioAuthorize = authed
 		);
 	});
 
-export const qcLog = authed
+export const qcLog = authMiddleware
 	.input(QcLogSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -291,7 +291,7 @@ export const qcLog = authed
 		);
 	});
 
-export const cancelOrder = authed
+export const cancelOrder = authMiddleware
 	.input(CancelOrderSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -305,7 +305,7 @@ export const cancelOrder = authed
 		);
 	});
 
-export const getOrder = authed
+export const getOrder = authMiddleware
 	.input(DiagnosticsIdSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -319,7 +319,7 @@ export const getOrder = authed
 		);
 	});
 
-export const queue = authed
+export const queue = authMiddleware
 	.input(DiagnosticsIdSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);

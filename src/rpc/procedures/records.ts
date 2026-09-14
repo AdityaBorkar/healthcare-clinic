@@ -18,11 +18,11 @@ import {
 	ShareSchema,
 	TimelineQuerySchema,
 } from "#/schemas/records";
-import { authed } from "../middlewares/auth";
+import { authMiddleware } from "../middlewares/auth";
 import { requireOrganizationSlug } from "../utils/subdomain";
 import { resolveTenantDatabaseName } from "../utils/workspace-organization";
 
-export const timeline = authed
+export const timeline = authMiddleware
 	.input(TimelineQuerySchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -41,7 +41,7 @@ export const timeline = authed
 		);
 	});
 
-export const encounterGet = authed
+export const encounterGet = authMiddleware
 	.input(EncounterGetSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -60,7 +60,7 @@ export const encounterGet = authed
 		);
 	});
 
-export const search = authed
+export const search = authMiddleware
 	.input(RecordsSearchSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -79,7 +79,7 @@ export const search = authed
 		);
 	});
 
-export const notesMask = authed
+export const notesMask = authMiddleware
 	.input(TimelineQuerySchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -98,7 +98,7 @@ export const notesMask = authed
 		);
 	});
 
-export const breakglass = authed
+export const breakglass = authMiddleware
 	.input(BreakGlassSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -119,7 +119,7 @@ export const breakglass = authed
 		);
 	});
 
-export const docsAttach = authed
+export const docsAttach = authMiddleware
 	.input(DocumentAttachSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -143,7 +143,7 @@ export const docsAttach = authed
 		);
 	});
 
-export const docsVerify = authed
+export const docsVerify = authMiddleware
 	.input(RecordsIdSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -162,7 +162,7 @@ export const docsVerify = authed
 		);
 	});
 
-export const sharePrint = authed
+export const sharePrint = authMiddleware
 	.input(ShareSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -186,7 +186,7 @@ export const sharePrint = authed
 		);
 	});
 
-export const shareWhatsapp = authed
+export const shareWhatsapp = authMiddleware
 	.input(ShareSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -210,7 +210,7 @@ export const shareWhatsapp = authed
 		);
 	});
 
-export const familySummary = authed
+export const familySummary = authMiddleware
 	.input(TimelineQuerySchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -229,7 +229,7 @@ export const familySummary = authed
 		);
 	});
 
-export const registersAppend = authed
+export const registersAppend = authMiddleware
 	.input(RegisterEntrySchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -253,7 +253,7 @@ export const registersAppend = authed
 		);
 	});
 
-export const registersVoid = authed
+export const registersVoid = authMiddleware
 	.input(RegisterVoidSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -274,7 +274,7 @@ export const registersVoid = authed
 		);
 	});
 
-export const registersExport = authed
+export const registersExport = authMiddleware
 	.input(RegisterEntrySchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -293,7 +293,7 @@ export const registersExport = authed
 		);
 	});
 
-export const addendumAppend = authed
+export const addendumAppend = authMiddleware
 	.input(AddendumSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -314,7 +314,7 @@ export const addendumAppend = authed
 		);
 	});
 
-export const dischargePending = authed
+export const dischargePending = authMiddleware
 	.input(DischargePendingSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -334,7 +334,7 @@ export const dischargePending = authed
 		);
 	});
 
-export const dischargeIssue = authed
+export const dischargeIssue = authMiddleware
 	.input(DischargeIssueSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -355,7 +355,7 @@ export const dischargeIssue = authed
 		);
 	});
 
-export const consentsGet = authed
+export const consentsGet = authMiddleware
 	.input(ConsentsGetSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -374,7 +374,7 @@ export const consentsGet = authed
 		);
 	});
 
-export const merge = authed
+export const merge = authMiddleware
 	.input(MergeSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -395,7 +395,7 @@ export const merge = authed
 		);
 	});
 
-export const retentionCheck = authed
+export const retentionCheck = authMiddleware
 	.input(RetentionCheckSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -415,7 +415,7 @@ export const retentionCheck = authed
 		);
 	});
 
-export const recordConsent = authed
+export const recordConsent = authMiddleware
 	.input(RecordConsentSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -437,7 +437,7 @@ export const recordConsent = authed
 		);
 	});
 
-export const familySummaryMulti = authed
+export const familySummaryMulti = authMiddleware
 	.input(FamilySummaryMultiSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -456,7 +456,7 @@ export const familySummaryMulti = authed
 		);
 	});
 
-export const recentlyUsedRx = authed
+export const recentlyUsedRx = authMiddleware
 	.input(RecentRxQuerySchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);

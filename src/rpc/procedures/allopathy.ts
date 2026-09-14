@@ -12,11 +12,11 @@ import {
 	TriageEntryInputSchema,
 } from "#/schemas/allopathy";
 import { InteractionCheckSchema } from "#/schemas/encounters";
-import { authed } from "../middlewares/auth";
+import { authMiddleware } from "../middlewares/auth";
 import { requireOrganizationSlug } from "../utils/subdomain";
 import { resolveTenantDatabaseName } from "../utils/workspace-organization";
 
-export const saveSoap = authed
+export const saveSoap = authMiddleware
 	.input(SoapNoteInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -30,7 +30,7 @@ export const saveSoap = authed
 		);
 	});
 
-export const saveExam = authed
+export const saveExam = authMiddleware
 	.input(ExamFindingInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -44,7 +44,7 @@ export const saveExam = authed
 		);
 	});
 
-export const logChronic = authed
+export const logChronic = authMiddleware
 	.input(ChronicLogInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -58,7 +58,7 @@ export const logChronic = authed
 		);
 	});
 
-export const recordImmunization = authed
+export const recordImmunization = authMiddleware
 	.input(ImmunizationInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -72,7 +72,7 @@ export const recordImmunization = authed
 		);
 	});
 
-export const triageEntry = authed
+export const triageEntry = authMiddleware
 	.input(TriageEntryInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -86,7 +86,7 @@ export const triageEntry = authed
 		);
 	});
 
-export const registerEntry = authed
+export const registerEntry = authMiddleware
 	.input(RegisterEntryInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -100,7 +100,7 @@ export const registerEntry = authed
 		);
 	});
 
-export const listSoap = authed
+export const listSoap = authMiddleware
 	.input(EncounterFilterSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -114,7 +114,7 @@ export const listSoap = authed
 		);
 	});
 
-export const problemUpsert = authed
+export const problemUpsert = authMiddleware
 	.input(ProblemUpsertSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -128,7 +128,7 @@ export const problemUpsert = authed
 		);
 	});
 
-export const problemList = authed
+export const problemList = authMiddleware
 	.input(ProblemListFilterSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -142,7 +142,7 @@ export const problemList = authed
 		);
 	});
 
-export const checkInteraction = authed
+export const checkInteraction = authMiddleware
 	.input(InteractionCheckSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);

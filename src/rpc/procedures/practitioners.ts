@@ -12,11 +12,11 @@ import {
 	RegistrationSchema,
 	ScheduleSchema,
 } from "#/schemas/practitioners";
-import { authed } from "../middlewares/auth";
+import { authMiddleware } from "../middlewares/auth";
 import { requireOrganizationSlug } from "../utils/subdomain";
 import { resolveTenantDatabaseName } from "../utils/workspace-organization";
 
-export const create = authed
+export const create = authMiddleware
 	.input(PractitionerCreateSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -52,7 +52,7 @@ export const create = authed
 		}
 	});
 
-export const get = authed
+export const get = authMiddleware
 	.input(PractitionerIdSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -72,7 +72,7 @@ export const get = authed
 		}
 	});
 
-export const list = authed
+export const list = authMiddleware
 	.input(PractitionerListSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -94,7 +94,7 @@ export const list = authed
 		}
 	});
 
-export const update = authed
+export const update = authMiddleware
 	.input(PractitionerPatchSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -140,7 +140,7 @@ export const update = authed
 		}
 	});
 
-export const deactivate = authed
+export const deactivate = authMiddleware
 	.input(PractitionerIdSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -160,7 +160,7 @@ export const deactivate = authed
 		}
 	});
 
-export const addRegistration = authed
+export const addRegistration = authMiddleware
 	.input(RegistrationSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -189,7 +189,7 @@ export const addRegistration = authed
 		}
 	});
 
-export const addEducation = authed
+export const addEducation = authMiddleware
 	.input(EducationSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -217,7 +217,7 @@ export const addEducation = authed
 		}
 	});
 
-export const addPosting = authed
+export const addPosting = authMiddleware
 	.input(PostingSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -245,7 +245,7 @@ export const addPosting = authed
 		}
 	});
 
-export const setSchedule = authed
+export const setSchedule = authMiddleware
 	.input(ScheduleSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -278,7 +278,7 @@ export const setSchedule = authed
 		}
 	});
 
-export const setFee = authed
+export const setFee = authMiddleware
 	.input(FeeSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -308,7 +308,7 @@ export const setFee = authed
 		}
 	});
 
-export const blockLeave = authed
+export const blockLeave = authMiddleware
 	.input(LeaveBlockSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -336,7 +336,7 @@ export const blockLeave = authed
 		}
 	});
 
-export const conflict = authed
+export const conflict = authMiddleware
 	.input(ConflictQuerySchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -362,7 +362,7 @@ export const conflict = authed
 		}
 	});
 
-export const nextFreeSlot = authed
+export const nextFreeSlot = authMiddleware
 	.input(NextSlotQuerySchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);

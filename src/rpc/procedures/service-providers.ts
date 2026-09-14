@@ -1,12 +1,12 @@
 import { CreateServiceProviderSchema } from "#/schemas/service-providers";
-import { authed } from "../middlewares/auth";
+import { authMiddleware } from "../middlewares/auth";
 
-export const listServiceProviders = authed.handler(async () => {
+export const listServiceProviders = authMiddleware.handler(async () => {
 	const { pm } = await import("#/aspen/server");
 	return pm.run("$global", () => pm.management.serviceProviders.list.run({}));
 });
 
-export const createServiceProvider = authed
+export const createServiceProvider = authMiddleware
 	.input(CreateServiceProviderSchema)
 	.handler(async ({ input }) => {
 		const { pm } = await import("#/aspen/server");

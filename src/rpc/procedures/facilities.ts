@@ -10,7 +10,7 @@ import {
 	ReleaseSchema,
 	SterilizationLogSchema,
 } from "#/schemas/facilities";
-import { authed } from "../middlewares/auth";
+import { authMiddleware } from "../middlewares/auth";
 import { requireOrganizationSlug } from "../utils/subdomain";
 import { resolveTenantDatabaseName } from "../utils/workspace-organization";
 
@@ -54,7 +54,7 @@ function toBackendCategory(category: string): BackendCategory {
 	}
 }
 
-export const create = authed
+export const create = authMiddleware
 	.input(FacilityCreateSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -83,7 +83,7 @@ export const create = authed
 		}
 	});
 
-export const get = authed
+export const get = authMiddleware
 	.input(FacilityIdSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -103,7 +103,7 @@ export const get = authed
 		}
 	});
 
-export const list = authed
+export const list = authMiddleware
 	.input(FacilityListSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -123,7 +123,7 @@ export const list = authed
 		}
 	});
 
-export const update = authed
+export const update = authMiddleware
 	.input(FacilityPatchSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -156,7 +156,7 @@ export const update = authed
 		}
 	});
 
-export const setSchedule = authed
+export const setSchedule = authMiddleware
 	.input(FacilityScheduleSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -184,7 +184,7 @@ export const setSchedule = authed
 		}
 	});
 
-export const addBlock = authed
+export const addBlock = authMiddleware
 	.input(FacilityBlockSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -212,7 +212,7 @@ export const addBlock = authed
 		}
 	});
 
-export const overlap = authed
+export const overlap = authMiddleware
 	.input(FacilityBlockSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -239,7 +239,7 @@ export const overlap = authed
 		}
 	});
 
-export const occupy = authed
+export const occupy = authMiddleware
 	.input(OccupySchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -265,7 +265,7 @@ export const occupy = authed
 		}
 	});
 
-export const release = authed
+export const release = authMiddleware
 	.input(ReleaseSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -291,7 +291,7 @@ export const release = authed
 		}
 	});
 
-export const logSterilization = authed
+export const logSterilization = authMiddleware
 	.input(SterilizationLogSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -320,7 +320,7 @@ export const logSterilization = authed
 		}
 	});
 
-export const statusBoard = authed
+export const statusBoard = authMiddleware
 	.input(FacilityStatusQuerySchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);

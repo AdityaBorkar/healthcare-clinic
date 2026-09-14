@@ -21,11 +21,11 @@ import {
 	SeedPresetsSchema,
 	StaffUpsertSchema,
 } from "#/schemas/operations";
-import { authed } from "../middlewares/auth";
+import { authMiddleware } from "../middlewares/auth";
 import { requireOrganizationSlug } from "../utils/subdomain";
 import { resolveTenantDatabaseName } from "../utils/workspace-organization";
 
-export const hrStaffUpsert = authed
+export const hrStaffUpsert = authMiddleware
 	.input(StaffUpsertSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -51,7 +51,7 @@ export const hrStaffUpsert = authed
 		);
 	});
 
-export const rosterPlan = authed
+export const rosterPlan = authMiddleware
 	.input(RosterPlanSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -71,7 +71,7 @@ export const rosterPlan = authed
 		);
 	});
 
-export const attendanceMark = authed
+export const attendanceMark = authMiddleware
 	.input(AttendanceMarkSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -92,7 +92,7 @@ export const attendanceMark = authed
 		);
 	});
 
-export const leaveRequest = authed
+export const leaveRequest = authMiddleware
 	.input(LeaveRequestSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -114,7 +114,7 @@ export const leaveRequest = authed
 		);
 	});
 
-export const leaveDecide = authed
+export const leaveDecide = authMiddleware
 	.input(LeaveDecideSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -135,7 +135,7 @@ export const leaveDecide = authed
 		);
 	});
 
-export const payrollExport = authed
+export const payrollExport = authMiddleware
 	.input(PayrollExportSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -154,7 +154,7 @@ export const payrollExport = authed
 		);
 	});
 
-export const mastersUpsert = authed
+export const mastersUpsert = authMiddleware
 	.input(MasterUpsertSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -175,7 +175,7 @@ export const mastersUpsert = authed
 		);
 	});
 
-export const branchesCreate = authed
+export const branchesCreate = authMiddleware
 	.input(BranchCreateSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -195,7 +195,7 @@ export const branchesCreate = authed
 		);
 	});
 
-export const seedPresets = authed
+export const seedPresets = authMiddleware
 	.input(SeedPresetsSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -214,7 +214,7 @@ export const seedPresets = authed
 		);
 	});
 
-export const explorerQuery = authed
+export const explorerQuery = authMiddleware
 	.input(ExplorerQuerySchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -237,7 +237,7 @@ export const explorerQuery = authed
 		);
 	});
 
-export const explorerExportCsv = authed
+export const explorerExportCsv = authMiddleware
 	.input(ExplorerQuerySchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -260,7 +260,7 @@ export const explorerExportCsv = authed
 		);
 	});
 
-export const reportsDefine = authed
+export const reportsDefine = authMiddleware
 	.input(ReportDefSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -281,7 +281,7 @@ export const reportsDefine = authed
 		);
 	});
 
-export const reportsRun = authed
+export const reportsRun = authMiddleware
 	.input(ReportRunSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -301,7 +301,7 @@ export const reportsRun = authed
 		);
 	});
 
-export const complianceEvidence = authed
+export const complianceEvidence = authMiddleware
 	.input(ComplianceEvidenceSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -323,7 +323,7 @@ export const complianceEvidence = authed
 		);
 	});
 
-export const messagingSend = authed
+export const messagingSend = authMiddleware
 	.input(MessageSendSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -345,7 +345,7 @@ export const messagingSend = authed
 		);
 	});
 
-export const messagingRetry = authed
+export const messagingRetry = authMiddleware
 	.input(MessageRetrySchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -364,7 +364,7 @@ export const messagingRetry = authed
 		);
 	});
 
-export const messagingOptOut = authed
+export const messagingOptOut = authMiddleware
 	.input(OptOutSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -384,7 +384,7 @@ export const messagingOptOut = authed
 		);
 	});
 
-export const explorerGrant = authed
+export const explorerGrant = authMiddleware
 	.input(ExplorerGrantSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -405,7 +405,7 @@ export const explorerGrant = authed
 		);
 	});
 
-export const auditQuery = authed
+export const auditQuery = authMiddleware
 	.input(OperationsIdSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -419,7 +419,7 @@ export const auditQuery = authed
 		);
 	});
 
-export const mastersGet = authed
+export const mastersGet = authMiddleware
 	.input(MasterFilterSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -433,7 +433,7 @@ export const mastersGet = authed
 		);
 	});
 
-export const complianceList = authed
+export const complianceList = authMiddleware
 	.input(ComplianceListSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -447,7 +447,7 @@ export const complianceList = authed
 		);
 	});
 
-export const reportsList = authed
+export const reportsList = authMiddleware
 	.input(ReportListSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);

@@ -12,11 +12,11 @@ import {
 	PatientRegisterSchema,
 	RecallEnrolSchema,
 } from "#/schemas/patients";
-import { authed } from "../middlewares/auth";
+import { authMiddleware } from "../middlewares/auth";
 import { requireOrganizationSlug } from "../utils/subdomain";
 import { resolveTenantDatabaseName } from "../utils/workspace-organization";
 
-export const register = authed
+export const register = authMiddleware
 	.input(PatientRegisterSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -48,7 +48,7 @@ export const register = authed
 		}
 	});
 
-export const dedupeCheck = authed
+export const dedupeCheck = authMiddleware
 	.input(DedupeCheckSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -74,7 +74,7 @@ export const dedupeCheck = authed
 		}
 	});
 
-export const get = authed
+export const get = authMiddleware
 	.input(PatientIdSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -94,7 +94,7 @@ export const get = authed
 		}
 	});
 
-export const list = authed
+export const list = authMiddleware
 	.input(PatientListSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -119,7 +119,7 @@ export const list = authed
 		}
 	});
 
-export const timeline = authed
+export const timeline = authMiddleware
 	.input(PatientIdSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -139,7 +139,7 @@ export const timeline = authed
 		}
 	});
 
-export const linkFamily = authed
+export const linkFamily = authMiddleware
 	.input(FamilyLinkSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -167,7 +167,7 @@ export const linkFamily = authed
 		}
 	});
 
-export const setFlag = authed
+export const setFlag = authMiddleware
 	.input(FlagSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -194,7 +194,7 @@ export const setFlag = authed
 		}
 	});
 
-export const addAllergy = authed
+export const addAllergy = authMiddleware
 	.input(AllergySchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -223,7 +223,7 @@ export const addAllergy = authed
 		}
 	});
 
-export const archiveConsent = authed
+export const archiveConsent = authMiddleware
 	.input(ConsentSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -251,7 +251,7 @@ export const archiveConsent = authed
 		}
 	});
 
-export const logCommunication = authed
+export const logCommunication = authMiddleware
 	.input(CommunicationLogSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -278,7 +278,7 @@ export const logCommunication = authed
 		}
 	});
 
-export const shareSlip = authed
+export const shareSlip = authMiddleware
 	.input(PatientIdSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -298,7 +298,7 @@ export const shareSlip = authed
 		}
 	});
 
-export const enrolRecall = authed
+export const enrolRecall = authMiddleware
 	.input(RecallEnrolSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -325,7 +325,7 @@ export const enrolRecall = authed
 		}
 	});
 
-export const requestMerge = authed
+export const requestMerge = authMiddleware
 	.input(MergeRequestSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -352,7 +352,7 @@ export const requestMerge = authed
 		}
 	});
 
-export const approveMerge = authed
+export const approveMerge = authMiddleware
 	.input(ApproveMergeSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);

@@ -11,11 +11,11 @@ import {
 	TriageTagSchema,
 	VitalsSchema,
 } from "#/schemas/nursing";
-import { authed } from "../middlewares/auth";
+import { authMiddleware } from "../middlewares/auth";
 import { requireOrganizationSlug } from "../utils/subdomain";
 import { resolveTenantDatabaseName } from "../utils/workspace-organization";
 
-export const tasksFromOrders = authed
+export const tasksFromOrders = authMiddleware
 	.input(TaskFromOrdersSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -29,7 +29,7 @@ export const tasksFromOrders = authed
 		);
 	});
 
-export const board = authed
+export const board = authMiddleware
 	.input(NursingBoardSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -43,7 +43,7 @@ export const board = authed
 		);
 	});
 
-export const vitalsChart = authed
+export const vitalsChart = authMiddleware
 	.input(VitalsSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -57,7 +57,7 @@ export const vitalsChart = authed
 		);
 	});
 
-export const ioChart = authed
+export const ioChart = authMiddleware
 	.input(IoSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -71,7 +71,7 @@ export const ioChart = authed
 		);
 	});
 
-export const painScore = authed
+export const painScore = authMiddleware
 	.input(PainSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -85,7 +85,7 @@ export const painScore = authed
 		);
 	});
 
-export const riskScreen = authed
+export const riskScreen = authMiddleware
 	.input(RiskScreenSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -99,7 +99,7 @@ export const riskScreen = authed
 		);
 	});
 
-export const drugAdminister = authed
+export const drugAdminister = authMiddleware
 	.input(DrugAdminSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -113,7 +113,7 @@ export const drugAdminister = authed
 		);
 	});
 
-export const missedEscalate = authed
+export const missedEscalate = authMiddleware
 	.input(TaskFromOrdersSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -126,7 +126,7 @@ export const missedEscalate = authed
 			),
 		);
 	});
-export const sittingsSupport = authed
+export const sittingsSupport = authMiddleware
 	.input(SittingSupportSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -140,7 +140,7 @@ export const sittingsSupport = authed
 		);
 	});
 
-export const checklistRecord = authed
+export const checklistRecord = authMiddleware
 	.input(ChecklistSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -154,7 +154,7 @@ export const checklistRecord = authed
 		);
 	});
 
-export const handoverCompile = authed
+export const handoverCompile = authMiddleware
 	.input(HandoverSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -168,7 +168,7 @@ export const handoverCompile = authed
 		);
 	});
 
-export const handoverSign = authed
+export const handoverSign = authMiddleware
 	.input(HandoverSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -182,7 +182,7 @@ export const handoverSign = authed
 		);
 	});
 
-export const triageTag = authed
+export const triageTag = authMiddleware
 	.input(TriageTagSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);

@@ -12,11 +12,11 @@ import {
 	RehabSittingRecordInputSchema,
 	ShareExerciseSheetInputSchema,
 } from "#/schemas/rehab";
-import { authed } from "../middlewares/auth";
+import { authMiddleware } from "../middlewares/auth";
 import { requireOrganizationSlug } from "../utils/subdomain";
 import { resolveTenantDatabaseName } from "../utils/workspace-organization";
 
-export const openEpisode = authed
+export const openEpisode = authMiddleware
 	.input(RehabEpisodeInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -30,7 +30,7 @@ export const openEpisode = authed
 		);
 	});
 
-export const assess = authed
+export const assess = authMiddleware
 	.input(RehabAssessmentInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -44,7 +44,7 @@ export const assess = authed
 		);
 	});
 
-export const setGoals = authed
+export const setGoals = authMiddleware
 	.input(RehabGoalPlanInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -58,7 +58,7 @@ export const setGoals = authed
 		);
 	});
 
-export const buildPackage = authed
+export const buildPackage = authMiddleware
 	.input(RehabPackageInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -72,7 +72,7 @@ export const buildPackage = authed
 		);
 	});
 
-export const bookSitting = authed
+export const bookSitting = authMiddleware
 	.input(RehabSittingBookInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -86,7 +86,7 @@ export const bookSitting = authed
 		);
 	});
 
-export const recordSitting = authed
+export const recordSitting = authMiddleware
 	.input(RehabSittingRecordInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -100,7 +100,7 @@ export const recordSitting = authed
 		);
 	});
 
-export const rescore = authed
+export const rescore = authMiddleware
 	.input(OutcomeScoreInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -114,7 +114,7 @@ export const rescore = authed
 		);
 	});
 
-export const exerciseSheet = authed
+export const exerciseSheet = authMiddleware
 	.input(ExercisePrescriptionInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -128,7 +128,7 @@ export const exerciseSheet = authed
 		);
 	});
 
-export const discharge = authed
+export const discharge = authMiddleware
 	.input(DischargeSummaryInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -142,7 +142,7 @@ export const discharge = authed
 		);
 	});
 
-export const dayBoard = authed
+export const dayBoard = authMiddleware
 	.input(BranchFilterSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -156,7 +156,7 @@ export const dayBoard = authed
 		);
 	});
 
-export const progressChart = authed
+export const progressChart = authMiddleware
 	.input(ProgressChartInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -170,7 +170,7 @@ export const progressChart = authed
 		);
 	});
 
-export const shareExerciseSheet = authed
+export const shareExerciseSheet = authMiddleware
 	.input(ShareExerciseSheetInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);

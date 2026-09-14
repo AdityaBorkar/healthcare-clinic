@@ -9,11 +9,11 @@ import {
 	ServiceListSchema,
 	ServicePatchSchema,
 } from "#/schemas/services";
-import { authed } from "../middlewares/auth";
+import { authMiddleware } from "../middlewares/auth";
 import { requireOrganizationSlug } from "../utils/subdomain";
 import { resolveTenantDatabaseName } from "../utils/workspace-organization";
 
-export const create = authed
+export const create = authMiddleware
 	.input(ServiceCreateSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -45,7 +45,7 @@ export const create = authed
 		}
 	});
 
-export const get = authed
+export const get = authMiddleware
 	.input(ServiceIdSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -65,7 +65,7 @@ export const get = authed
 		}
 	});
 
-export const list = authed
+export const list = authMiddleware
 	.input(ServiceListSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -87,7 +87,7 @@ export const list = authed
 		}
 	});
 
-export const update = authed
+export const update = authMiddleware
 	.input(ServicePatchSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -122,7 +122,7 @@ export const update = authed
 		}
 	});
 
-export const publish = authed
+export const publish = authMiddleware
 	.input(ServiceIdSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -142,7 +142,7 @@ export const publish = authed
 		}
 	});
 
-export const retire = authed
+export const retire = authMiddleware
 	.input(ServiceIdSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -162,7 +162,7 @@ export const retire = authed
 		}
 	});
 
-export const mapFacilities = authed
+export const mapFacilities = authMiddleware
 	.input(FacilityMapSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -188,7 +188,7 @@ export const mapFacilities = authed
 		}
 	});
 
-export const setPrice = authed
+export const setPrice = authMiddleware
 	.input(PriceSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -216,7 +216,7 @@ export const setPrice = authed
 		}
 	});
 
-export const addDiscountRule = authed
+export const addDiscountRule = authMiddleware
 	.input(DiscountRuleSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -246,7 +246,7 @@ export const addDiscountRule = authed
 		}
 	});
 
-export const definePackage = authed
+export const definePackage = authMiddleware
 	.input(PackageDefSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -275,7 +275,7 @@ export const definePackage = authed
 		}
 	});
 
-export const redeem = authed
+export const redeem = authMiddleware
 	.input(RedeemSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);

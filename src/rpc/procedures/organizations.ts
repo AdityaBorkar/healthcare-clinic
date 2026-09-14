@@ -1,6 +1,6 @@
 import { env } from "#/env";
 import { UpdateOrganizationInputSchema } from "#/schemas/organizations";
-import { authed, base } from "../middlewares/auth";
+import { authMiddleware, base } from "../middlewares/auth";
 import {
 	findOrganizationBrandingBySlug,
 	listMyOrganizationBranding,
@@ -25,7 +25,7 @@ export const listOrganizations = base.handler(async () => {
 	return { organizations };
 });
 
-export const listMyOrganizations = authed.handler(async ({ context }) => {
+export const listMyOrganizations = authMiddleware.handler(async ({ context }) => {
 	const organizations = await listMyOrganizationBranding(context.headers);
 	return { organizations };
 });
@@ -56,7 +56,7 @@ function toOrganizationDto(org: TenantOrganizationRow) {
 	};
 }
 
-export const getCurrentOrganization = authed.handler(async ({ context }) => {
+export const getCurrentOrganization = authMiddleware.handler(async ({ context }) => {
 	const organizationSlug = requireOrganizationSlug(context.headers);
 	const workspaceOrg = await getWorkspaceOrganization(
 		context.headers,
@@ -82,7 +82,7 @@ export const getCurrentOrganization = authed.handler(async ({ context }) => {
 	});
 });
 
-export const updateCurrentOrganization = authed
+export const updateCurrentOrganization = authMiddleware
 	.input(UpdateOrganizationInputSchema)
 	.handler(async ({ context, input }) => {
 		const organizationSlug = requireOrganizationSlug(context.headers);

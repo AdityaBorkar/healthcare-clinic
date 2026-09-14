@@ -17,11 +17,11 @@ import {
 	SideEffectCheckInputSchema,
 	WithdrawalChartInputSchema,
 } from "#/schemas/psych";
-import { authed } from "../middlewares/auth";
+import { authMiddleware } from "../middlewares/auth";
 import { requireOrganizationSlug } from "../utils/subdomain";
 import { resolveTenantDatabaseName } from "../utils/workspace-organization";
 
-export const assess = authed
+export const assess = authMiddleware
 	.input(PsychAssessmentInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -35,7 +35,7 @@ export const assess = authed
 		);
 	});
 
-export const scoreScale = authed
+export const scoreScale = authMiddleware
 	.input(ScaleResultInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -49,7 +49,7 @@ export const scoreScale = authed
 		);
 	});
 
-export const screenRisk = authed
+export const screenRisk = authMiddleware
 	.input(RiskScreenInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -63,7 +63,7 @@ export const screenRisk = authed
 		);
 	});
 
-export const saveSafetyPlan = authed
+export const saveSafetyPlan = authMiddleware
 	.input(SafetyPlanInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -77,7 +77,7 @@ export const saveSafetyPlan = authed
 		);
 	});
 
-export const alertSenior = authed
+export const alertSenior = authMiddleware
 	.input(SeniorAlertInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -91,7 +91,7 @@ export const alertSenior = authed
 		);
 	});
 
-export const bookCounselling = authed
+export const bookCounselling = authMiddleware
 	.input(CounsellingBookInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -105,7 +105,7 @@ export const bookCounselling = authed
 		);
 	});
 
-export const bookTele = authed
+export const bookTele = authMiddleware
 	.input(CounsellingBookInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -119,7 +119,7 @@ export const bookTele = authed
 		);
 	});
 
-export const chartWithdrawal = authed
+export const chartWithdrawal = authMiddleware
 	.input(WithdrawalChartInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -133,7 +133,7 @@ export const chartWithdrawal = authed
 		);
 	});
 
-export const relapsePlan = authed
+export const relapsePlan = authMiddleware
 	.input(RelapsePlanInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -147,7 +147,7 @@ export const relapsePlan = authed
 		);
 	});
 
-export const prescribeControlled = authed
+export const prescribeControlled = authMiddleware
 	.input(ControlledPrescriptionInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -161,7 +161,7 @@ export const prescribeControlled = authed
 		);
 	});
 
-export const sideEffectCheck = authed
+export const sideEffectCheck = authMiddleware
 	.input(SideEffectCheckInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -175,7 +175,7 @@ export const sideEffectCheck = authed
 		);
 	});
 
-export const caregiverConsent = authed
+export const caregiverConsent = authMiddleware
 	.input(CaregiverConsentInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -189,7 +189,7 @@ export const caregiverConsent = authed
 		);
 	});
 
-export const involuntaryHook = authed
+export const involuntaryHook = authMiddleware
 	.input(InvoluntaryHookInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -203,7 +203,7 @@ export const involuntaryHook = authed
 		);
 	});
 
-export const breakGlass = authed
+export const breakGlass = authMiddleware
 	.input(BreakGlassInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -217,7 +217,7 @@ export const breakGlass = authed
 		);
 	});
 
-export const recallList = authed
+export const recallList = authMiddleware
 	.input(RecallListInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -231,7 +231,7 @@ export const recallList = authed
 		);
 	});
 
-export const closeReadiness = authed
+export const closeReadiness = authMiddleware
 	.input(CloseReadinessInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);

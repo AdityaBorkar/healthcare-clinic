@@ -17,11 +17,11 @@ import {
 	YogaBatchInputSchema,
 	YogaEnrollmentInputSchema,
 } from "#/schemas/ayush";
-import { authed } from "../middlewares/auth";
+import { authMiddleware } from "../middlewares/auth";
 import { requireOrganizationSlug } from "../utils/subdomain";
 import { resolveTenantDatabaseName } from "../utils/workspace-organization";
 
-export const saveCaseSheet = authed
+export const saveCaseSheet = authMiddleware
 	.input(AyushCaseSheetInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -35,7 +35,7 @@ export const saveCaseSheet = authed
 		);
 	});
 
-export const repertorize = authed
+export const repertorize = authMiddleware
 	.input(RepertorizationInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -49,7 +49,7 @@ export const repertorize = authed
 		);
 	});
 
-export const dualCode = authed
+export const dualCode = authMiddleware
 	.input(AyushDiagnosisInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -63,7 +63,7 @@ export const dualCode = authed
 		);
 	});
 
-export const bookNadi = authed
+export const bookNadi = authMiddleware
 	.input(NadiBookingInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -77,7 +77,7 @@ export const bookNadi = authed
 		);
 	});
 
-export const scheduleTherapy = authed
+export const scheduleTherapy = authMiddleware
 	.input(TherapySittingInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -91,7 +91,7 @@ export const scheduleTherapy = authed
 		);
 	});
 
-export const recordSitting = authed
+export const recordSitting = authMiddleware
 	.input(TherapySittingInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -105,7 +105,7 @@ export const recordSitting = authed
 		);
 	});
 
-export const sellPackage = authed
+export const sellPackage = authMiddleware
 	.input(TherapyPackageInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -119,7 +119,7 @@ export const sellPackage = authed
 		);
 	});
 
-export const pauseExtendPackage = authed
+export const pauseExtendPackage = authMiddleware
 	.input(PackagePauseExtendInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -133,7 +133,7 @@ export const pauseExtendPackage = authed
 		);
 	});
 
-export const issueDiet = authed
+export const issueDiet = authMiddleware
 	.input(DietPlanInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -147,7 +147,7 @@ export const issueDiet = authed
 		);
 	});
 
-export const enrollYoga = authed
+export const enrollYoga = authMiddleware
 	.input(YogaEnrollmentInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -161,7 +161,7 @@ export const enrollYoga = authed
 		);
 	});
 
-export const createYogaBatch = authed
+export const createYogaBatch = authMiddleware
 	.input(YogaBatchInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -175,7 +175,7 @@ export const createYogaBatch = authed
 		);
 	});
 
-export const saveFollowUpGrid = authed
+export const saveFollowUpGrid = authMiddleware
 	.input(FollowUpGridInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -189,7 +189,7 @@ export const saveFollowUpGrid = authed
 		);
 	});
 
-export const listFollowUpGrid = authed
+export const listFollowUpGrid = authMiddleware
 	.input(FollowUpGridListSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -203,7 +203,7 @@ export const listFollowUpGrid = authed
 		);
 	});
 
-export const markYogaAttendance = authed
+export const markYogaAttendance = authMiddleware
 	.input(YogaAttendanceInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -217,7 +217,7 @@ export const markYogaAttendance = authed
 		);
 	});
 
-export const prescribeAyush = authed
+export const prescribeAyush = authMiddleware
 	.input(AyushPrescriptionInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -231,7 +231,7 @@ export const prescribeAyush = authed
 		);
 	});
 
-export const recordPackageOutcome = authed
+export const recordPackageOutcome = authMiddleware
 	.input(PackageOutcomeInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);

@@ -15,11 +15,11 @@ import {
 	TemplateSchema,
 	UserDisableSchema,
 } from "#/schemas/admin";
-import { authed } from "../middlewares/auth";
+import { authMiddleware } from "../middlewares/auth";
 import { requireOrganizationSlug } from "../utils/subdomain";
 import { resolveTenantDatabaseName } from "../utils/workspace-organization";
 
-export const getCompany = authed.handler(async ({ context }) => {
+export const getCompany = authMiddleware.handler(async ({ context }) => {
 	requireOrganizationSlug(context.headers);
 	const dbName = await resolveTenantDatabaseName(context.headers);
 	const { pm } = await import("#/aspen/server");
@@ -37,7 +37,7 @@ export const getCompany = authed.handler(async ({ context }) => {
 	}
 });
 
-export const saveCompany = authed
+export const saveCompany = authMiddleware
 	.input(CompanySchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -63,7 +63,7 @@ export const saveCompany = authed
 		}
 	});
 
-export const listBranches = authed.handler(async ({ context }) => {
+export const listBranches = authMiddleware.handler(async ({ context }) => {
 	requireOrganizationSlug(context.headers);
 	const dbName = await resolveTenantDatabaseName(context.headers);
 	const { pm } = await import("#/aspen/server");
@@ -81,7 +81,7 @@ export const listBranches = authed.handler(async ({ context }) => {
 	}
 });
 
-export const createBranch = authed
+export const createBranch = authMiddleware
 	.input(BranchCreateSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -107,7 +107,7 @@ export const createBranch = authed
 		}
 	});
 
-export const updateBranch = authed
+export const updateBranch = authMiddleware
 	.input(BranchPatchSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -127,7 +127,7 @@ export const updateBranch = authed
 		}
 	});
 
-export const disableUser = authed
+export const disableUser = authMiddleware
 	.input(UserDisableSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -154,7 +154,7 @@ export const disableUser = authed
 		}
 	});
 
-export const listRoles = authed.handler(async ({ context }) => {
+export const listRoles = authMiddleware.handler(async ({ context }) => {
 	requireOrganizationSlug(context.headers);
 	const dbName = await resolveTenantDatabaseName(context.headers);
 	const { pm } = await import("#/aspen/server");
@@ -172,7 +172,7 @@ export const listRoles = authed.handler(async ({ context }) => {
 	}
 });
 
-export const createRole = authed
+export const createRole = authMiddleware
 	.input(RoleSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -198,7 +198,7 @@ export const createRole = authed
 		}
 	});
 
-export const deleteRole = authed
+export const deleteRole = authMiddleware
 	.input(RoleIdSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -218,25 +218,27 @@ export const deleteRole = authed
 		}
 	});
 
-export const listMasterVersions = authed.handler(async ({ context }) => {
-	requireOrganizationSlug(context.headers);
-	const dbName = await resolveTenantDatabaseName(context.headers);
-	const { pm } = await import("#/aspen/server");
-	try {
-		return await pm.run(dbName, () =>
-			pm.healthcare.admin.listMasterVersions.run(
-				{ input: {} },
-				{ actorId: context.session.user.id },
-			),
-		);
-	} catch (error) {
-		throw new Error(
-			`Master list failed (${error instanceof Error ? error.message : "unknown error"}); retry`,
-		);
-	}
-});
+export const listMasterVersions = authMiddleware.handler(
+	async ({ context }) => {
+		requireOrganizationSlug(context.headers);
+		const dbName = await resolveTenantDatabaseName(context.headers);
+		const { pm } = await import("#/aspen/server");
+		try {
+			return await pm.run(dbName, () =>
+				pm.healthcare.admin.listMasterVersions.run(
+					{ input: {} },
+					{ actorId: context.session.user.id },
+				),
+			);
+		} catch (error) {
+			throw new Error(
+				`Master list failed (${error instanceof Error ? error.message : "unknown error"}); retry`,
+			);
+		}
+	},
+);
 
-export const saveMasterVersion = authed
+export const saveMasterVersion = authMiddleware
 	.input(MasterVersionSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -263,7 +265,7 @@ export const saveMasterVersion = authed
 		}
 	});
 
-export const listTemplates = authed.handler(async ({ context }) => {
+export const listTemplates = authMiddleware.handler(async ({ context }) => {
 	requireOrganizationSlug(context.headers);
 	const dbName = await resolveTenantDatabaseName(context.headers);
 	const { pm } = await import("#/aspen/server");
@@ -281,7 +283,7 @@ export const listTemplates = authed.handler(async ({ context }) => {
 	}
 });
 
-export const saveTemplate = authed
+export const saveTemplate = authMiddleware
 	.input(TemplateSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -311,7 +313,7 @@ export const saveTemplate = authed
 		}
 	});
 
-export const deleteTemplate = authed
+export const deleteTemplate = authMiddleware
 	.input(NamedIdSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -331,7 +333,7 @@ export const deleteTemplate = authed
 		}
 	});
 
-export const listRecallRules = authed.handler(async ({ context }) => {
+export const listRecallRules = authMiddleware.handler(async ({ context }) => {
 	requireOrganizationSlug(context.headers);
 	const dbName = await resolveTenantDatabaseName(context.headers);
 	const { pm } = await import("#/aspen/server");
@@ -349,7 +351,7 @@ export const listRecallRules = authed.handler(async ({ context }) => {
 	}
 });
 
-export const saveRecallRule = authed
+export const saveRecallRule = authMiddleware
 	.input(RecallRuleSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -376,7 +378,7 @@ export const saveRecallRule = authed
 		}
 	});
 
-export const deleteRecallRule = authed
+export const deleteRecallRule = authMiddleware
 	.input(BranchIdSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -396,7 +398,7 @@ export const deleteRecallRule = authed
 		}
 	});
 
-export const logs = authed
+export const logs = authMiddleware
 	.input(LogsQuerySchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -424,7 +426,7 @@ export const logs = authed
 // CPT + billing-code master (P0-5, admin domain). Backed by the generic
 // master-version store with domain "cpt": version = CPT code, payload = JSON
 // of { code, description, billingCode, system, price }.
-export const upsertCptCode = authed
+export const upsertCptCode = authMiddleware
 	.input(CptUpsertSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -457,7 +459,7 @@ export const upsertCptCode = authed
 		}
 	});
 
-export const listCptCodes = authed
+export const listCptCodes = authMiddleware
 	.input(CptListSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -502,7 +504,7 @@ export const listCptCodes = authed
 		}
 	});
 
-export const saveCptVersion = authed
+export const saveCptVersion = authMiddleware
 	.input(CptVersionSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);

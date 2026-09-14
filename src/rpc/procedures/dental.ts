@@ -14,11 +14,11 @@ import {
 	RescheduleStageInputSchema,
 	TreatmentPlanInputSchema,
 } from "#/schemas/dental";
-import { authed } from "../middlewares/auth";
+import { authMiddleware } from "../middlewares/auth";
 import { requireOrganizationSlug } from "../utils/subdomain";
 import { resolveTenantDatabaseName } from "../utils/workspace-organization";
 
-export const chart = authed
+export const chart = authMiddleware
 	.input(DentalChartInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -32,7 +32,7 @@ export const chart = authed
 		);
 	});
 
-export const buildPlan = authed
+export const buildPlan = authMiddleware
 	.input(TreatmentPlanInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -46,7 +46,7 @@ export const buildPlan = authed
 		);
 	});
 
-export const quote = authed
+export const quote = authMiddleware
 	.input(QuoteInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -60,7 +60,7 @@ export const quote = authed
 		);
 	});
 
-export const consent = authed
+export const consent = authMiddleware
 	.input(ConsentFormInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -74,7 +74,7 @@ export const consent = authed
 		);
 	});
 
-export const bookChair = authed
+export const bookChair = authMiddleware
 	.input(ChairSlotInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -88,7 +88,7 @@ export const bookChair = authed
 		);
 	});
 
-export const raiseLabJob = authed
+export const raiseLabJob = authMiddleware
 	.input(LabJobInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -102,7 +102,7 @@ export const raiseLabJob = authed
 		);
 	});
 
-export const trackLabJob = authed
+export const trackLabJob = authMiddleware
 	.input(LabJobTrackInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -116,7 +116,7 @@ export const trackLabJob = authed
 		);
 	});
 
-export const closeStage = authed
+export const closeStage = authMiddleware
 	.input(PlanStageCloseInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -130,7 +130,7 @@ export const closeStage = authed
 		);
 	});
 
-export const pendingJobs = authed
+export const pendingJobs = authMiddleware
 	.input(PendingJobsFilterSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -144,7 +144,7 @@ export const pendingJobs = authed
 		);
 	});
 
-export const rescheduleStage = authed
+export const rescheduleStage = authMiddleware
 	.input(RescheduleStageInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -158,7 +158,7 @@ export const rescheduleStage = authed
 		);
 	});
 
-export const implantMilestone = authed
+export const implantMilestone = authMiddleware
 	.input(ImplantMilestoneInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -172,7 +172,7 @@ export const implantMilestone = authed
 		);
 	});
 
-export const sellPackage = authed
+export const sellPackage = authMiddleware
 	.input(DentalPackageInputSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);

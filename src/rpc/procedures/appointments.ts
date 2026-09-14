@@ -14,11 +14,11 @@ import {
 	RescheduleSchema,
 	SlotsQuerySchema,
 } from "#/schemas/appointments";
-import { authed } from "../middlewares/auth";
+import { authMiddleware } from "../middlewares/auth";
 import { requireOrganizationSlug } from "../utils/subdomain";
 import { resolveTenantDatabaseName } from "../utils/workspace-organization";
 
-export const computeSlots = authed
+export const computeSlots = authMiddleware
 	.input(SlotsQuerySchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -48,7 +48,7 @@ export const computeSlots = authed
 		}
 	});
 
-export const book = authed
+export const book = authMiddleware
 	.input(BookingSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -80,7 +80,7 @@ export const book = authed
 		}
 	});
 
-export const get = authed
+export const get = authMiddleware
 	.input(AppointmentIdSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -100,7 +100,7 @@ export const get = authed
 		}
 	});
 
-export const list = authed
+export const list = authMiddleware
 	.input(AppointmentListSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -120,7 +120,7 @@ export const list = authed
 		}
 	});
 
-export const reschedule = authed
+export const reschedule = authMiddleware
 	.input(RescheduleSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -146,7 +146,7 @@ export const reschedule = authed
 		}
 	});
 
-export const cancel = authed
+export const cancel = authMiddleware
 	.input(CancelSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -166,7 +166,7 @@ export const cancel = authed
 		}
 	});
 
-export const checkin = authed
+export const checkin = authMiddleware
 	.input(AppointmentIdSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -186,7 +186,7 @@ export const checkin = authed
 		}
 	});
 
-export const queueBoard = authed
+export const queueBoard = authMiddleware
 	.input(QueueQuerySchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -206,7 +206,7 @@ export const queueBoard = authed
 		}
 	});
 
-export const walkinToken = authed
+export const walkinToken = authMiddleware
 	.input(QueueTokenSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -234,7 +234,7 @@ export const walkinToken = authed
 		}
 	});
 
-export const callNext = authed
+export const callNext = authMiddleware
 	.input(CallNextSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -259,7 +259,7 @@ export const callNext = authed
 		}
 	});
 
-export const bookVideo = authed
+export const bookVideo = authMiddleware
 	.input(BookVideoSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -287,7 +287,7 @@ export const bookVideo = authed
 		}
 	});
 
-export const captureConsent = authed
+export const captureConsent = authMiddleware
 	.input(ConsentCaptureSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -313,7 +313,7 @@ export const captureConsent = authed
 		}
 	});
 
-export const issueRecall = authed
+export const issueRecall = authMiddleware
 	.input(RecallIssueSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -340,7 +340,7 @@ export const issueRecall = authed
 		}
 	});
 
-export const issueCertificate = authed
+export const issueCertificate = authMiddleware
 	.input(CertificateIssueSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -373,7 +373,7 @@ export const issueCertificate = authed
 // it also issues a recall in the same request (1-click recall hook).
 // Auto-flag note: callers should follow with patients.setFlag
 // (level "watch", label "no-show") so repeat no-shows surface on the queue.
-export const markNoShow = authed
+export const markNoShow = authMiddleware
 	.input(NoShowSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);

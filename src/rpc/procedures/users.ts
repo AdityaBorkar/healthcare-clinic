@@ -3,7 +3,7 @@ import {
 	TenantUserIdSchema,
 	UpdateTenantUserInputSchema,
 } from "#/schemas/users";
-import { authed } from "../middlewares/auth";
+import { authMiddleware } from "../middlewares/auth";
 import { requireOrganizationSlug } from "../utils/subdomain";
 import {
 	findWorkspaceMember,
@@ -16,19 +16,19 @@ import {
 	requireWorkspaceAdmin,
 } from "../utils/workspace-organization";
 
-export const listUsers = authed.handler(async ({ context }) => {
+export const listUsers = authMiddleware.handler(async ({ context }) => {
 	const organizationSlug = requireOrganizationSlug(context.headers);
 	return listWorkspaceMembers(context.headers, organizationSlug);
 });
 
-export const getUser = authed
+export const getUser = authMiddleware
 	.input(TenantUserIdSchema)
 	.handler(async ({ context, input }) => {
 		const organizationSlug = requireOrganizationSlug(context.headers);
 		return findWorkspaceMember(context.headers, organizationSlug, input.id);
 	});
 
-export const createUser = authed
+export const createUser = authMiddleware
 	.input(CreateTenantUserSchema)
 	.handler(async ({ context, input }) => {
 		const organizationSlug = requireOrganizationSlug(context.headers);
@@ -82,7 +82,7 @@ export const createUser = authed
 		});
 	});
 
-export const updateUser = authed
+export const updateUser = authMiddleware
 	.input(UpdateTenantUserInputSchema)
 	.handler(async ({ context, input }) => {
 		const organizationSlug = requireOrganizationSlug(context.headers);
@@ -119,7 +119,7 @@ export const updateUser = authed
 		return findWorkspaceMember(context.headers, organizationSlug, input.id);
 	});
 
-export const removeUser = authed
+export const removeUser = authMiddleware
 	.input(TenantUserIdSchema)
 	.handler(async ({ context, input }) => {
 		const organizationSlug = requireOrganizationSlug(context.headers);

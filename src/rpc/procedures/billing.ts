@@ -16,11 +16,11 @@ import {
 	RepriceSchema,
 	SettleAdvanceSchema,
 } from "#/schemas/billing";
-import { authed } from "../middlewares/auth";
+import { authMiddleware } from "../middlewares/auth";
 import { requireOrganizationSlug } from "../utils/subdomain";
 import { resolveTenantDatabaseName } from "../utils/workspace-organization";
 
-export const invoiceRaise = authed
+export const invoiceRaise = authMiddleware
 	.input(InvoiceFromSourcesSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -34,7 +34,7 @@ export const invoiceRaise = authed
 		);
 	});
 
-export const invoiceFinalize = authed
+export const invoiceFinalize = authMiddleware
 	.input(InvoiceFinalizeSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -48,7 +48,7 @@ export const invoiceFinalize = authed
 		);
 	});
 
-export const interimTab = authed
+export const interimTab = authMiddleware
 	.input(InterimTabSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -62,7 +62,7 @@ export const interimTab = authed
 		);
 	});
 
-export const applyDiscount = authed
+export const applyDiscount = authMiddleware
 	.input(DiscountSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -76,7 +76,7 @@ export const applyDiscount = authed
 		);
 	});
 
-export const collect = authed
+export const collect = authMiddleware
 	.input(PaySchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -90,7 +90,7 @@ export const collect = authed
 		);
 	});
 
-export const settle = authed
+export const settle = authMiddleware
 	.input(InterimTabSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -104,7 +104,7 @@ export const settle = authed
 		);
 	});
 
-export const packageSell = authed
+export const packageSell = authMiddleware
 	.input(PackageSellSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -118,7 +118,7 @@ export const packageSell = authed
 		);
 	});
 
-export const packageRedeem = authed
+export const packageRedeem = authMiddleware
 	.input(RedeemSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -132,7 +132,7 @@ export const packageRedeem = authed
 		);
 	});
 
-export const packageExpireRun = authed
+export const packageExpireRun = authMiddleware
 	.input(DuesAgingSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -146,7 +146,7 @@ export const packageExpireRun = authed
 		);
 	});
 
-export const pricelistUpsert = authed
+export const pricelistUpsert = authMiddleware
 	.input(PricelistSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -160,7 +160,7 @@ export const pricelistUpsert = authed
 		);
 	});
 
-export const repriceOnPayerSwitch = authed
+export const repriceOnPayerSwitch = authMiddleware
 	.input(RepriceSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -174,7 +174,7 @@ export const repriceOnPayerSwitch = authed
 		);
 	});
 
-export const cndnIssue = authed
+export const cndnIssue = authMiddleware
 	.input(BillingCndnSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -188,7 +188,7 @@ export const cndnIssue = authed
 		);
 	});
 
-export const settleAdvance = authed
+export const settleAdvance = authMiddleware
 	.input(SettleAdvanceSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -202,7 +202,7 @@ export const settleAdvance = authed
 		);
 	});
 
-export const duesAging = authed
+export const duesAging = authMiddleware
 	.input(DuesAgingSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -216,7 +216,7 @@ export const duesAging = authed
 		);
 	});
 
-export const gstExport = authed
+export const gstExport = authMiddleware
 	.input(GstExportSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -230,7 +230,7 @@ export const gstExport = authed
 		);
 	});
 
-export const getInvoice = authed
+export const getInvoice = authMiddleware
 	.input(BillingIdSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -244,7 +244,7 @@ export const getInvoice = authed
 		);
 	});
 
-export const collectionReport = authed
+export const collectionReport = authMiddleware
 	.input(CollectionReportSchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
@@ -258,7 +258,7 @@ export const collectionReport = authed
 		);
 	});
 
-export const packageLiability = authed
+export const packageLiability = authMiddleware
 	.input(PackageLiabilitySchema)
 	.handler(async ({ context, input }) => {
 		requireOrganizationSlug(context.headers);
