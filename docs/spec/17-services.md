@@ -14,7 +14,11 @@ One priced, bookable, billable catalog of everything the organization sells — 
 | Modality | Care setting the service runs in | OPD / IPD / daycare / tele |
 | Duration | Standard slot length for booking | 30 min |
 | Facility mapping | Required bookable unit(s) to deliver a service | MRI Brain → MRI room |
-| Pricelist price | Payer-specific charge for a service | Cash ₹800 / CGHS ₹650 |
+| Billing UOM | Governed unit (see 21) a service is billed in | Per `sitting`, per `tooth`, per `visit` |
+| Duration UOM | Governed Time-category unit the slot length is expressed in | 30 `min`, 1 `hour` |
+| Default pricelist | The seeded `Default` rate card guaranteed per branch; fallback for all pricing | New branch opens with Default live |
+| Pricelist | Named, versioned rate card mapping services to fees (managed inside this module) | Cash, CGHS, TPA-XYZ, Default |
+| Pricelist price | Service row inside one pricelist (fee + tax + effective dates) | MRI Brain ₹800 on Cash v3 |
 | Tax/GST | Tax treatment attached to price | 18% GST slab |
 | Package bundling | Grouping services into a prepaid bundle | Physio 10-pack |
 | Consent template | Service-linked consent form required pre-procedure | RCT consent |
@@ -25,8 +29,8 @@ One priced, bookable, billable catalog of everything the organization sells — 
 
 ## 3. Scope In/Out
 
-In: service master (name/code/dept/pathy/modality/duration), required facility mapping, pricelist-wise cost + tax/discount + package bundling, clinical binding (orders/consent/prereqs/daycare), billing binding (invoice line / package redeem / continuous IPD), versioning, standard create-edit-view pattern.
-Out: external charge-master auto-sync (CGHS import), claims adjudication, roster/scheduling engine (see 18), stock management (see 08).
+In: service master (name/code/dept/pathy/modality/duration + duration/billing UOMs from 21), required facility mapping, pricelist master management (multiple named pricelists + seeded `Default`, payer/branch binding, versioned prices) with cost + tax/discount + package bundling, clinical binding (orders/consent/prereqs/daycare), billing binding (invoice line / package redeem / continuous IPD), versioning, standard create-edit-view pattern.
+Out: external charge-master auto-sync (CGHS import), claims adjudication, roster/scheduling engine (see 18), stock management (see 08). UOM definitions themselves live in 21 — services only bind to them.
 
 ## 4. MUST Functionalities (P0)
 
@@ -44,6 +48,12 @@ Out: external charge-master auto-sync (CGHS import), claims adjudication, roster
 - MUST-1712: Inactive services MUST hide from booking/ordering while remaining in history and reports.
 - MUST-1713: Search MUST work by name, code, department, pathy, and modality with <100ms type-ahead for front-desk speed.
 - MUST-1714: Duplicate service (same name + dept + modality) MUST be blocked with a merge suggestion.
+- MUST-1715: Every Service MUST declare a Billing UOM and a Duration UOM by reference to the governed UOM master (see 21) — free-text units are forbidden; mismatched-category UOM selection MUST be rejected.
+- MUST-1716: Admin MUST manage Pricelists inside this module: create/edit/view named pricelists (name, code, currency, branch scope global/local, payer binding cash/CGHS/ECHS/TPA/corporate, tax-inclusive flag, rounding rule, active flag) via the standard pattern UI.
+- MUST-1717: The system MUST seed one `Default` pricelist (code `DEFAULT`, branch-global, tax-inclusive per org setting) on organization setup and copy-attach it to every new branch; `Default` MUST never be deletable and MUST always remain publishable as the fallback price.
+- MUST-1718: Price resolution MUST follow a deterministic chain — booking/billing context (branch + payer) → matching pricelist → `Default` fallback; when no price exists anywhere the line MUST block with "no rate on pricelist X nor Default" instead of silently zero-rating.
+- MUST-1719: Pricelist versions MUST carry effective-date ranges with exactly one active version per pricelist at any date; switching payer MUST re-price only open/draft lines before finalization, preserving audit of the switch.
+- MUST-1720: Bulk price revision (CSV import or % uplift per pricelist) MUST run as draft → preview (affected services × old → new) → approve (maker ≠ checker) → publish; publish MUST be atomic per pricelist version.
 
 ## 5. SHOULD P1 (4-6)
 
@@ -52,16 +62,19 @@ Out: external charge-master auto-sync (CGHS import), claims adjudication, roster
 - SHOULD-1703: Payer formulary flags (CGHS-approved-only marker).
 - SHOULD-1704: Utilization alerts (low-demand services flagged quarterly).
 - SHOULD-1705: Bulk price revision with preview + approval before publish.
+- SHOULD-1706: Pricelist simulator — preview any service basket across pricelists (Cash vs CGHS vs Default) before selecting payer at booking.
+- SHOULD-1707: UOM-aware duration display — slot length auto-renders in the service's Duration UOM with conversion hint (e.g. 90 min = 1.5 hour).
 
 ## 6. Entities & States
 
-Entities: Service, ServiceFacilityMap, ServicePrice (versioned), Pricelist, DiscountRule, PackageDef (+members), ConsentBinding, PrereqRule, ServiceVersion.
-States: Service `draft → published → inactive`; Price `future → active → superseded`; PackageDef `draft → published → retired`.
+Entities: Service, ServiceFacilityMap, ServicePrice (versioned), Pricelist, PricelistVersion, DiscountRule, PackageDef (+members), ConsentBinding, PrereqRule, ServiceVersion. UOMs are referenced (never duplicated) from 21: Service.billingUomId → Uom (Session/Count), Service.durationUomId → Uom (Time).
+States: Service `draft → published → inactive`; Pricelist `draft → published → inactive` (`Default` can never leave published without a successor version); Price `future → active → superseded`; PackageDef `draft → published → retired`.
 
 ## 7. Workflows
 
-Define Service → Map required facilit(ies) → Set pricelist prices + tax → Attach consent/prereqs → Bundle into package (optional) → Publish → Book/Order → Execute (+daycare capture) → Bill/Redeem.
+Define Service → Bind Billing/Duration UOMs (from 21) → Map required facilit(ies) → Attach to pricelists (Default guaranteed) + Set payer prices + tax → Attach consent/prereqs → Bundle into package (optional) → Publish → Book/Order → Execute (+daycare capture) → Bill/Redeem.
 Price change: new version with effective date → future bookings use new price → old invoices untouched.
+Pricelist setup: Seed Default at org creation → Copy-attach to each branch → Add payer pricelists (CGHS/TPA/corporate) → First price entry per service falls back to Default until overridden → Publish version → Booking resolves branch + payer → Default.
 
 ## 8. Business Rules
 
@@ -71,10 +84,13 @@ Price change: new version with effective date → future bookings use new price 
 - BR-1704: Consent-required services block execution (not booking) without signed consent.
 - BR-1705: Codes are unique and immutable once published; renames create alias, not rewrite.
 - BR-1706: Inactive/retired definitions stay reportable; deletion is forbidden, only retirement.
+- BR-1707: Service UOMs MUST reference the governed UOM master (21); free-text or cross-category UOMs are rejected at save.
+- BR-1708: Exactly one `Default` pricelist per branch scope MUST exist and stay published; it is the terminal fallback — resolution never ends in a silent zero rate.
+- BR-1709: One active pricelist version per date; overlapping effective ranges for the same pricelist are rejected at publish.
 
 ## 9. CX Requirements
 
-- Service creation is a single guided form: basics → facilities → prices → clinical bindings → publish checklist.
+- Service creation is a single guided form: basics → UOMs → facilities → prices → clinical bindings → publish checklist.
 - Booking search shows price (per active pricelist), duration, and facility availability inline.
 - Publish checklist shows blockers (no facility, no price, missing consent) before go-live.
 - Version history is one click from the service page: what changed, when, by whom.
@@ -82,5 +98,5 @@ Price change: new version with effective date → future bookings use new price 
 
 ## 10. Reports & Acceptance
 
-Reports: service volumes, revenue by service/dept/pathy/payer, package liability/expiry, facility-wise demand, unpublished/inactive hygiene, price-change audit.
-Acceptance: (a) new service + facility + price → bookable and billable with zero code change; (b) every invoice line traces to an ordered service or package redemption; (c) price revision leaves historical invoices byte-identical; (d) consent-required service cannot execute unsigned.
+Reports: service volumes, revenue by service/dept/pathy/payer, package liability/expiry, facility-wise demand, unpublished/inactive hygiene, price-change audit, pricelist coverage (services missing a payer price but covered by Default), UOM binding hygiene (services without Billing/Duration UOM).
+Acceptance: (a) new service + facility + price → bookable and billable with zero code change; (b) every invoice line traces to an ordered service or package redemption; (c) price revision leaves historical invoices byte-identical; (d) consent-required service cannot execute unsigned; (e) fresh org/branch always has a published `Default` pricelist and every service resolves a price through it; (f) service with a mismatched UOM category cannot be saved.

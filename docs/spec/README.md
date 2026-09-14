@@ -21,10 +21,11 @@ Small-medium clinics/hospitals: Allopathy, Dental, AYUSH + Rehab, Psychiatry, Ol
 - `14-practitioners.md` — practitioner profile, roster, schedule, fees, availability
 - `15-patients.md` — patient identity, timeline, dedupe, family, consents
 - `16-facilities.md` — bookable units, schedules, categories, floor-plan map
-- `17-services.md` — service catalog, facility mapping, pricing/packages, clinical+billing binding
+- `17-services.md` — service catalog, facility mapping, UOM binding (see 21), pricelist management (multiple + seeded `Default`), pricing/packages, clinical+billing binding
 - `18-appointments.md` — slot engine, queue, video, reminders, conflicts, daycare subtype
 - `19-nursing.md` — drug chart, vitals, tasks, handover, daycare support
 - `20-medical-records.md` — timeline, documents, registers, sharing, retention
+- `21-uom.md` — universal units of measurement master (categories, base units, conversions, precision) consumed by services, pharmacy, lab/radio
 
 ## Tiers
 
