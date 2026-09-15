@@ -178,7 +178,6 @@ function toFormValues(
 	};
 }
 
-// biome-ignore lint/style/useComponentExportOnlyModules: route modules export a Route config alongside render helpers
 function Detail({ label, value }: { label: string; value: ReactNode }) {
 	return (
 		<div>
@@ -188,7 +187,6 @@ function Detail({ label, value }: { label: string; value: ReactNode }) {
 	);
 }
 
-// biome-ignore lint/style/useComponentExportOnlyModules: route modules export a Route config alongside render helpers
 function StatusBadge({ status }: { status: string | null }) {
 	const variant =
 		status === "active"

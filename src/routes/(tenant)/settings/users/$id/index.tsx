@@ -240,7 +240,6 @@ function UserDetailsPage() {
 	);
 }
 
-// biome-ignore lint/style/useComponentExportOnlyModules: route modules export a Route config alongside render helpers
 function UserAvatar({ name }: { name: string }) {
 	const initials = name
 		.split(/\s+/)

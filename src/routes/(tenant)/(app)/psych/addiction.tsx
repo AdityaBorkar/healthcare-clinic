@@ -108,9 +108,9 @@ function RouteComponent() {
 				patientId,
 				qty: Number(qty),
 			});
-			setRxId((res as { id?: string })?.id ?? "");
+			setRxId((res as { id?: string }).id ?? "");
 			setStatus(
-				`Controlled prescription saved (${(res as { id?: string })?.id ?? "ok"}). Capped at 30 days without override.`,
+				`Controlled prescription saved (${(res as { id?: string }).id ?? "ok"}). Capped at 30 days without override.`,
 			);
 		} catch (err) {
 			setStatus(err instanceof Error ? err.message : "Prescription failed.");

@@ -64,7 +64,7 @@ function RouteComponent() {
 			});
 			const detail = res as { ews?: number; repeatPrompt?: string | null };
 			setStatus(
-				`Vitals charted (EWS ${detail?.ews ?? "?"}). ${detail?.repeatPrompt ?? ""}`,
+				`Vitals charted (EWS ${detail.ews ?? "?"}). ${detail.repeatPrompt ?? ""}`,
 			);
 		} catch (err) {
 			setStatus(err instanceof Error ? err.message : "Vitals failed.");
@@ -83,7 +83,7 @@ function RouteComponent() {
 			});
 			const detail = res as { balance?: number; dayBalance?: number };
 			setStatus(
-				`I/O charted. Entry balance ${detail?.balance ?? "?"}, day balance ${detail?.dayBalance ?? "?"} ml.`,
+				`I/O charted. Entry balance ${detail.balance ?? "?"}, day balance ${detail.dayBalance ?? "?"} ml.`,
 			);
 		} catch (err) {
 			setStatus(err instanceof Error ? err.message : "I/O failed.");
@@ -101,7 +101,7 @@ function RouteComponent() {
 				score: Number(pain),
 			});
 			const detail = res as { reassessmentPrompt?: string | null };
-			setStatus(`Pain recorded. ${detail?.reassessmentPrompt ?? ""}`);
+			setStatus(`Pain recorded. ${detail.reassessmentPrompt ?? ""}`);
 		} catch (err) {
 			setStatus(err instanceof Error ? err.message : "Pain failed.");
 		}
@@ -145,7 +145,7 @@ function RouteComponent() {
 				witness: witness || undefined,
 			});
 			setStatus(
-				`Drug administration recorded (${(res as { outcome?: string })?.outcome ?? "ok"}).`,
+				`Drug administration recorded (${(res as { outcome?: string }).outcome ?? "ok"}).`,
 			);
 		} catch (err) {
 			setStatus(err instanceof Error ? err.message : "Administration failed.");
@@ -186,7 +186,7 @@ function RouteComponent() {
 			});
 			const detail = res as { printBlocked?: boolean };
 			setStatus(
-				`Checklist filed. Print ${detail?.printBlocked === false ? "released" : "blocked"}.`,
+				`Checklist filed. Print ${detail.printBlocked === false ? "released" : "blocked"}.`,
 			);
 		} catch (err) {
 			setStatus(err instanceof Error ? err.message : "Checklist failed.");
@@ -226,7 +226,7 @@ function RouteComponent() {
 			});
 			const detail = res as { unsignedFlag?: boolean; openTasks?: number };
 			setStatus(
-				`Handover compiled (${detail?.openTasks ?? 0} open tasks).${detail?.unsignedFlag ? " Unsigned handovers pending sign-off." : ""}`,
+				`Handover compiled (${detail.openTasks ?? 0} open tasks).${detail.unsignedFlag ? " Unsigned handovers pending sign-off." : ""}`,
 			);
 		} catch (err) {
 			setStatus(err instanceof Error ? err.message : "Handover failed.");

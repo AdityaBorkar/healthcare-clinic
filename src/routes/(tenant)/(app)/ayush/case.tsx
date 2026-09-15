@@ -251,7 +251,7 @@ function RouteComponent() {
 				branchId: "main",
 				caseId,
 			})) as Array<GridRow>;
-			setGridRows(rows ?? []);
+			setGridRows(rows);
 		} catch {
 			setGridRows([]);
 		}
@@ -288,9 +288,9 @@ function RouteComponent() {
 				remaining?: number;
 				validTill?: string | null;
 			};
-			if (r?.id) setTherapyPkg({ ...therapyPkg, packageId: r.id });
+			if (r.id) setTherapyPkg({ ...therapyPkg, packageId: r.id });
 			setPkgInfo(
-				`Package ${r?.id ?? ""}: attended ${r?.attended ?? 0}, remaining ${r?.remaining ?? "?"}, expiry ${r?.validTill ?? "?"} — expired packages block new sittings.`,
+				`Package ${r.id ?? ""}: attended ${r.attended ?? 0}, remaining ${r.remaining ?? "?"}, expiry ${r.validTill ?? "?"} — expired packages block new sittings.`,
 			);
 		} catch (err) {
 			setStatus(err instanceof Error ? err.message : "Package sale failed.");
@@ -381,7 +381,7 @@ function RouteComponent() {
 			});
 			const r = res as unknown as { attended?: number; remaining?: number };
 			setStatus(
-				`Outcome recorded — attended ${r?.attended ?? "?"}, remaining ${r?.remaining ?? "?"} (package completed).`,
+				`Outcome recorded — attended ${r.attended ?? "?"}, remaining ${r.remaining ?? "?"} (package completed).`,
 			);
 		} catch (err) {
 			setStatus(err instanceof Error ? err.message : "Outcome failed.");
@@ -425,8 +425,8 @@ function RouteComponent() {
 				schedule: yoga.schedule,
 			});
 			const r = res as unknown as { id?: string };
-			if (r?.id) setYoga({ ...yoga, batchId: r.id });
-			setStatus(`Yoga batch created (${r?.id ?? "ok"}).`);
+			if (r.id) setYoga({ ...yoga, batchId: r.id });
+			setStatus(`Yoga batch created (${r.id ?? "ok"}).`);
 		} catch (err) {
 			setStatus(err instanceof Error ? err.message : "Batch failed.");
 		}
@@ -450,7 +450,7 @@ function RouteComponent() {
 			});
 			const r = res as unknown as { sessionsAttended?: number };
 			setStatus(
-				`Enrolled + attendance marked (sessions: ${r?.sessionsAttended ?? "?"}).`,
+				`Enrolled + attendance marked (sessions: ${r.sessionsAttended ?? "?"}).`,
 			);
 		} catch (err) {
 			setStatus(err instanceof Error ? err.message : "Yoga enroll failed.");
@@ -489,7 +489,7 @@ function RouteComponent() {
 				anupana?: string | null;
 			};
 			setStatus(
-				`AYUSH prescription: ${r?.classical?.length ?? 0} classical + ${r?.proprietary?.length ?? 0} proprietary, anupana ${r?.anupana ?? "—"} (prints on slip).`,
+				`AYUSH prescription: ${r.classical?.length ?? 0} classical + ${r.proprietary?.length ?? 0} proprietary, anupana ${r.anupana ?? "—"} (prints on slip).`,
 			);
 		} catch (err) {
 			setStatus(err instanceof Error ? err.message : "AYUSH prescribe failed.");

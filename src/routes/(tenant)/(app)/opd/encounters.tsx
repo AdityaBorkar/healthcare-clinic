@@ -219,8 +219,8 @@ function RouteComponent() {
 				encounterId: encounterId || undefined,
 				patientId,
 			});
-			setWarnings((res?.warnings as Array<WarningRow>) ?? []);
-			setBlocked(res?.blocked ?? false);
+			setWarnings(res.warnings as Array<WarningRow>);
+			setBlocked(res.blocked ?? false);
 			setStatus(
 				res?.blocked
 					? `Blocked: ${(res.unacknowledged as Array<WarningRow>).length} warning(s) need acknowledgement.`
@@ -263,7 +263,7 @@ function RouteComponent() {
 				branchId: "main",
 				patientId,
 			})) as Array<ProblemRow>;
-			setProblems(rows ?? []);
+			setProblems(rows);
 		} catch {
 			setProblems([]);
 		}
@@ -475,7 +475,7 @@ function RouteComponent() {
 				receivingUnit?: string | null;
 			};
 			setStatus(
-				`Order placed (${r?.id ?? "ok"}) — status ${r?.status ?? "ordered"}${r?.receivingUnit ? ` → ${r.receivingUnit}` : ""}.`,
+				`Order placed (${r.id ?? "ok"}) — status ${r.status ?? "ordered"}${r.receivingUnit ? ` → ${r.receivingUnit}` : ""}.`,
 			);
 		} catch (err) {
 			setStatus(err instanceof Error ? err.message : "Order failed.");
@@ -497,7 +497,7 @@ function RouteComponent() {
 			});
 			const r = res as unknown as { serial?: number; id?: string };
 			setStatus(
-				`Register entry appended (serial ${r?.serial ?? r?.id ?? "ok"}).`,
+				`Register entry appended (serial ${r.serial ?? r.id ?? "ok"}).`,
 			);
 		} catch (err) {
 			setStatus(err instanceof Error ? err.message : "Register append failed.");

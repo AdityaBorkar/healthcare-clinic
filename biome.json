@@ -92,6 +92,16 @@
 					}
 				}
 			}
+		},
+		{
+			"includes": ["src/routes/**"],
+			"linter": {
+				"rules": {
+					"style": {
+						"useComponentExportOnlyModules": "off"
+					}
+				}
+			}
 		}
 	],
 	"vcs": {

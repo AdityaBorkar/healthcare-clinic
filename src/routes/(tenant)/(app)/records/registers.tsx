@@ -68,7 +68,7 @@ function RouteComponent() {
 				branchId: "main",
 				ward: ward || undefined,
 			});
-			setPending((res as { pending?: PendingRow[] })?.pending ?? []);
+			setPending((res as { pending?: PendingRow[] }).pending ?? []);
 		} catch (err) {
 			setStatus(err instanceof Error ? err.message : "Pending load failed.");
 		}

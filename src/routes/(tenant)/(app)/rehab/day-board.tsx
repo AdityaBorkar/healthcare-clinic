@@ -58,7 +58,7 @@ function RouteComponent() {
 				status: "Active",
 			});
 			setStatus(
-				`Episode opened (${(res as { id?: string })?.id ?? "ok"}) — ${discipline}.`,
+				`Episode opened (${(res as { id?: string }).id ?? "ok"}) — ${discipline}.`,
 			);
 		} catch (err) {
 			setStatus(err instanceof Error ? err.message : "Open episode failed.");

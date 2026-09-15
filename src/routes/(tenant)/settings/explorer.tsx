@@ -82,7 +82,7 @@ function ExplorerPage() {
 			link.download = `${collection}.csv`;
 			link.click();
 			URL.revokeObjectURL(url);
-		} catch (err) {
+		} catch {
 			exportRowsCsv(`${collection}.csv`, rows, Object.keys(rows[0] ?? {}));
 		}
 	}

@@ -55,7 +55,7 @@ function RouteComponent() {
 				patientId,
 			});
 			setStatus(
-				`Risk recorded (${(res as { id?: string })?.id ?? "ok"}). ${(res as { nextStep?: string | null })?.nextStep ?? ""}`,
+				`Risk recorded (${(res as { id?: string }).id ?? "ok"}). ${(res as { nextStep?: string | null }).nextStep ?? ""}`,
 			);
 		} catch (err) {
 			setStatus(err instanceof Error ? err.message : "Risk screen failed.");

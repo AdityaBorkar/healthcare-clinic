@@ -60,7 +60,7 @@ function RouteComponent() {
 				status: "Signed",
 			});
 			setStatus(
-				`Caregiver consent signed (${(res as { id?: string })?.id ?? "ok"}).`,
+				`Caregiver consent signed (${(res as { id?: string }).id ?? "ok"}).`,
 			);
 		} catch (err) {
 			setStatus(err instanceof Error ? err.message : "Consent failed.");

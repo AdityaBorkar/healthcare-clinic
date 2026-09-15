@@ -124,7 +124,7 @@ function RouteComponent() {
 				expiryWarning?: string | null;
 			};
 			setStatus(
-				`Sitting booked (${extra?.id ?? "ok"}).${extra?.remaining !== null && extra?.remaining !== undefined ? ` Package balance: ${extra.remaining}.` : ""}${extra?.expiryWarning ? ` ${extra.expiryWarning}` : ""}`,
+				`Sitting booked (${extra.id ?? "ok"}).${extra.remaining !== null && extra.remaining !== undefined ? ` Package balance: ${extra.remaining}.` : ""}${extra.expiryWarning ? ` ${extra.expiryWarning}` : ""}`,
 			);
 		} catch (err) {
 			setStatus(err instanceof Error ? err.message : "Booking failed.");
@@ -150,7 +150,7 @@ function RouteComponent() {
 				patientId,
 			});
 			setStatus(
-				`Goal saved (${(res as { goals?: unknown[] })?.goals?.length ?? 1} goal(s) on plan).`,
+				`Goal saved (${(res as { goals?: unknown[] }).goals?.length ?? 1} goal(s) on plan).`,
 			);
 		} catch (err) {
 			setStatus(err instanceof Error ? err.message : "Goal save failed.");
@@ -177,7 +177,7 @@ function RouteComponent() {
 				validityDays: pkgValidity ? Number(pkgValidity) : undefined,
 			});
 			setStatus(
-				`Package built (${(res as { id?: string })?.id ?? "ok"}). Price/validity/balance tracked on booking.`,
+				`Package built (${(res as { id?: string }).id ?? "ok"}). Price/validity/balance tracked on booking.`,
 			);
 		} catch (err) {
 			setStatus(err instanceof Error ? err.message : "Package failed.");
@@ -199,7 +199,7 @@ function RouteComponent() {
 				status: "Completed",
 			});
 			const lines =
-				(res as { billingLines?: unknown[] })?.billingLines?.length ?? 0;
+				(res as { billingLines?: unknown[] }).billingLines?.length ?? 0;
 			setStatus(
 				`Sitting recorded. ${lines} consumable line(s) pushed to billing.`,
 			);
@@ -215,7 +215,7 @@ function RouteComponent() {
 				branchId: "main",
 				episodeId,
 			});
-			setChart((res as { series?: typeof chart })?.series ?? []);
+			setChart((res as { series?: typeof chart }).series ?? []);
 		} catch (err) {
 			setStatus(err instanceof Error ? err.message : "Chart failed.");
 		}
@@ -240,7 +240,7 @@ function RouteComponent() {
 			});
 			const counts = res as { attended?: number; missed?: number; id?: string };
 			setStatus(
-				`Episode discharged (${counts?.id ?? "ok"}). Attended ${counts?.attended ?? "?"}, missed ${counts?.missed ?? "?"}.`,
+				`Episode discharged (${counts.id ?? "ok"}). Attended ${counts.attended ?? "?"}, missed ${counts.missed ?? "?"}.`,
 			);
 		} catch (err) {
 			setStatus(err instanceof Error ? err.message : "Discharge failed.");

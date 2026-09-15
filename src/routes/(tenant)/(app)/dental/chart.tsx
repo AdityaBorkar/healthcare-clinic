@@ -337,7 +337,7 @@ function RouteComponent() {
 				validTill?: string;
 			};
 			setQuoteResult(
-				`Quote ${r?.id ?? ""}: subtotal ${r?.subtotal ?? "?"} → total ${r?.total ?? "?"} (valid till ${r?.validTill ?? "?"}; expired quotes need re-issue before booking).`,
+				`Quote ${r.id ?? ""}: subtotal ${r.subtotal ?? "?"} → total ${r.total ?? "?"} (valid till ${r.validTill ?? "?"}; expired quotes need re-issue before booking).`,
 			);
 		} catch (err) {
 			setStatus(err instanceof Error ? err.message : "Quote failed.");
@@ -411,7 +411,7 @@ function RouteComponent() {
 				patientId: patientId || undefined,
 				planId: planId || undefined,
 			})) as Array<LabJobRow>;
-			setLabJobs(rows ?? []);
+			setLabJobs(rows);
 		} catch {
 			setLabJobs([]);
 		}
@@ -434,7 +434,7 @@ function RouteComponent() {
 				planClosable?: boolean;
 			};
 			setStatus(
-				`Stage moved. Open stages: ${r?.openStages ?? "?"} — ${r?.planClosable ? "plan can close." : "open stage blocks plan closure."}`,
+				`Stage moved. Open stages: ${r.openStages ?? "?"} — ${r.planClosable ? "plan can close." : "open stage blocks plan closure."}`,
 			);
 		} catch (err) {
 			setStatus(err instanceof Error ? err.message : "Stage close failed.");
@@ -489,7 +489,7 @@ function RouteComponent() {
 			});
 			const r = res as unknown as { stageCount?: number };
 			setStatus(
-				`Package linked (${res?.id ?? "ok"}) covering ${r?.stageCount ?? "?"} stages.`,
+				`Package linked (${res?.id ?? "ok"}) covering ${r.stageCount ?? "?"} stages.`,
 			);
 		} catch (err) {
 			setStatus(err instanceof Error ? err.message : "Package sale failed.");

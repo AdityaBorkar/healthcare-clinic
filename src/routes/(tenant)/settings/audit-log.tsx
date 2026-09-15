@@ -34,7 +34,7 @@ function AuditLogPage() {
 			const res = (await api.admin.auditLogs.list({ branchId, limit: 100 })) as
 				| Array<LogRow>
 				| { items: Array<LogRow> };
-			setRows(Array.isArray(res) ? res : (res.items ?? []));
+			setRows(Array.isArray(res) ? res : res.items);
 		} catch (err) {
 			setError(err instanceof Error ? err.message : "Audit log load failed");
 		}

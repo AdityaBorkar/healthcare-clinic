@@ -65,7 +65,7 @@ function RouteComponent() {
 				branchId: "main",
 				patientId,
 			});
-			setRx((res as { items?: typeof rx })?.items ?? []);
+			setRx((res as { items?: typeof rx }).items ?? []);
 		} catch (err) {
 			setStatus(err instanceof Error ? err.message : "Rx load failed.");
 		}
@@ -97,7 +97,7 @@ function RouteComponent() {
 				primaryId: mergePrimary,
 			});
 			setStatus(
-				`Merged ${(res as { duplicateId?: string })?.duplicateId ?? ""} into ${(res as { primaryId?: string })?.primaryId ?? ""}; both histories preserved.`,
+				`Merged ${(res as { duplicateId?: string }).duplicateId ?? ""} into ${(res as { primaryId?: string }).primaryId ?? ""}; both histories preserved.`,
 			);
 		} catch (err) {
 			setStatus(err instanceof Error ? err.message : "Merge failed.");

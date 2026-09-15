@@ -97,7 +97,7 @@ function RouteComponent() {
 			});
 			const flags = res as { missedVitals?: boolean };
 			setStatus(
-				flags?.missedVitals
+				flags.missedVitals
 					? "Daily log saved. Vitals incomplete — flagged as missed."
 					: "Daily log saved with full vitals.",
 			);
@@ -119,7 +119,7 @@ function RouteComponent() {
 				residentId: id,
 			});
 			setStatus(
-				`Round recorded (${(res as { nursingTasksCreated?: number })?.nursingTasksCreated ?? 0} nursing task(s) created).`,
+				`Round recorded (${(res as { nursingTasksCreated?: number }).nursingTasksCreated ?? 0} nursing task(s) created).`,
 			);
 		} catch (err) {
 			setStatus(err instanceof Error ? err.message : "Round failed.");

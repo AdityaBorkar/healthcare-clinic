@@ -139,7 +139,6 @@ function SettingsPage() {
 	);
 }
 
-// biome-ignore lint/style/useComponentExportOnlyModules: route modules export a Route config alongside render helpers
 function ServiceCard({ item }: { item: Service }) {
 	const Icon = item.icon;
 

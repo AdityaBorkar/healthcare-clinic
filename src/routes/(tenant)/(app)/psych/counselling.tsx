@@ -53,7 +53,7 @@ function RouteComponent() {
 					: await api.psych.counselling.book(payload);
 			const detail = res as { id?: string; billingSlab?: string };
 			setStatus(
-				`Session booked (${detail?.id ?? "ok"}). Duration billing slab: ${detail?.billingSlab ?? `${duration}min`}.`,
+				`Session booked (${detail.id ?? "ok"}). Duration billing slab: ${detail.billingSlab ?? `${duration}min`}.`,
 			);
 		} catch (err) {
 			setStatus(err instanceof Error ? err.message : "Booking failed.");
