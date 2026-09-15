@@ -9,11 +9,10 @@ import { orpc } from "#/lib/rpc";
 export const Route = createFileRoute("/account/organizations")({
 	component: RouteComponent,
 	loader: async () => {
-		try {
-			return await orpc.organizations.list();
-		} catch {
-			return { organizations: [] };
-		}
+		const { organizations } = await orpc.organizations
+			.list()
+			.catch(() => ({ organizations: [] }));
+		return { organizations };
 	},
 	validateSearch: object({ redirect: optional(string()) }),
 });

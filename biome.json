@@ -50,6 +50,9 @@
 		},
 		"enabled": true,
 		"rules": {
+			"performance": {
+				"noJsxPropsBind": "off"
+			},
 			"preset": "recommended"
 		}
 	},

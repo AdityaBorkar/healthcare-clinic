@@ -35,10 +35,12 @@ try {
 	const passphrase =
 		process.env.PULUMI_CONFIG_PASSPHRASE ??
 		(process.stdin.isTTY
-			? await password({
-					mask: "*",
-					message: `Pulumi config passphrase for stack "${options.stack}"`,
-				})
+			? (
+					await password({
+						mask: "*",
+						message: `Pulumi config passphrase for stack "${options.stack}"`,
+					})
+				).toString()
 			: null);
 	if (passphrase === null) {
 		throw new Error(

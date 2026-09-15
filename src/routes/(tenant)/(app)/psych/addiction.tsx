@@ -60,7 +60,7 @@ function RouteComponent() {
 			});
 			const detail = res as { prompt?: string; nextDueAt?: string };
 			setStatus(
-				`${detail?.prompt ?? "Charted."} Next due: ${detail?.nextDueAt ?? "—"}.`,
+				`${detail.prompt ?? "Charted."} Next due: ${detail.nextDueAt ?? "—"}.`,
 			);
 		} catch (err) {
 			setStatus(err instanceof Error ? err.message : "Chart failed.");

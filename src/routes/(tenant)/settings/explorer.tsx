@@ -69,12 +69,12 @@ function ExplorerPage() {
 	async function exportCsv() {
 		setError(null);
 		try {
-			const res = (await api.operations.explorer.exportCsv({
+			const res = await api.operations.explorer.exportCsv({
 				branchId,
 				collection,
 				filters: filters || undefined,
 				limit: 1000,
-			})) as string;
+			});
 			const blob = new Blob([res], { type: "text/csv" });
 			const url = URL.createObjectURL(blob);
 			const link = document.createElement("a");
