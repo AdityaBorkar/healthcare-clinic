@@ -51,7 +51,6 @@ function RouteComponent() {
 	const [maxScore, setMaxScore] = useState("27");
 	const [riskLevel, setRiskLevel] = useState("Low");
 	const [riskFactors, setRiskFactors] = useState("");
-	const [breakReason, setBreakReason] = useState("");
 	const [status, setStatus] = useState<string | null>(null);
 	const encId = useId();
 	const patId = useId();
@@ -60,7 +59,6 @@ function RouteComponent() {
 	const scoreId = useId();
 	const maxScoreId = useId();
 	const factorsId = useId();
-	const breakReasonId = useId();
 
 	async function saveAssessment(e: FormEvent) {
 		e.preventDefault();
@@ -127,21 +125,6 @@ function RouteComponent() {
 			);
 		} catch (err) {
 			setStatus(err instanceof Error ? err.message : "Risk screening failed.");
-		}
-	}
-
-	async function breakGlass(e: FormEvent) {
-		e.preventDefault();
-		setStatus(null);
-		try {
-			const res = await api.psych.breakGlass({
-				branchId: "main",
-				patientId,
-				reason: breakReason,
-			});
-			setStatus(`Break-glass logged (${res?.id ?? "ok"}). Access audited.`);
-		} catch (err) {
-			setStatus(err instanceof Error ? err.message : "Break-glass failed.");
 		}
 	}
 
@@ -261,71 +244,44 @@ function RouteComponent() {
 					</Card>
 				</div>
 
-				<div className="grid gap-6 lg:grid-cols-2">
-					<Card className="shadow-xs">
-						<CardHeader>
-							<CardTitle className="text-base font-semibold">
-								Risk screening
-							</CardTitle>
-						</CardHeader>
-						<CardContent>
-							<form className="grid gap-3" onSubmit={saveRisk}>
-								<div className="grid gap-1.5">
-									<Label>Level</Label>
-									<Select
-										onValueChange={(v) => setRiskLevel(v ?? "Low")}
-										value={riskLevel}
-									>
-										<SelectTrigger className="max-w-xs">
-											<SelectValue />
-										</SelectTrigger>
-										<SelectContent>
-											{["Low", "Moderate", "High"].map((l) => (
-												<SelectItem key={l} value={l}>
-													{l}
-												</SelectItem>
-											))}
-										</SelectContent>
-									</Select>
-								</div>
-								<div className="grid gap-1.5">
-									<Label htmlFor={factorsId}>Factors (comma separated)</Label>
-									<Input
-										id={factorsId}
-										onChange={(e) => setRiskFactors(e.target.value)}
-										value={riskFactors}
-									/>
-								</div>
-								<Button type="submit">Screen risk</Button>
-							</form>
-						</CardContent>
-					</Card>
-
-					<Card className="shadow-xs">
-						<CardHeader>
-							<CardTitle className="text-base font-semibold">
-								Break-glass (audited)
-							</CardTitle>
-						</CardHeader>
-						<CardContent>
-							<form className="grid gap-3" onSubmit={breakGlass}>
-								<div className="grid gap-1.5">
-									<Label htmlFor={breakReasonId}>
-										Detailed reason (min 10 chars)
-									</Label>
-									<Input
-										id={breakReasonId}
-										onChange={(e) => setBreakReason(e.target.value)}
-										value={breakReason}
-									/>
-								</div>
-								<Button type="submit" variant="destructive">
-									Log break-glass access
-								</Button>
-							</form>
-						</CardContent>
-					</Card>
-				</div>
+				<Card className="shadow-xs">
+					<CardHeader>
+						<CardTitle className="text-base font-semibold">
+							Risk screening
+						</CardTitle>
+					</CardHeader>
+					<CardContent>
+						<form className="grid gap-3" onSubmit={saveRisk}>
+							<div className="grid gap-1.5">
+								<Label>Level</Label>
+								<Select
+									onValueChange={(v) => setRiskLevel(v ?? "Low")}
+									value={riskLevel}
+								>
+									<SelectTrigger className="max-w-xs">
+										<SelectValue />
+									</SelectTrigger>
+									<SelectContent>
+										{["Low", "Moderate", "High"].map((l) => (
+											<SelectItem key={l} value={l}>
+												{l}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+							</div>
+							<div className="grid gap-1.5">
+								<Label htmlFor={factorsId}>Factors (comma separated)</Label>
+								<Input
+									id={factorsId}
+									onChange={(e) => setRiskFactors(e.target.value)}
+									value={riskFactors}
+								/>
+							</div>
+							<Button type="submit">Screen risk</Button>
+						</form>
+					</CardContent>
+				</Card>
 
 				{status ? (
 					<p className="text-sm text-muted-foreground">{status}</p>

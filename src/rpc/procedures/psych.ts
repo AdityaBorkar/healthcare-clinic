@@ -1,7 +1,6 @@
 // NOTE: `pm` is lazily imported inside handlers (not statically) because the
 // clinic track contract forbids top-level pm/router imports in procedures.
 import {
-	BreakGlassInputSchema,
 	CaregiverConsentInputSchema,
 	CloseReadinessInputSchema,
 	ControlledPrescriptionInputSchema,
@@ -133,15 +132,6 @@ export const involuntaryHook = scopedAuthMiddleware
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
 			pm.healthcare.psych.involuntaryHook.run({ input }, { actorId }),
-		);
-	});
-
-export const breakGlass = scopedAuthMiddleware
-	.input(BreakGlassInputSchema)
-	.handler(async ({ context, input }) => {
-		const { actorId, pm, tenantId } = context;
-		return pm.run(tenantId, () =>
-			pm.healthcare.psych.breakGlass.run({ input }, { actorId }),
 		);
 	});
 

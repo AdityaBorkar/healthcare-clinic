@@ -173,12 +173,6 @@ export const InvoluntaryHookInputSchema = object({
 	reviewDate: optional(pipe(string(), minLength(1))),
 });
 
-export const BreakGlassInputSchema = object({
-	branchId: BranchIdSchema,
-	patientId: RequiredText("Patient"),
-	reason: pipe(string(), minLength(10, "Break-glass needs a detailed reason")),
-});
-
 export const RecallListInputSchema = object({
 	branchId: BranchIdSchema,
 	limit: optional(

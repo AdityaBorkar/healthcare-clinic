@@ -1,6 +1,5 @@
 import {
 	AddendumSchema,
-	BreakGlassSchema,
 	ConsentsGetSchema,
 	DischargeIssueSchema,
 	DischargePendingSchema,
@@ -81,25 +80,6 @@ export const notesMask = scopedAuthMiddleware
 					input: {
 						branchId: input.branchId,
 						patientId: input.patientId,
-					},
-				},
-				{ actorId },
-			),
-		);
-	});
-
-export const breakglass = scopedAuthMiddleware
-	.input(BreakGlassSchema)
-	.handler(async ({ context, input }) => {
-		const { actorId, pm, tenantId } = context;
-		return pm.run(tenantId, () =>
-			pm.healthcare.records.breakglass.run(
-				{
-					input: {
-						accessedBy: input.accessedBy,
-						branchId: input.branchId,
-						patientId: input.patientId,
-						reason: input.reason,
 					},
 				},
 				{ actorId },

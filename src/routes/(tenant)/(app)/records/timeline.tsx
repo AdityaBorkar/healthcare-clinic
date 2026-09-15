@@ -61,8 +61,8 @@ function RouteComponent() {
 					<CardContent className="py-6">
 						<CardTitle className="text-base font-semibold">Privacy</CardTitle>
 						<p className="text-sm text-muted-foreground">
-							Psychiatry notes stay masked; break-glass access is audit-logged.
-							Records are addendum-only — never edited in place.
+							Psychiatry notes stay masked. Records are addendum-only — never
+							edited in place.
 						</p>
 					</CardContent>
 				</Card>

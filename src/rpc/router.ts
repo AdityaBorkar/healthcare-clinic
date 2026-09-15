@@ -269,7 +269,6 @@ import {
 	closeReadiness as closePsychReadiness,
 	involuntaryHook,
 	prescribeControlled,
-	breakGlass as psychBreakGlass,
 	recallList as psychRecallList,
 	relapsePlan,
 	saveSafetyPlan,
@@ -291,7 +290,6 @@ import {
 	familySummaryMulti as multiResidentFamilySummary,
 	dischargePending as pendingRecordDischarges,
 	recordConsent as recordRecordConsent,
-	breakglass as recordsBreakglass,
 	familySummary as recordsFamilySummary,
 	recentlyUsedRx as recordsRecentlyUsedRx,
 	timeline as recordsTimeline,
@@ -893,7 +891,6 @@ export const router = {
 	},
 	psych: {
 		assessments: assessPsych,
-		breakGlass: psychBreakGlass,
 		consents: {
 			caregiver: caregiverConsent,
 		},
@@ -937,7 +934,6 @@ export const router = {
 		addenda: {
 			append: appendRecordAddendum,
 		},
-		breakglass: recordsBreakglass,
 		consents: {
 			get: getRecordConsents,
 			record: recordRecordConsent,

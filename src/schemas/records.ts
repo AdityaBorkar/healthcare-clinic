@@ -41,13 +41,6 @@ export const AddendumSchema = object({
 	note: pipe(string(), minLength(1, "Addendum note is required")),
 });
 
-export const BreakGlassSchema = object({
-	accessedBy: Id,
-	branchId: BranchId,
-	patientId: Id,
-	reason: pipe(string(), minLength(1, "Break-glass reason is required")),
-});
-
 export const RegisterEntrySchema = object({
 	branchId: BranchId,
 	certifierId: optional(string()),
