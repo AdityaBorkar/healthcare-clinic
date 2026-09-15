@@ -22,7 +22,9 @@ function RouteComponent() {
 	const [slug, setSlug] = useState("");
 	const [logo, setLogo] = useState("");
 	const [status, setStatus] = useState<string | null>(null);
-	const [versions, setVersions] = useState<Array<Record<string, unknown>>>([]);
+	const [versions, setVersions] = useState<
+		Awaited<ReturnType<typeof api.admin.masters.versions.list>>
+	>([]);
 	const [domain, setDomain] = useState("");
 	const [version, setVersion] = useState("");
 	const [payload, setPayload] = useState("");

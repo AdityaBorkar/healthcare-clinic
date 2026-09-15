@@ -102,7 +102,7 @@ function RouteComponent() {
 				recipientConfirm: "yes",
 				sharedBy: doctor || "doctor",
 			});
-			setStatus(`WhatsApp queued (${res?.id ?? "ok"}) in ${language}.`);
+			setStatus(`WhatsApp queued (${res?.shareId ?? "ok"}) in ${language}.`);
 		} catch (err) {
 			setStatus(err instanceof Error ? err.message : "WhatsApp share failed.");
 		}

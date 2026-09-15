@@ -15,7 +15,9 @@ export const Route = createFileRoute("/(tenant)/(app)/records/search")({
 
 function RouteComponent() {
 	const [q, setQ] = useState("");
-	const [results, setResults] = useState<{ id: string; summary: string }[]>([]);
+	const [results, setResults] = useState<
+		{ id: string; kind: string; text: string }[]
+	>([]);
 	const [encounterId, setEncounterId] = useState("");
 	const [encounter, setEncounter] = useState<{
 		diagnoses: { code: string; label: string }[];
@@ -37,7 +39,7 @@ function RouteComponent() {
 		setStatus(null);
 		try {
 			const res = await orpc.records.search({ branchId: "main", q });
-			setResults(res as typeof results);
+			setResults(res);
 		} catch (err) {
 			setStatus(err instanceof Error ? err.message : "Search failed.");
 		}
@@ -133,7 +135,7 @@ function RouteComponent() {
 							<ul className="mt-3 divide-y text-sm">
 								{results.map((r) => (
 									<li className="py-2" key={r.id}>
-										{r.id} · {r.summary}
+										{r.id} · {r.kind} · {r.text}
 									</li>
 								))}
 							</ul>

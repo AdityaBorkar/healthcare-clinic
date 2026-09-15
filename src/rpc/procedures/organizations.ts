@@ -17,7 +17,7 @@ export const getOrganizationBySubdomain = base.handler(async ({ context }) => {
 		pm.management.tenants.getBySlug.run({ slug: subdomain }),
 	);
 	if (!tenant) {
-		return null;
+		return { organization: null, subdomain: null };
 	}
 	const organization = {
 		createdAt: tenant.createdAt.toISOString(),
@@ -33,7 +33,7 @@ export const getOrganizationBySubdomain = base.handler(async ({ context }) => {
 
 export const listOrganizations = base.handler(async () => {
 	const { pm } = await import("#/aspen/server");
-	const organizations = pm.run("$global", () =>
+	const organizations = await pm.run("$global", () =>
 		pm.management.tenants.listBranding.run({}),
 	);
 	return { organizations };

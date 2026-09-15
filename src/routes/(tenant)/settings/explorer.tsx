@@ -75,7 +75,7 @@ function ExplorerPage() {
 				filters: filters || undefined,
 				limit: 1000,
 			});
-			const blob = new Blob([res], { type: "text/csv" });
+			const blob = new Blob([res.csv], { type: "text/csv" });
 			const url = URL.createObjectURL(blob);
 			const link = document.createElement("a");
 			link.href = url;
