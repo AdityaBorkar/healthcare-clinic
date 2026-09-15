@@ -30,6 +30,7 @@
 	"dependencies": {
 		"@aspen-os/healthcare": "link:@aspen-os/healthcare",
 		"@aspen-os/management": "link:@aspen-os/management",
+		"@aspen-os/masters": "link:@aspen-os/masters",
 		"@aspen-os/platform": "link:@aspen-os/platform",
 		"@aws-sdk/client-s3": "^3.1127.0",
 		"@aws-sdk/s3-request-presigner": "^3.1127.0",

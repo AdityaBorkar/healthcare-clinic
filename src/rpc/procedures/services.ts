@@ -17,7 +17,7 @@ export const create = scopedAuthMiddleware
 		const { actorId, pm, tenantId } = context;
 		try {
 			// Backend create accepts basePrice/branchId/code/name/teleExempt
-			// only; department/pathy/modality/duration/payer/GST/billing-code
+			// plus department/pathy/modality/UOM bindings; payer/GST/billing-code
 			// are validated locally and kept client-side until backend grows.
 			// Dup-block (P1): callers check list(search=code) before create.
 			return await pm.run(tenantId, () =>
@@ -25,9 +25,33 @@ export const create = scopedAuthMiddleware
 					{
 						input: {
 							basePrice: input.basePrice,
+							...(input.billingUomCategory
+								? { billingUomCategory: input.billingUomCategory }
+								: {}),
+							...(input.billingUomId
+								? { billingUomId: input.billingUomId }
+								: {}),
 							branchId: input.branchId,
 							code: input.code,
+							...(input.department ? { department: input.department } : {}),
+							...(input.durationMin !== undefined
+								? {
+										durationUomCategory: "time",
+										durationValue: input.durationMin,
+									}
+								: {}),
+							...(input.durationUomCategory
+								? { durationUomCategory: input.durationUomCategory }
+								: {}),
+							...(input.durationUomId
+								? { durationUomId: input.durationUomId }
+								: {}),
+							...(input.durationValue !== undefined
+								? { durationValue: input.durationValue }
+								: {}),
+							...(input.modality ? { modality: input.modality } : {}),
 							name: input.name,
+							...(input.pathy ? { pathy: input.pathy } : {}),
 							teleExempt: input.teleExempt,
 						},
 					},
@@ -64,11 +88,17 @@ export const list = scopedAuthMiddleware
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
-			// Backend list accepts branchId only; department/pathy/search are
-			// applied as client-side type-ahead until backend filters land.
 			return await pm.run(tenantId, () =>
 				pm.healthcare.services.list.run(
-					{ input: { branchId: input.branchId } },
+					{
+						input: {
+							branchId: input.branchId,
+							...(input.department ? { department: input.department } : {}),
+							...(input.pathy ? { pathy: input.pathy } : {}),
+							...(input.search ? { search: input.search } : {}),
+							...(input.status ? { status: input.status } : {}),
+						},
+					},
 					{ actorId },
 				),
 			);
@@ -84,7 +114,6 @@ export const update = scopedAuthMiddleware
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
-			// Strip client-only patch keys before the backend update call.
 			const { patch } = input;
 			return await pm.run(tenantId, () =>
 				pm.healthcare.services.update.run(
@@ -95,7 +124,35 @@ export const update = scopedAuthMiddleware
 								...(patch.basePrice !== undefined
 									? { basePrice: patch.basePrice }
 									: {}),
+								...(patch.billingUomCategory !== undefined
+									? { billingUomCategory: patch.billingUomCategory }
+									: {}),
+								...(patch.billingUomId !== undefined
+									? { billingUomId: patch.billingUomId }
+									: {}),
+								...(patch.department !== undefined
+									? { department: patch.department }
+									: {}),
+								...(patch.durationMin !== undefined
+									? {
+											durationUomCategory: "time",
+											durationValue: patch.durationMin,
+										}
+									: {}),
+								...(patch.durationUomCategory !== undefined
+									? { durationUomCategory: patch.durationUomCategory }
+									: {}),
+								...(patch.durationUomId !== undefined
+									? { durationUomId: patch.durationUomId }
+									: {}),
+								...(patch.durationValue !== undefined
+									? { durationValue: patch.durationValue }
+									: {}),
+								...(patch.modality !== undefined
+									? { modality: patch.modality }
+									: {}),
 								...(patch.name !== undefined ? { name: patch.name } : {}),
+								...(patch.pathy !== undefined ? { pathy: patch.pathy } : {}),
 								...(patch.teleExempt !== undefined
 									? { teleExempt: patch.teleExempt }
 									: {}),
@@ -184,7 +241,9 @@ export const setPrice = scopedAuthMiddleware
 							amount: input.amount,
 							branchId: input.branchId,
 							effectiveFrom: input.effectiveFrom,
+							...(input.gstPct !== undefined ? { gstPct: input.gstPct } : {}),
 							pricelist: input.pricelist,
+							...(input.pricelistId ? { pricelistId: input.pricelistId } : {}),
 							serviceId: input.serviceId,
 						},
 					},

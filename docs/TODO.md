@@ -1,10 +1,14 @@
 # TODO
 
+remove the "break-glass" provisions from all modules
+
 Ensure the @schemas are defined in the modules itself and exported from there for use. Unless it is used in forms, where custom schema/validation is required, use the module's schema.
 
+@/rpc/utils/*
 resolveTenantDatabaseName -> add { subdomain, pm, actorId } to the context
 
 Clearly define module boundaries
+- separate billing as a different module
 
 Clearly define UI for one module and adapt accordingly for all other modules
 

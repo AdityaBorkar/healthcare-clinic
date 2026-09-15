@@ -65,13 +65,15 @@ function RouteComponent() {
 				branchId: target,
 				preset: "pricelist",
 			});
+			await api.uom.seed({});
+			await api.pricelists.ensureDefault({ branchId: target });
 			await api.billing.pricelists.upsert({
 				branchId: target,
 				name: pricelistName,
 				rates: [],
 			});
 			setStatus(
-				`Branch ${target} live: subdomain + facility presets + ${pricelistName} pricelist — no deploy.`,
+				`Branch ${target} live: subdomain + facility presets + UOM seed + Default pricelist + ${pricelistName} pricelist — no deploy.`,
 			);
 		} catch (err) {
 			setError(err instanceof Error ? err.message : "Go-live failed");

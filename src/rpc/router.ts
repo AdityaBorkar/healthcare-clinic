@@ -248,6 +248,18 @@ import {
 	update as updatePractitioner,
 } from "./procedures/practitioners";
 import {
+	applyBulkRevision as applyPricelistBulkRevision,
+	create as createPricelist,
+	ensureDefault as ensureDefaultPricelist,
+	get as getPricelist,
+	list as listPricelists,
+	previewBulkRevision as previewPricelistBulkRevision,
+	publish as publishPricelist,
+	resolvePrice as resolveServicePrice,
+	retire as retirePricelist,
+	update as updatePricelist,
+} from "./procedures/pricelists";
+import {
 	alertSenior as alertPsychSenior,
 	assess as assessPsych,
 	bookCounselling,
@@ -338,6 +350,18 @@ import {
 	update as updateService,
 } from "./procedures/services";
 import { listTenants, onboardTenant } from "./procedures/tenants";
+import {
+	convert as convertUom,
+	create as createUom,
+	get as getUom,
+	list as listUoms,
+	publish as publishUom,
+	retire as retireUom,
+	seed as seedUoms,
+	setDefault as setDefaultUom,
+	versions as uomVersions,
+	update as updateUom,
+} from "./procedures/uom";
 import {
 	createUser,
 	getUser,
@@ -856,6 +880,17 @@ export const router = {
 		},
 		update: updatePractitioner,
 	},
+	pricelists: {
+		applyBulkRevision: applyPricelistBulkRevision,
+		create: createPricelist,
+		ensureDefault: ensureDefaultPricelist,
+		get: getPricelist,
+		list: listPricelists,
+		previewBulkRevision: previewPricelistBulkRevision,
+		publish: publishPricelist,
+		retire: retirePricelist,
+		update: updatePricelist,
+	},
 	psych: {
 		assessments: assessPsych,
 		breakGlass: psychBreakGlass,
@@ -1024,6 +1059,7 @@ export const router = {
 			redeem: redeemPackage,
 		},
 		prices: {
+			resolve: resolveServicePrice,
 			set: setServicePrice,
 		},
 		publish: publishService,
@@ -1033,6 +1069,18 @@ export const router = {
 	tenants: {
 		list: listTenants,
 		onboard: onboardTenant,
+	},
+	uom: {
+		convert: convertUom,
+		create: createUom,
+		get: getUom,
+		list: listUoms,
+		publish: publishUom,
+		retire: retireUom,
+		seed: seedUoms,
+		setDefault: setDefaultUom,
+		update: updateUom,
+		versions: uomVersions,
 	},
 	users: {
 		create: createUser,

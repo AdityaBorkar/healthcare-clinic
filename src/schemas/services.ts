@@ -29,11 +29,16 @@ export const ServiceCreateSchema = object({
 	active: optional(boolean(), true),
 	basePrice: optional(number()),
 	billingCode: optional(string()),
+	billingUomCategory: optional(picklist(["count", "session"])),
+	billingUomId: optional(string()),
 	branchId: BranchId,
 	code: pipe(string(), minLength(1, "Service code is required")),
 	codeSystem: optional(picklist(["CPT", "ICD-11", "internal"])),
 	department: optional(string()),
 	durationMin: optional(pipe(number(), integer(), minValue(1))),
+	durationUomCategory: optional(picklist(["time"])),
+	durationUomId: optional(string()),
+	durationValue: optional(pipe(number(), minValue(0))),
 	gstPct: optional(pipe(number(), minValue(0))),
 	modality: optional(string()),
 	name: NameSchema,
@@ -50,9 +55,14 @@ export const ServicePatchSchema = object({
 		active: optional(boolean()),
 		basePrice: optional(number()),
 		billingCode: optional(string()),
+		billingUomCategory: optional(picklist(["count", "session"])),
+		billingUomId: optional(string()),
 		codeSystem: optional(picklist(["CPT", "ICD-11", "internal"])),
 		department: optional(string()),
 		durationMin: optional(pipe(number(), integer(), minValue(1))),
+		durationUomCategory: optional(picklist(["time"])),
+		durationUomId: optional(string()),
+		durationValue: optional(pipe(number(), minValue(0))),
 		gstPct: optional(pipe(number(), minValue(0))),
 		modality: optional(string()),
 		name: optional(NameSchema),
@@ -80,7 +90,9 @@ export const PriceSchema = object({
 	amount: number(),
 	branchId: BranchId,
 	effectiveFrom: optional(string()),
+	gstPct: optional(pipe(number(), minValue(0))),
 	pricelist: optional(string(), "standard"),
+	pricelistId: optional(string()),
 	serviceId: ServiceId,
 });
 
@@ -107,6 +119,83 @@ export const PackageDefSchema = object({
 // Every invoice must carry >= 1 billing code (CPT/ICD-11/internal).
 export const INVOICE_MIN_CODES_NOTE =
 	"Every invoice must carry at least one billing code (CPT/ICD-11/internal).";
+
+export const PricelistCreateSchema = object({
+	branchId: BranchId,
+	code: pipe(string(), minLength(1, "Pricelist code is required")),
+	currency: optional(string(), "INR"),
+	name: NameSchema,
+	payer: optional(string()),
+	scope: optional(picklist(["global", "branch"]), "branch"),
+	taxInclusive: optional(boolean(), true),
+});
+
+export const PricelistIdSchema = object({
+	id: pipe(string(), minLength(1, "Pricelist ID is required")),
+});
+
+export const PricelistPatchSchema = object({
+	id: pipe(string(), minLength(1, "Pricelist ID is required")),
+	patch: object({
+		currency: optional(string()),
+		name: optional(NameSchema),
+		payer: optional(string()),
+		scope: optional(picklist(["global", "branch"])),
+		taxInclusive: optional(boolean()),
+	}),
+});
+
+export const PricelistListSchema = object({
+	branchId: BranchId,
+	payer: optional(string()),
+	search: optional(string()),
+	status: optional(string()),
+});
+
+export const PricelistPublishSchema = object({
+	effectiveFrom: optional(string()),
+	effectiveTo: optional(string()),
+	id: pipe(string(), minLength(1, "Pricelist ID is required")),
+});
+
+export const PriceResolveSchema = object({
+	branchId: BranchId,
+	date: optional(string()),
+	payer: optional(string()),
+	pricelistId: optional(string()),
+	serviceId: ServiceId,
+});
+
+export const BulkRevisionPreviewSchema = object({
+	branchId: BranchId,
+	pricelistId: pipe(string(), minLength(1, "Pricelist ID is required")),
+	rows: optional(
+		array(
+			object({
+				amount: pipe(number(), minValue(0)),
+				serviceId: ServiceId,
+			}),
+		),
+	),
+	upliftPct: optional(number()),
+});
+
+export const BulkRevisionApplySchema = object({
+	approvedBy: pipe(string(), minLength(1, "Approver is required")),
+	branchId: BranchId,
+	effectiveFrom: pipe(string(), minLength(1, "Effective date is required")),
+	pricelistId: pipe(string(), minLength(1, "Pricelist ID is required")),
+	requestedBy: pipe(string(), minLength(1, "Requester is required")),
+	rows: optional(
+		array(
+			object({
+				amount: pipe(number(), minValue(0)),
+				serviceId: ServiceId,
+			}),
+		),
+	),
+	upliftPct: optional(number()),
+});
 
 export const RedeemSchema = object({
 	branchId: BranchId,

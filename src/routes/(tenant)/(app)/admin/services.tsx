@@ -18,12 +18,24 @@ export const Route = createFileRoute("/(tenant)/(app)/admin/services")({
 const api: typeof orpc = orpc;
 
 type Service = {
+	billingUomId?: string | null;
 	code: string;
 	department?: string | null;
+	durationUomId?: string | null;
+	durationValue?: number | null;
 	id: string;
 	name: string;
 	pathy?: string | null;
 	status: string;
+};
+
+type UomOption = {
+	category: string;
+	code: string;
+	id: string;
+	is_active: boolean;
+	name: string;
+	symbol: string | null;
 };
 
 type CptCode = {
@@ -45,6 +57,9 @@ function RouteComponent() {
 	const [durationMin, setDurationMin] = useState("");
 	const [gstPct, setGstPct] = useState("");
 	const [billingCode, setBillingCode] = useState("");
+	const [uoms, setUoms] = useState<Array<UomOption>>([]);
+	const [billingUomId, setBillingUomId] = useState("");
+	const [durationUomId, setDurationUomId] = useState("");
 	const [error, setError] = useState<string | null>(null);
 	const [notice, setNotice] = useState<string | null>(null);
 	const [cptCodes, setCptCodes] = useState<Array<CptCode>>([]);
@@ -62,6 +77,11 @@ function RouteComponent() {
 				branchId,
 			})) as Array<CptCode>;
 			setCptCodes(cpt);
+			const uomList = (await api.uom.list({
+				isActive: true,
+				limit: 200,
+			})) as Array<UomOption>;
+			setUoms(uomList);
 		} catch (err) {
 			setError(err instanceof Error ? err.message : "List failed");
 		}
@@ -99,11 +119,25 @@ function RouteComponent() {
 			}
 			const duration = durationMin ? Number(durationMin) : undefined;
 			const gst = gstPct ? Number(gstPct) : undefined;
+			const billingUom = uoms.find((u) => u.id === billingUomId);
+			const durationUom = uoms.find((u) => u.id === durationUomId);
 			await api.services.create({
 				branchId,
+				...(billingUom
+					? {
+							billingUomCategory: billingUom.category as "count" | "session",
+							billingUomId: billingUom.id,
+						}
+					: {}),
 				code,
 				department: department || undefined,
 				...(duration && duration > 0 ? { durationMin: duration } : {}),
+				...(durationUom
+					? {
+							durationUomCategory: "time" as const,
+							durationUomId: durationUom.id,
+						}
+					: {}),
 				...(gst !== undefined && !Number.isNaN(gst) ? { gstPct: gst } : {}),
 				...(billingCode ? { billingCode } : {}),
 				name,
@@ -116,6 +150,8 @@ function RouteComponent() {
 			setDurationMin("");
 			setGstPct("");
 			setBillingCode("");
+			setBillingUomId("");
+			setDurationUomId("");
 			await load();
 			setNotice("Service created.");
 		} catch (err) {
@@ -255,6 +291,38 @@ function RouteComponent() {
 								placeholder="Billing code"
 								value={billingCode}
 							/>
+							<select
+								aria-label="Billing UOM"
+								className="max-w-40 rounded-md border px-2 py-1 text-sm"
+								onChange={(e) => setBillingUomId(e.target.value)}
+								value={billingUomId}
+							>
+								<option value="">Billing UOM…</option>
+								{uoms
+									.filter(
+										(u) => u.category === "count" || u.category === "session",
+									)
+									.map((u) => (
+										<option key={u.id} value={u.id}>
+											{u.code} ({u.category})
+										</option>
+									))}
+							</select>
+							<select
+								aria-label="Duration UOM"
+								className="max-w-40 rounded-md border px-2 py-1 text-sm"
+								onChange={(e) => setDurationUomId(e.target.value)}
+								value={durationUomId}
+							>
+								<option value="">Duration UOM…</option>
+								{uoms
+									.filter((u) => u.category === "time")
+									.map((u) => (
+										<option key={u.id} value={u.id}>
+											{u.code}
+										</option>
+									))}
+							</select>
 							<Button type="submit">Add service</Button>
 						</form>
 						<p className="text-xs text-muted-foreground">
@@ -277,6 +345,7 @@ function RouteComponent() {
 										{r.code} · {r.name} · {r.status}
 										{r.department ? ` · ${r.department}` : ""}
 										{r.pathy ? ` · ${r.pathy}` : ""}
+										{r.durationValue ? ` · ${r.durationValue}` : ""}
 									</span>
 									<span className="flex gap-2">
 										<Button
