@@ -1,41 +1,39 @@
 import {
 	AppointmentIdSchema,
 	AppointmentListSchema,
-	BookingSchema,
+	BookAppointmentSchema,
 	BookVideoSchema,
 	CallNextSchema,
-	CancelSchema,
-	CertificateIssueSchema,
-	ConsentCaptureSchema,
-	NoShowSchema,
+	CancelAppointmentSchema,
+	CaptureConsentSchema,
+	ComputeSlotsSchema,
+	IssueCertificateSchema,
+	IssueRecallSchema,
 	QueueQuerySchema,
-	QueueTokenSchema,
-	RecallIssueSchema,
-	RescheduleSchema,
-	SlotsQuerySchema,
-} from "#/schemas/appointments";
+	RescheduleAppointmentSchema,
+	WalkinTokenSchema,
+} from "@aspen-os/healthcare";
+import { minLength, object, optional, pipe, string } from "valibot";
+
 import { scopedAuthMiddleware } from "../middlewares/scoped_auth";
 
+// P0-8 no-show lifecycle: custom to this module (no Aspen equivalent).
+// Reason required downstream (cancel workflow), recallAt offers a 1-click
+// recall hook. Callers should also set a patient watch flag via
+// patients.setFlag after marking no-show.
+export const NoShowSchema = object({
+	id: pipe(string(), minLength(1, "Appointment ID is required")),
+	reason: optional(string(), "no-show"),
+	recallAt: optional(string()),
+});
+
 export const computeSlots = scopedAuthMiddleware
-	.input(SlotsQuerySchema)
+	.input(ComputeSlotsSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
-			// Aspen ComputeSlots supports branchId/date/practitionerId/facilityId.
-			// serviceId/durationMin/bufferMin are validated locally (P0-10) and
-			// kept for slot-length display until the backend accepts them.
 			return await pm.run(tenantId, () =>
-				pm.healthcare.appointments.computeSlots.run(
-					{
-						input: {
-							branchId: input.branchId,
-							date: input.date,
-							...(input.facilityId ? { facilityId: input.facilityId } : {}),
-							practitionerId: input.practitionerId,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.appointments.computeSlots.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -45,27 +43,12 @@ export const computeSlots = scopedAuthMiddleware
 	});
 
 export const book = scopedAuthMiddleware
-	.input(BookingSchema)
+	.input(BookAppointmentSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.appointments.book.run(
-					{
-						input: {
-							branchId: input.branchId,
-							daycare: input.daycare,
-							facilityId: input.facilityId,
-							note: input.note,
-							patientId: input.patientId,
-							practitionerId: input.practitionerId,
-							pricelist: input.pricelist,
-							serviceId: input.serviceId,
-							slotStart: input.slotStart,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.appointments.book.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -80,10 +63,7 @@ export const get = scopedAuthMiddleware
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.appointments.get.run(
-					{ input: { id: input.id } },
-					{ actorId },
-				),
+				pm.healthcare.appointments.get.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -98,10 +78,7 @@ export const list = scopedAuthMiddleware
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.appointments.list.run(
-					{ input: { branchId: input.branchId } },
-					{ actorId },
-				),
+				pm.healthcare.appointments.list.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -111,21 +88,12 @@ export const list = scopedAuthMiddleware
 	});
 
 export const reschedule = scopedAuthMiddleware
-	.input(RescheduleSchema)
+	.input(RescheduleAppointmentSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.appointments.reschedule.run(
-					{
-						input: {
-							id: input.id,
-							reason: input.reason,
-							slotStart: input.slotStart,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.appointments.reschedule.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -135,15 +103,12 @@ export const reschedule = scopedAuthMiddleware
 	});
 
 export const cancel = scopedAuthMiddleware
-	.input(CancelSchema)
+	.input(CancelAppointmentSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.appointments.cancel.run(
-					{ input: { id: input.id, reason: input.reason } },
-					{ actorId },
-				),
+				pm.healthcare.appointments.cancel.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -158,10 +123,7 @@ export const checkin = scopedAuthMiddleware
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.appointments.checkin.run(
-					{ input: { id: input.id } },
-					{ actorId },
-				),
+				pm.healthcare.appointments.checkin.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -176,10 +138,7 @@ export const queueBoard = scopedAuthMiddleware
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.appointments.queueBoard.run(
-					{ input: { branchId: input.branchId } },
-					{ actorId },
-				),
+				pm.healthcare.appointments.queueBoard.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -189,23 +148,12 @@ export const queueBoard = scopedAuthMiddleware
 	});
 
 export const walkinToken = scopedAuthMiddleware
-	.input(QueueTokenSchema)
+	.input(WalkinTokenSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.appointments.walkinToken.run(
-					{
-						input: {
-							branchId: input.branchId,
-							facilityId: input.facilityId,
-							patientId: input.patientId,
-							practitionerId: input.practitionerId,
-							walkin: input.walkin,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.appointments.walkinToken.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -220,15 +168,7 @@ export const callNext = scopedAuthMiddleware
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.appointments.callNext.run(
-					{
-						input: {
-							branchId: input.branchId,
-							practitionerId: input.practitionerId,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.appointments.callNext.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -243,18 +183,7 @@ export const bookVideo = scopedAuthMiddleware
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.appointments.bookVideo.run(
-					{
-						input: {
-							branchId: input.branchId,
-							note: input.note,
-							patientId: input.patientId,
-							practitionerId: input.practitionerId,
-							slotStart: input.slotStart,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.appointments.bookVideo.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -264,21 +193,12 @@ export const bookVideo = scopedAuthMiddleware
 	});
 
 export const captureConsent = scopedAuthMiddleware
-	.input(ConsentCaptureSchema)
+	.input(CaptureConsentSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.appointments.captureConsent.run(
-					{
-						input: {
-							appointmentId: input.appointmentId,
-							granted: input.granted,
-							note: input.note,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.appointments.captureConsent.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -288,22 +208,12 @@ export const captureConsent = scopedAuthMiddleware
 	});
 
 export const issueRecall = scopedAuthMiddleware
-	.input(RecallIssueSchema)
+	.input(IssueRecallSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.appointments.issueRecall.run(
-					{
-						input: {
-							at: input.at,
-							branchId: input.branchId,
-							patientId: input.patientId,
-							reason: input.reason,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.appointments.issueRecall.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -313,22 +223,12 @@ export const issueRecall = scopedAuthMiddleware
 	});
 
 export const issueCertificate = scopedAuthMiddleware
-	.input(CertificateIssueSchema)
+	.input(IssueCertificateSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.appointments.issueCertificate.run(
-					{
-						input: {
-							appointmentId: input.appointmentId,
-							body: input.body,
-							branchId: input.branchId,
-							type: input.type,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.appointments.issueCertificate.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(

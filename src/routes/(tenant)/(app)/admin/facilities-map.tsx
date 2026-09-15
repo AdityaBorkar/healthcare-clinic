@@ -19,6 +19,46 @@ const api: typeof orpc = orpc;
 type Service = { code: string; id: string; name: string };
 type Facility = { category: string; id: string; name: string; status: string };
 
+type BackendCategory =
+	| "consultation"
+	| "diagnostics"
+	| "pharmacy"
+	| "procedure"
+	| "support"
+	| "tele"
+	| "ward";
+
+// Extended OPD/clinic categories map to the closest backend-supported bucket
+// (the Aspen FacilityCategory picklist only accepts the 7 values above).
+function toBackendCategory(category: string): BackendCategory {
+	switch (category) {
+		case "ot":
+		case "chair":
+		case "therapy":
+			return "procedure";
+		case "bed":
+			return "ward";
+		case "mri":
+		case "ct":
+		case "xray":
+		case "usg":
+			return "diagnostics";
+		case "nadi":
+		case "counselling":
+			return "consultation";
+		case "consultation":
+		case "diagnostics":
+		case "pharmacy":
+		case "procedure":
+		case "support":
+		case "tele":
+		case "ward":
+			return category;
+		default:
+			return "support";
+	}
+}
+
 function RouteComponent() {
 	const [branchId] = useBranch();
 	const [services, setServices] = useState<Array<Service>>([]);
@@ -81,7 +121,7 @@ function RouteComponent() {
 		try {
 			await api.facilities.create({
 				branchId,
-				category: category as "consultation",
+				category: toBackendCategory(category),
 				name,
 			});
 			setName("");

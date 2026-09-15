@@ -11,7 +11,7 @@ Non-obvious conventions in this repo. Standard TS/React/TanStack/oRPC practices 
 ## 2. Path alias is `#/*`, not `@/*`
 
 - `#/*` → `src/*` via `tsconfig.json:paths` + `vite.config.ts:resolve.tsconfigPaths` + `components.json` shadcn aliases.
-- Use `#/schemas/patients`, `#/aspen/server`, `#/lib/rpc`. Sibling files inside `src/rpc/` use relative imports (`../middlewares/scoped_auth`, `./subdomain`).
+- Use `@aspen-os/healthcare`, `@aspen-os/masters`, `@aspen-os/management` for validation schemas, `#/aspen/server`, `#/lib/rpc`. Sibling files inside `src/rpc/` use relative imports (`../middlewares/scoped_auth`, `./subdomain`).
 
 ## 3. oRPC router is a noun→verb tree; procedure files export verbs
 

@@ -62,7 +62,7 @@ function RouteComponent() {
 
 	const loadVersions = useCallback(async () => {
 		try {
-			const res = (await api.admin.masters.versions.list()) as
+			const res = (await api.admin.masters.versions.list({})) as
 				| Array<Record<string, unknown>>
 				| { items: Array<Record<string, unknown>> };
 			setVersions(Array.isArray(res) ? res : (res.items ?? []));

@@ -1,45 +1,31 @@
 import {
-	ConflictQuerySchema,
-	EducationSchema,
-	FeeSchema,
-	LeaveBlockSchema,
-	NextSlotQuerySchema,
-	PostingSchema,
-	PractitionerCreateSchema,
+	CreateEducationSchema,
+	CreateLeaveBlockSchema,
+	CreatePostingSchema,
+	CreatePractitionerSchema,
+	CreateRegistrationSchema,
+	NextFreeSlotQuerySchema,
+	PractitionerConflictQuerySchema,
+	PractitionerFiltersSchema,
 	PractitionerIdSchema,
-	PractitionerListSchema,
-	PractitionerPatchSchema,
-	RegistrationSchema,
-	ScheduleSchema,
-} from "#/schemas/practitioners";
+	SetPractitionerFeeSchema,
+	SetPractitionerScheduleSchema,
+	UpdatePractitionerSchema,
+} from "@aspen-os/healthcare";
+
 import { scopedAuthMiddleware } from "../middlewares/scoped_auth";
 
 export const create = scopedAuthMiddleware
-	.input(PractitionerCreateSchema)
+	.input(CreatePractitionerSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			// Backend create accepts branchId/email/languages/name/overallYrs/
 			// phone/specialistYrs/specialty only; photo/bio/signature/board/
-			// fees/presence are kept client-side until the backend grows them.
-			// Multi-specialization: first entry doubles as legacy specialty.
+			// fees/presence stay client-side until the backend grows them.
+			// Multi-specialization: the UI sends the first entry as specialty.
 			return await pm.run(tenantId, () =>
-				pm.healthcare.practitioners.create.run(
-					{
-						input: {
-							branchId: input.branchId,
-							email: input.email,
-							languages: input.languages,
-							name: input.name,
-							overallYrs: input.overallYrs,
-							phone: input.phone,
-							specialistYrs: input.specialistYrs,
-							specialty:
-								input.specialty ?? input.specializations?.[0] ?? undefined,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.practitioners.create.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -54,10 +40,7 @@ export const get = scopedAuthMiddleware
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.practitioners.get.run(
-					{ input: { id: input.id } },
-					{ actorId },
-				),
+				pm.healthcare.practitioners.get.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -67,17 +50,14 @@ export const get = scopedAuthMiddleware
 	});
 
 export const list = scopedAuthMiddleware
-	.input(PractitionerListSchema)
+	.input(PractitionerFiltersSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
-			// Backend list accepts branchId only; search/specialty filters are
-			// applied client-side in the admin UI until backend filters land.
+			// Multi-specialization search stays client-side in the admin UI
+			// until backend filters land.
 			return await pm.run(tenantId, () =>
-				pm.healthcare.practitioners.list.run(
-					{ input: { branchId: input.branchId } },
-					{ actorId },
-				),
+				pm.healthcare.practitioners.list.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -87,41 +67,15 @@ export const list = scopedAuthMiddleware
 	});
 
 export const update = scopedAuthMiddleware
-	.input(PractitionerPatchSchema)
+	.input(UpdatePractitionerSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
-			// Strip client-only patch keys (photo/bio/signature/board/fees/
-			// presence/specializations) before the backend update call.
-			const { patch } = input;
+			// Client-only patch keys (photo/bio/signature/board/fees/
+			// presence/specializations) are stripped by input validation
+			// before the backend update call.
 			return await pm.run(tenantId, () =>
-				pm.healthcare.practitioners.update.run(
-					{
-						input: {
-							id: input.id,
-							patch: {
-								...(patch.email !== undefined ? { email: patch.email } : {}),
-								...(patch.languages !== undefined
-									? { languages: patch.languages }
-									: {}),
-								...(patch.name !== undefined ? { name: patch.name } : {}),
-								...(patch.overallYrs !== undefined
-									? { overallYrs: patch.overallYrs }
-									: {}),
-								...(patch.phone !== undefined ? { phone: patch.phone } : {}),
-								...(patch.specialistYrs !== undefined
-									? { specialistYrs: patch.specialistYrs }
-									: {}),
-								...(patch.specialty !== undefined
-									? { specialty: patch.specialty }
-									: patch.specializations?.[0] !== undefined
-										? { specialty: patch.specializations[0] }
-										: {}),
-							},
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.practitioners.update.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -136,10 +90,7 @@ export const deactivate = scopedAuthMiddleware
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.practitioners.deactivate.run(
-					{ input: { id: input.id } },
-					{ actorId },
-				),
+				pm.healthcare.practitioners.deactivate.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -149,24 +100,13 @@ export const deactivate = scopedAuthMiddleware
 	});
 
 export const addRegistration = scopedAuthMiddleware
-	.input(RegistrationSchema)
+	.input(CreateRegistrationSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			// renewalDate is tracked client-side until the backend schema grows it.
 			return await pm.run(tenantId, () =>
-				pm.healthcare.practitioners.addRegistration.run(
-					{
-						input: {
-							branchId: input.branchId,
-							council: input.council,
-							practitionerId: input.practitionerId,
-							regNo: input.regNo,
-							year: input.year,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.practitioners.addRegistration.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -176,23 +116,12 @@ export const addRegistration = scopedAuthMiddleware
 	});
 
 export const addEducation = scopedAuthMiddleware
-	.input(EducationSchema)
+	.input(CreateEducationSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.practitioners.addEducation.run(
-					{
-						input: {
-							branchId: input.branchId,
-							degree: input.degree,
-							institute: input.institute,
-							practitionerId: input.practitionerId,
-							year: input.year,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.practitioners.addEducation.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -202,23 +131,12 @@ export const addEducation = scopedAuthMiddleware
 	});
 
 export const addPosting = scopedAuthMiddleware
-	.input(PostingSchema)
+	.input(CreatePostingSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.practitioners.addPosting.run(
-					{
-						input: {
-							branchId: input.branchId,
-							facilityId: input.facilityId,
-							from: input.from,
-							practitionerId: input.practitionerId,
-							to: input.to,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.practitioners.addPosting.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -228,28 +146,12 @@ export const addPosting = scopedAuthMiddleware
 	});
 
 export const setSchedule = scopedAuthMiddleware
-	.input(ScheduleSchema)
+	.input(SetPractitionerScheduleSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.practitioners.setSchedule.run(
-					{
-						input: {
-							branchId: input.branchId,
-							bufferMin: input.bufferMin,
-							emergencyCount: input.emergencyCount,
-							end: input.end,
-							facilityId: input.facilityId,
-							practitionerId: input.practitionerId,
-							slotMin: input.slotMin,
-							start: input.start,
-							videoFlag: input.videoFlag,
-							weekday: input.weekday,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.practitioners.setSchedule.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -259,25 +161,14 @@ export const setSchedule = scopedAuthMiddleware
 	});
 
 export const setFee = scopedAuthMiddleware
-	.input(FeeSchema)
+	.input(SetPractitionerFeeSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			// Fee head (new/revisit/tele) is tracked client-side; the backend
 			// stores one amount per practitioner/service effective date.
 			return await pm.run(tenantId, () =>
-				pm.healthcare.practitioners.setFee.run(
-					{
-						input: {
-							amount: input.amount,
-							branchId: input.branchId,
-							effectiveFrom: input.effectiveFrom,
-							practitionerId: input.practitionerId,
-							serviceId: input.serviceId,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.practitioners.setFee.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -287,23 +178,12 @@ export const setFee = scopedAuthMiddleware
 	});
 
 export const blockLeave = scopedAuthMiddleware
-	.input(LeaveBlockSchema)
+	.input(CreateLeaveBlockSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.practitioners.blockLeave.run(
-					{
-						input: {
-							branchId: input.branchId,
-							from: input.from,
-							practitionerId: input.practitionerId,
-							reason: input.reason,
-							to: input.to,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.practitioners.blockLeave.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -313,21 +193,12 @@ export const blockLeave = scopedAuthMiddleware
 	});
 
 export const conflict = scopedAuthMiddleware
-	.input(ConflictQuerySchema)
+	.input(PractitionerConflictQuerySchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.practitioners.conflict.run(
-					{
-						input: {
-							from: input.from,
-							practitionerId: input.practitionerId,
-							to: input.to,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.practitioners.conflict.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -337,21 +208,12 @@ export const conflict = scopedAuthMiddleware
 	});
 
 export const nextFreeSlot = scopedAuthMiddleware
-	.input(NextSlotQuerySchema)
+	.input(NextFreeSlotQuerySchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.practitioners.nextFreeSlot.run(
-					{
-						input: {
-							branchId: input.branchId,
-							from: input.from,
-							practitionerId: input.practitionerId,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.practitioners.nextFreeSlot.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(

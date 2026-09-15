@@ -1,20 +1,21 @@
 import {
-	ChecklistSchema,
-	DrugAdminSchema,
-	HandoverSchema,
-	IoSchema,
+	AdministerDrugSchema,
 	NursingBoardSchema,
-	PainSchema,
-	RiskScreenSchema,
-	SittingSupportSchema,
-	TaskFromOrdersSchema,
-	TriageTagSchema,
-	VitalsSchema,
-} from "#/schemas/nursing";
+	NursingRecordVitalsSchema,
+	RecordChecklistSchema,
+	RecordHandoverSchema,
+	RecordIoSchema,
+	RecordPainSchema,
+	RecordRiskScreenSchema,
+	RecordSittingSchema,
+	RecordTriageTagSchema,
+	TasksFromOrdersSchema,
+} from "@aspen-os/healthcare";
+
 import { scopedAuthMiddleware } from "../middlewares/scoped_auth";
 
 export const tasksFromOrders = scopedAuthMiddleware
-	.input(TaskFromOrdersSchema)
+	.input(TasksFromOrdersSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -32,7 +33,7 @@ export const board = scopedAuthMiddleware
 	});
 
 export const vitalsChart = scopedAuthMiddleware
-	.input(VitalsSchema)
+	.input(NursingRecordVitalsSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -41,7 +42,7 @@ export const vitalsChart = scopedAuthMiddleware
 	});
 
 export const ioChart = scopedAuthMiddleware
-	.input(IoSchema)
+	.input(RecordIoSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -50,7 +51,7 @@ export const ioChart = scopedAuthMiddleware
 	});
 
 export const painScore = scopedAuthMiddleware
-	.input(PainSchema)
+	.input(RecordPainSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -59,7 +60,7 @@ export const painScore = scopedAuthMiddleware
 	});
 
 export const riskScreen = scopedAuthMiddleware
-	.input(RiskScreenSchema)
+	.input(RecordRiskScreenSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -68,7 +69,7 @@ export const riskScreen = scopedAuthMiddleware
 	});
 
 export const drugAdminister = scopedAuthMiddleware
-	.input(DrugAdminSchema)
+	.input(AdministerDrugSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -77,7 +78,7 @@ export const drugAdminister = scopedAuthMiddleware
 	});
 
 export const missedEscalate = scopedAuthMiddleware
-	.input(TaskFromOrdersSchema)
+	.input(TasksFromOrdersSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -85,7 +86,7 @@ export const missedEscalate = scopedAuthMiddleware
 		);
 	});
 export const sittingsSupport = scopedAuthMiddleware
-	.input(SittingSupportSchema)
+	.input(RecordSittingSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -94,7 +95,7 @@ export const sittingsSupport = scopedAuthMiddleware
 	});
 
 export const checklistRecord = scopedAuthMiddleware
-	.input(ChecklistSchema)
+	.input(RecordChecklistSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -103,7 +104,7 @@ export const checklistRecord = scopedAuthMiddleware
 	});
 
 export const handoverCompile = scopedAuthMiddleware
-	.input(HandoverSchema)
+	.input(RecordHandoverSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -112,7 +113,7 @@ export const handoverCompile = scopedAuthMiddleware
 	});
 
 export const handoverSign = scopedAuthMiddleware
-	.input(HandoverSchema)
+	.input(RecordHandoverSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -121,7 +122,7 @@ export const handoverSign = scopedAuthMiddleware
 	});
 
 export const triageTag = scopedAuthMiddleware
-	.input(TriageTagSchema)
+	.input(RecordTriageTagSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>

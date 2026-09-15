@@ -1,32 +1,24 @@
 import {
-	BulkRevisionApplySchema,
-	BulkRevisionPreviewSchema,
-	PricelistCreateSchema,
+	ApplyBulkRevisionSchema,
+	CreatePricelistSchema,
+	EnsureDefaultPricelistSchema,
+	PreviewBulkRevisionSchema,
+	PricelistFiltersSchema,
 	PricelistIdSchema,
-	PricelistListSchema,
-	PricelistPatchSchema,
-	PricelistPublishSchema,
-	PriceResolveSchema,
-} from "#/schemas/services";
+	PublishPricelistSchema,
+	ResolvePriceSchema,
+	UpdatePricelistSchema,
+} from "@aspen-os/healthcare";
+
 import { scopedAuthMiddleware } from "../middlewares/scoped_auth";
 
 export const list = scopedAuthMiddleware
-	.input(PricelistListSchema)
+	.input(PricelistFiltersSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.pricelists.list.run(
-					{
-						input: {
-							branchId: input.branchId,
-							...(input.payer ? { payer: input.payer } : {}),
-							...(input.search ? { search: input.search } : {}),
-							...(input.status ? { status: input.status } : {}),
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.pricelists.list.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -41,10 +33,7 @@ export const get = scopedAuthMiddleware
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.pricelists.get.run(
-					{ input: { id: input.id } },
-					{ actorId },
-				),
+				pm.healthcare.pricelists.get.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -54,25 +43,12 @@ export const get = scopedAuthMiddleware
 	});
 
 export const create = scopedAuthMiddleware
-	.input(PricelistCreateSchema)
+	.input(CreatePricelistSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.pricelists.create.run(
-					{
-						input: {
-							branchId: input.branchId,
-							code: input.code,
-							currency: input.currency ?? "INR",
-							name: input.name,
-							...(input.payer ? { payer: input.payer } : {}),
-							scope: input.scope ?? "branch",
-							taxInclusive: input.taxInclusive ?? true,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.pricelists.create.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -82,29 +58,12 @@ export const create = scopedAuthMiddleware
 	});
 
 export const update = scopedAuthMiddleware
-	.input(PricelistPatchSchema)
+	.input(UpdatePricelistSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
-			const { patch } = input;
 			return await pm.run(tenantId, () =>
-				pm.healthcare.pricelists.update.run(
-					{
-						input: {
-							id: input.id,
-							patch: {
-								...(patch.currency ? { currency: patch.currency } : {}),
-								...(patch.name ? { name: patch.name } : {}),
-								...(patch.payer !== undefined ? { payer: patch.payer } : {}),
-								...(patch.scope ? { scope: patch.scope } : {}),
-								...(patch.taxInclusive !== undefined
-									? { taxInclusive: patch.taxInclusive }
-									: {}),
-							},
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.pricelists.update.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -114,23 +73,12 @@ export const update = scopedAuthMiddleware
 	});
 
 export const publish = scopedAuthMiddleware
-	.input(PricelistPublishSchema)
+	.input(PublishPricelistSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.pricelists.publish.run(
-					{
-						input: {
-							id: input.id,
-							...(input.effectiveFrom
-								? { effectiveFrom: input.effectiveFrom }
-								: {}),
-							...(input.effectiveTo ? { effectiveTo: input.effectiveTo } : {}),
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.pricelists.publish.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -145,10 +93,7 @@ export const retire = scopedAuthMiddleware
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.pricelists.retire.run(
-					{ input: { id: input.id } },
-					{ actorId },
-				),
+				pm.healthcare.pricelists.retire.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -158,21 +103,12 @@ export const retire = scopedAuthMiddleware
 	});
 
 export const ensureDefault = scopedAuthMiddleware
-	.input(PricelistListSchema)
+	.input(EnsureDefaultPricelistSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.pricelists.ensureDefault.run(
-					{
-						input: {
-							branchId: input.branchId,
-							currency: "INR",
-							taxInclusive: true,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.pricelists.ensureDefault.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -182,23 +118,12 @@ export const ensureDefault = scopedAuthMiddleware
 	});
 
 export const resolvePrice = scopedAuthMiddleware
-	.input(PriceResolveSchema)
+	.input(ResolvePriceSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.pricelists.resolvePrice.run(
-					{
-						input: {
-							branchId: input.branchId,
-							...(input.date ? { date: input.date } : {}),
-							...(input.payer ? { payer: input.payer } : {}),
-							...(input.pricelistId ? { pricelistId: input.pricelistId } : {}),
-							serviceId: input.serviceId,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.pricelists.resolvePrice.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -208,22 +133,13 @@ export const resolvePrice = scopedAuthMiddleware
 	});
 
 export const previewBulkRevision = scopedAuthMiddleware
-	.input(BulkRevisionPreviewSchema)
+	.input(PreviewBulkRevisionSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
 				pm.healthcare.pricelists.previewBulkRevision.run(
-					{
-						input: {
-							branchId: input.branchId,
-							pricelistId: input.pricelistId,
-							...(input.rows ? { rows: input.rows } : {}),
-							...(input.upliftPct !== undefined
-								? { upliftPct: input.upliftPct }
-								: {}),
-						},
-					},
+					{ input },
 					{ actorId },
 				),
 			);
@@ -235,27 +151,12 @@ export const previewBulkRevision = scopedAuthMiddleware
 	});
 
 export const applyBulkRevision = scopedAuthMiddleware
-	.input(BulkRevisionApplySchema)
+	.input(ApplyBulkRevisionSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.pricelists.applyBulkRevision.run(
-					{
-						input: {
-							approvedBy: input.approvedBy,
-							branchId: input.branchId,
-							effectiveFrom: input.effectiveFrom,
-							pricelistId: input.pricelistId,
-							requestedBy: input.requestedBy,
-							...(input.rows ? { rows: input.rows } : {}),
-							...(input.upliftPct !== undefined
-								? { upliftPct: input.upliftPct }
-								: {}),
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.pricelists.applyBulkRevision.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(

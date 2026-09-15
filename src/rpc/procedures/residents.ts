@@ -1,23 +1,24 @@
 import {
-	BedAllocateSchema,
-	DailyLogSchema,
+	AllocateBedSchema,
+	CompileStayBillSchema,
+	CreateDailyLogSchema,
+	CreateFeedbackSchema,
+	CreateGeriatricScoreSchema,
+	CreatePolypharmacyReviewSchema,
+	CreateResidentSchema,
+	CreateRoundSchema,
+	CreateStayChargeSchema,
+	CreateVisitLogSchema,
 	FamilySummarySendSchema,
-	FeedbackSchema,
-	GeriatricScoreSchema,
-	PolypharmacyReviewSchema,
 	RaiseAlertSchema,
-	ResidentAdmitSchema,
 	ResidentIdSchema,
 	ResidentListSchema,
-	RoundSchema,
-	StayBillCompileSchema,
-	StayChargeSchema,
-	VisitLogSchema,
-} from "#/schemas/residents";
+} from "@aspen-os/healthcare";
+
 import { scopedAuthMiddleware } from "../middlewares/scoped_auth";
 
 export const admit = scopedAuthMiddleware
-	.input(ResidentAdmitSchema)
+	.input(CreateResidentSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -26,7 +27,7 @@ export const admit = scopedAuthMiddleware
 	});
 
 export const allocateBed = scopedAuthMiddleware
-	.input(BedAllocateSchema)
+	.input(AllocateBedSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -35,7 +36,7 @@ export const allocateBed = scopedAuthMiddleware
 	});
 
 export const scoreGeriatric = scopedAuthMiddleware
-	.input(GeriatricScoreSchema)
+	.input(CreateGeriatricScoreSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -44,7 +45,7 @@ export const scoreGeriatric = scopedAuthMiddleware
 	});
 
 export const polypharmacyReview = scopedAuthMiddleware
-	.input(PolypharmacyReviewSchema)
+	.input(CreatePolypharmacyReviewSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -53,7 +54,7 @@ export const polypharmacyReview = scopedAuthMiddleware
 	});
 
 export const logDaily = scopedAuthMiddleware
-	.input(DailyLogSchema)
+	.input(CreateDailyLogSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -62,7 +63,7 @@ export const logDaily = scopedAuthMiddleware
 	});
 
 export const round = scopedAuthMiddleware
-	.input(RoundSchema)
+	.input(CreateRoundSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -71,7 +72,7 @@ export const round = scopedAuthMiddleware
 	});
 
 export const visitLog = scopedAuthMiddleware
-	.input(VisitLogSchema)
+	.input(CreateVisitLogSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -89,7 +90,7 @@ export const familySummary = scopedAuthMiddleware
 	});
 
 export const compileStayBill = scopedAuthMiddleware
-	.input(StayBillCompileSchema)
+	.input(CompileStayBillSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -116,7 +117,7 @@ export const listResidents = scopedAuthMiddleware
 	});
 
 export const recordStayCharge = scopedAuthMiddleware
-	.input(StayChargeSchema)
+	.input(CreateStayChargeSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -125,7 +126,7 @@ export const recordStayCharge = scopedAuthMiddleware
 	});
 
 export const feedback = scopedAuthMiddleware
-	.input(FeedbackSchema)
+	.input(CreateFeedbackSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>

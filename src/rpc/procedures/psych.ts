@@ -1,25 +1,26 @@
 // NOTE: `pm` is lazily imported inside handlers (not statically) because the
 // clinic track contract forbids top-level pm/router imports in procedures.
 import {
-	CaregiverConsentInputSchema,
-	CloseReadinessInputSchema,
-	ControlledPrescriptionInputSchema,
-	CounsellingBookInputSchema,
-	InvoluntaryHookInputSchema,
-	PsychAssessmentInputSchema,
-	RecallListInputSchema,
-	RelapsePlanInputSchema,
-	RiskScreenInputSchema,
-	SafetyPlanInputSchema,
-	ScaleResultInputSchema,
-	SeniorAlertInputSchema,
-	SideEffectCheckInputSchema,
-	WithdrawalChartInputSchema,
-} from "#/schemas/psych";
+	BookCounsellingSchema,
+	CloseReadinessSchema,
+	CreateCaregiverConsentSchema,
+	CreateControlledPrescriptionSchema,
+	CreateInvoluntaryHookSchema,
+	CreatePsychAssessmentSchema,
+	CreateRelapsePlanSchema,
+	CreateRiskScreenSchema,
+	CreateSafetyPlanSchema,
+	CreateScaleResultSchema,
+	CreateSeniorAlertSchema,
+	CreateSideEffectCheckSchema,
+	CreateWithdrawalChartSchema,
+	RecallListFiltersSchema,
+} from "@aspen-os/healthcare";
+
 import { scopedAuthMiddleware } from "../middlewares/scoped_auth";
 
 export const assess = scopedAuthMiddleware
-	.input(PsychAssessmentInputSchema)
+	.input(CreatePsychAssessmentSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -28,7 +29,7 @@ export const assess = scopedAuthMiddleware
 	});
 
 export const scoreScale = scopedAuthMiddleware
-	.input(ScaleResultInputSchema)
+	.input(CreateScaleResultSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -37,7 +38,7 @@ export const scoreScale = scopedAuthMiddleware
 	});
 
 export const screenRisk = scopedAuthMiddleware
-	.input(RiskScreenInputSchema)
+	.input(CreateRiskScreenSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -46,7 +47,7 @@ export const screenRisk = scopedAuthMiddleware
 	});
 
 export const saveSafetyPlan = scopedAuthMiddleware
-	.input(SafetyPlanInputSchema)
+	.input(CreateSafetyPlanSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -55,7 +56,7 @@ export const saveSafetyPlan = scopedAuthMiddleware
 	});
 
 export const alertSenior = scopedAuthMiddleware
-	.input(SeniorAlertInputSchema)
+	.input(CreateSeniorAlertSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -64,7 +65,7 @@ export const alertSenior = scopedAuthMiddleware
 	});
 
 export const bookCounselling = scopedAuthMiddleware
-	.input(CounsellingBookInputSchema)
+	.input(BookCounsellingSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -73,7 +74,7 @@ export const bookCounselling = scopedAuthMiddleware
 	});
 
 export const bookTele = scopedAuthMiddleware
-	.input(CounsellingBookInputSchema)
+	.input(BookCounsellingSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -82,7 +83,7 @@ export const bookTele = scopedAuthMiddleware
 	});
 
 export const chartWithdrawal = scopedAuthMiddleware
-	.input(WithdrawalChartInputSchema)
+	.input(CreateWithdrawalChartSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -91,7 +92,7 @@ export const chartWithdrawal = scopedAuthMiddleware
 	});
 
 export const relapsePlan = scopedAuthMiddleware
-	.input(RelapsePlanInputSchema)
+	.input(CreateRelapsePlanSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -100,7 +101,7 @@ export const relapsePlan = scopedAuthMiddleware
 	});
 
 export const prescribeControlled = scopedAuthMiddleware
-	.input(ControlledPrescriptionInputSchema)
+	.input(CreateControlledPrescriptionSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -109,7 +110,7 @@ export const prescribeControlled = scopedAuthMiddleware
 	});
 
 export const sideEffectCheck = scopedAuthMiddleware
-	.input(SideEffectCheckInputSchema)
+	.input(CreateSideEffectCheckSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -118,7 +119,7 @@ export const sideEffectCheck = scopedAuthMiddleware
 	});
 
 export const caregiverConsent = scopedAuthMiddleware
-	.input(CaregiverConsentInputSchema)
+	.input(CreateCaregiverConsentSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -127,7 +128,7 @@ export const caregiverConsent = scopedAuthMiddleware
 	});
 
 export const involuntaryHook = scopedAuthMiddleware
-	.input(InvoluntaryHookInputSchema)
+	.input(CreateInvoluntaryHookSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -136,7 +137,7 @@ export const involuntaryHook = scopedAuthMiddleware
 	});
 
 export const recallList = scopedAuthMiddleware
-	.input(RecallListInputSchema)
+	.input(RecallListFiltersSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -145,7 +146,7 @@ export const recallList = scopedAuthMiddleware
 	});
 
 export const closeReadiness = scopedAuthMiddleware
-	.input(CloseReadinessInputSchema)
+	.input(CloseReadinessSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>

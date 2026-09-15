@@ -1,4 +1,5 @@
-import { ProvisionTenantSchema } from "#/schemas/tenants";
+import { ProvisionTenantSchema } from "@aspen-os/management";
+
 import { authMiddleware } from "../middlewares/auth";
 
 export const listTenants = authMiddleware.handler(async () => {

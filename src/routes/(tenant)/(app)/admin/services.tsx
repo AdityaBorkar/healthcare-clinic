@@ -9,7 +9,7 @@ import { Input } from "#/components/ui/input";
 import { useBranch } from "#/lib/branch-store";
 import { exportRowsCsv, printPage } from "#/lib/export";
 import { orpc } from "#/lib/rpc";
-import { INVOICE_MIN_CODES_NOTE } from "#/schemas/services";
+import { INVOICE_MIN_CODES_NOTE } from "#/rpc/procedures/services";
 
 export const Route = createFileRoute("/(tenant)/(app)/admin/services")({
 	component: RouteComponent,
@@ -78,7 +78,7 @@ function RouteComponent() {
 			})) as Array<CptCode>;
 			setCptCodes(cpt);
 			const uomList = (await api.uom.list({
-				isActive: true,
+				filters: { isActive: true },
 				limit: 200,
 			})) as Array<UomOption>;
 			setUoms(uomList);
@@ -118,7 +118,6 @@ function RouteComponent() {
 				return;
 			}
 			const duration = durationMin ? Number(durationMin) : undefined;
-			const gst = gstPct ? Number(gstPct) : undefined;
 			const billingUom = uoms.find((u) => u.id === billingUomId);
 			const durationUom = uoms.find((u) => u.id === durationUomId);
 			await api.services.create({
@@ -131,15 +130,18 @@ function RouteComponent() {
 					: {}),
 				code,
 				department: department || undefined,
-				...(duration && duration > 0 ? { durationMin: duration } : {}),
+				...(duration && duration > 0
+					? {
+							durationUomCategory: "time" as const,
+							durationValue: duration,
+						}
+					: {}),
 				...(durationUom
 					? {
 							durationUomCategory: "time" as const,
 							durationUomId: durationUom.id,
 						}
 					: {}),
-				...(gst !== undefined && !Number.isNaN(gst) ? { gstPct: gst } : {}),
-				...(billingCode ? { billingCode } : {}),
 				name,
 				pathy: pathy || undefined,
 			});

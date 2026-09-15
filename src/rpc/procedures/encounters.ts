@@ -1,34 +1,24 @@
 import {
-	AddendumSchema,
-	DiagnosisSchema,
-	EncounterCreateSchema,
+	AddDiagnosisSchema,
+	AddEncounterAddendumSchema,
+	CreateEncounterSchema,
 	EncounterIdSchema,
-	FollowUpSchema,
-	OrderSchema,
-	PrescriptionSchema,
+	PlaceOrderSchema,
+	PrescribeSchema,
+	RecordVitalsSchema,
 	RefillSchema,
-	VitalsSchema,
-} from "#/schemas/encounters";
+	SetFollowUpSchema,
+} from "@aspen-os/healthcare";
+
 import { scopedAuthMiddleware } from "../middlewares/scoped_auth";
 
 export const create = scopedAuthMiddleware
-	.input(EncounterCreateSchema)
+	.input(CreateEncounterSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.encounters.create.run(
-					{
-						input: {
-							appointmentId: input.appointmentId,
-							branchId: input.branchId,
-							patientId: input.patientId,
-							specialty: input.specialty,
-							visitType: input.visitType,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.encounters.create.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -43,10 +33,7 @@ export const get = scopedAuthMiddleware
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.encounters.get.run(
-					{ input: { id: input.id } },
-					{ actorId },
-				),
+				pm.healthcare.encounters.get.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -61,10 +48,7 @@ export const sign = scopedAuthMiddleware
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.encounters.sign.run(
-					{ input: { id: input.id } },
-					{ actorId },
-				),
+				pm.healthcare.encounters.sign.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -74,24 +58,12 @@ export const sign = scopedAuthMiddleware
 	});
 
 export const addDiagnosis = scopedAuthMiddleware
-	.input(DiagnosisSchema)
+	.input(AddDiagnosisSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.encounters.addDiagnosis.run(
-					{
-						input: {
-							code: input.code,
-							encounterId: input.encounterId,
-							kind: input.kind ?? "provisional",
-							label: input.label,
-							patientId: input.patientId,
-							primary: input.primary,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.encounters.addDiagnosis.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -101,22 +73,12 @@ export const addDiagnosis = scopedAuthMiddleware
 	});
 
 export const prescribe = scopedAuthMiddleware
-	.input(PrescriptionSchema)
+	.input(PrescribeSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.encounters.prescribe.run(
-					{
-						input: {
-							acknowledgedWarnings: input.acknowledgedWarnings,
-							encounterId: input.encounterId,
-							items: input.items,
-							patientId: input.patientId,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.encounters.prescribe.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -131,16 +93,7 @@ export const refill = scopedAuthMiddleware
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.encounters.refill.run(
-					{
-						input: {
-							encounterId: input.encounterId,
-							patientId: input.patientId,
-							prescriptionId: input.prescriptionId,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.encounters.refill.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -150,24 +103,12 @@ export const refill = scopedAuthMiddleware
 	});
 
 export const placeOrder = scopedAuthMiddleware
-	.input(OrderSchema)
+	.input(PlaceOrderSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.encounters.placeOrder.run(
-					{
-						input: {
-							encounterId: input.encounterId,
-							item: input.item,
-							kind: input.kind,
-							note: input.note,
-							patientId: input.patientId,
-							receivingUnit: input.receivingUnit,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.encounters.placeOrder.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -177,25 +118,12 @@ export const placeOrder = scopedAuthMiddleware
 	});
 
 export const recordVitals = scopedAuthMiddleware
-	.input(VitalsSchema)
+	.input(RecordVitalsSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.encounters.recordVitals.run(
-					{
-						input: {
-							bp: input.bp,
-							encounterId: input.encounterId,
-							patientId: input.patientId,
-							pulse: input.pulse,
-							spo2: input.spo2,
-							tempC: input.tempC,
-							weightKg: input.weightKg,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.encounters.recordVitals.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -205,22 +133,12 @@ export const recordVitals = scopedAuthMiddleware
 	});
 
 export const setFollowUp = scopedAuthMiddleware
-	.input(FollowUpSchema)
+	.input(SetFollowUpSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.encounters.setFollowUp.run(
-					{
-						input: {
-							at: input.at,
-							encounterId: input.encounterId,
-							note: input.note,
-							patientId: input.patientId,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.encounters.setFollowUp.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -230,20 +148,12 @@ export const setFollowUp = scopedAuthMiddleware
 	});
 
 export const addendum = scopedAuthMiddleware
-	.input(AddendumSchema)
+	.input(AddEncounterAddendumSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.encounters.addendum.run(
-					{
-						input: {
-							encounterId: input.encounterId,
-							note: input.note,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.encounters.addendum.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(

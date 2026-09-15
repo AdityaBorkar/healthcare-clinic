@@ -1,8 +1,14 @@
+import { NameSchema } from "@aspen-os/platform/server";
 import {
-	CreateTenantUserSchema,
-	TenantUserIdSchema,
-	UpdateTenantUserInputSchema,
-} from "#/schemas/users";
+	email,
+	minLength,
+	object,
+	optional,
+	picklist,
+	pipe,
+	string,
+} from "valibot";
+
 import { authMiddleware } from "../middlewares/auth";
 import { requireOrganizationSlug } from "../utils/subdomain";
 import {
@@ -14,6 +20,38 @@ import {
 	renameAuthUser,
 	requireWorkspaceAdmin,
 } from "../utils/workspace-organization";
+
+// Workspace user management is custom to this module (no Aspen equivalent
+// for workspace roles admin|member + password policy + auth/workspace
+// orchestration). Schemas are defined here for the user forms in
+// settings/users/; other domains use their Aspen module schemas.
+export const OrganizationUserRoleSchema = picklist(["admin", "member"]);
+
+const PasswordSchema = pipe(
+	string(),
+	minLength(8, "Password must be at least 8 characters"),
+);
+
+export const CreateTenantUserSchema = object({
+	email: pipe(string(), email("Enter a valid email address")),
+	name: NameSchema,
+	password: PasswordSchema,
+	role: OrganizationUserRoleSchema,
+});
+
+const UpdateTenantUserSchema = object({
+	name: optional(NameSchema),
+	role: optional(OrganizationUserRoleSchema),
+});
+
+export const TenantUserIdSchema = object({
+	id: pipe(string(), minLength(1, "User ID is required")),
+});
+
+export const UpdateTenantUserInputSchema = object({
+	id: pipe(string(), minLength(1, "User ID is required")),
+	patch: UpdateTenantUserSchema,
+});
 
 export const listUsers = authMiddleware.handler(async ({ context }) => {
 	const headers = context.headers;

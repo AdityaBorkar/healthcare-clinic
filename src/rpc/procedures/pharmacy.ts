@@ -15,7 +15,8 @@ import {
 	StockLedgerQuerySchema,
 	TransferAcceptSchema,
 	TransferSchema,
-} from "#/schemas/pharmacy";
+} from "@aspen-os/healthcare";
+
 import { scopedAuthMiddleware } from "../middlewares/scoped_auth";
 
 export const itemUpsert = scopedAuthMiddleware

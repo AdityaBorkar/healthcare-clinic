@@ -36,8 +36,8 @@ function MessagingPage() {
 	const load = useCallback(async () => {
 		try {
 			const [t, r] = await Promise.all([
-				api.admin.templates.list(),
-				api.admin.recalls.rules.list(),
+				api.admin.templates.list({}),
+				api.admin.recalls.rules.list({}),
 			]);
 			setTemplates(t as Array<Template>);
 			setRules(r as Array<Rule>);

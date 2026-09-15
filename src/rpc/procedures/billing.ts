@@ -1,25 +1,26 @@
 import {
-	BillingCndnSchema,
-	BillingIdSchema,
+	ApplyDiscountSchema,
+	BillingCreatePricelistSchema,
+	BillingRedeemPackageSchema,
 	CollectionReportSchema,
-	DiscountSchema,
-	DuesAgingSchema,
-	GstExportSchema,
-	InterimTabSchema,
-	InvoiceFinalizeSchema,
-	InvoiceFromSourcesSchema,
+	CollectPaymentSchema,
+	CreateInvoiceSchema,
+	CreatePackageBalanceSchema,
+	DuesAgingFiltersSchema,
+	FinalizeInvoiceSchema,
+	GstExportFiltersSchema,
+	InvoiceIdSchema,
+	IssueCndnSchema,
 	PackageLiabilitySchema,
-	PackageSellSchema,
-	PaySchema,
-	PricelistSchema,
-	RedeemSchema,
-	RepriceSchema,
+	RepriceInvoiceSchema,
 	SettleAdvanceSchema,
-} from "#/schemas/billing";
+	SettleTabSchema,
+} from "@aspen-os/healthcare";
+
 import { scopedAuthMiddleware } from "../middlewares/scoped_auth";
 
 export const invoiceRaise = scopedAuthMiddleware
-	.input(InvoiceFromSourcesSchema)
+	.input(CreateInvoiceSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -28,7 +29,7 @@ export const invoiceRaise = scopedAuthMiddleware
 	});
 
 export const invoiceFinalize = scopedAuthMiddleware
-	.input(InvoiceFinalizeSchema)
+	.input(FinalizeInvoiceSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -37,7 +38,7 @@ export const invoiceFinalize = scopedAuthMiddleware
 	});
 
 export const interimTab = scopedAuthMiddleware
-	.input(InterimTabSchema)
+	.input(SettleTabSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -46,7 +47,7 @@ export const interimTab = scopedAuthMiddleware
 	});
 
 export const applyDiscount = scopedAuthMiddleware
-	.input(DiscountSchema)
+	.input(ApplyDiscountSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -55,7 +56,7 @@ export const applyDiscount = scopedAuthMiddleware
 	});
 
 export const collect = scopedAuthMiddleware
-	.input(PaySchema)
+	.input(CollectPaymentSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -64,7 +65,7 @@ export const collect = scopedAuthMiddleware
 	});
 
 export const settle = scopedAuthMiddleware
-	.input(InterimTabSchema)
+	.input(SettleTabSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -73,7 +74,7 @@ export const settle = scopedAuthMiddleware
 	});
 
 export const packageSell = scopedAuthMiddleware
-	.input(PackageSellSchema)
+	.input(CreatePackageBalanceSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -82,7 +83,7 @@ export const packageSell = scopedAuthMiddleware
 	});
 
 export const packageRedeem = scopedAuthMiddleware
-	.input(RedeemSchema)
+	.input(BillingRedeemPackageSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -91,7 +92,7 @@ export const packageRedeem = scopedAuthMiddleware
 	});
 
 export const packageExpireRun = scopedAuthMiddleware
-	.input(DuesAgingSchema)
+	.input(DuesAgingFiltersSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -100,7 +101,7 @@ export const packageExpireRun = scopedAuthMiddleware
 	});
 
 export const pricelistUpsert = scopedAuthMiddleware
-	.input(PricelistSchema)
+	.input(BillingCreatePricelistSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -109,7 +110,7 @@ export const pricelistUpsert = scopedAuthMiddleware
 	});
 
 export const repriceOnPayerSwitch = scopedAuthMiddleware
-	.input(RepriceSchema)
+	.input(RepriceInvoiceSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -118,7 +119,7 @@ export const repriceOnPayerSwitch = scopedAuthMiddleware
 	});
 
 export const cndnIssue = scopedAuthMiddleware
-	.input(BillingCndnSchema)
+	.input(IssueCndnSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -136,7 +137,7 @@ export const settleAdvance = scopedAuthMiddleware
 	});
 
 export const duesAging = scopedAuthMiddleware
-	.input(DuesAgingSchema)
+	.input(DuesAgingFiltersSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -145,7 +146,7 @@ export const duesAging = scopedAuthMiddleware
 	});
 
 export const gstExport = scopedAuthMiddleware
-	.input(GstExportSchema)
+	.input(GstExportFiltersSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -154,7 +155,7 @@ export const gstExport = scopedAuthMiddleware
 	});
 
 export const getInvoice = scopedAuthMiddleware
-	.input(BillingIdSchema)
+	.input(InvoiceIdSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>

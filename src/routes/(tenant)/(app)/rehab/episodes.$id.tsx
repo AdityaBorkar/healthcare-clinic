@@ -190,7 +190,6 @@ function RouteComponent() {
 		try {
 			const vitals = { bpDys: 80, bpSys: 120, pulse: 72 };
 			const res = await api.rehab.sittings.record({
-				branchId: "main",
 				dosage: recordDosage || undefined,
 				durationMins: recordDuration ? Number(recordDuration) : undefined,
 				modality: recordModality || undefined,

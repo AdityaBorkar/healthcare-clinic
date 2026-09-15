@@ -20,7 +20,8 @@ import {
 	SampleRejectSchema,
 	TatReportSchema,
 	TestMasterSchema,
-} from "#/schemas/diagnostics";
+} from "@aspen-os/healthcare";
+
 import { scopedAuthMiddleware } from "../middlewares/scoped_auth";
 
 export const testMasterUpsert = scopedAuthMiddleware

@@ -1,4 +1,5 @@
-import { CreateServiceProviderSchema } from "#/schemas/service-providers";
+import { CreateServiceProviderSchema } from "@aspen-os/management";
+
 import { authMiddleware } from "../middlewares/auth";
 
 export const listServiceProviders = authMiddleware.handler(async () => {

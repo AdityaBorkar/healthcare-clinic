@@ -26,11 +26,11 @@ function RolesPage() {
 
 	const load = useCallback(async () => {
 		try {
-			setRoles((await api.admin.roles.list()) as Array<Role>);
+			setRoles((await api.admin.roles.list({ branchId })) as Array<Role>);
 		} catch (err) {
 			setError(err instanceof Error ? err.message : "Role load failed");
 		}
-	}, []);
+	}, [branchId]);
 
 	useEffect(() => {
 		void load();
@@ -59,7 +59,7 @@ function RolesPage() {
 	async function remove(id: string) {
 		setError(null);
 		try {
-			await api.admin.roles.remove({ id });
+			await api.admin.roles.remove({ branchId, id });
 			await load();
 		} catch (err) {
 			setError(err instanceof Error ? err.message : "Role deletion failed");

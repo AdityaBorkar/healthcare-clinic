@@ -1,62 +1,29 @@
 import {
-	DiscountRuleSchema,
-	FacilityMapSchema,
-	PackageDefSchema,
-	PriceSchema,
-	RedeemSchema,
-	ServiceCreateSchema,
+	CreateDiscountRuleSchema,
+	CreateServiceSchema,
+	DefinePackageSchema,
+	MapFacilitiesSchema,
+	RedeemPackageSchema,
+	ServiceFiltersSchema,
 	ServiceIdSchema,
-	ServiceListSchema,
-	ServicePatchSchema,
-} from "#/schemas/services";
+	SetPriceSchema,
+	UpdateServiceSchema,
+} from "@aspen-os/healthcare";
+
 import { scopedAuthMiddleware } from "../middlewares/scoped_auth";
 
+// Every invoice must carry >= 1 billing code (CPT/ICD-11/internal).
+export const INVOICE_MIN_CODES_NOTE =
+	"Every invoice must carry at least one billing code (CPT/ICD-11/internal).";
+
 export const create = scopedAuthMiddleware
-	.input(ServiceCreateSchema)
+	.input(CreateServiceSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
-			// Backend create accepts basePrice/branchId/code/name/teleExempt
-			// plus department/pathy/modality/UOM bindings; payer/GST/billing-code
-			// are validated locally and kept client-side until backend grows.
 			// Dup-block (P1): callers check list(search=code) before create.
 			return await pm.run(tenantId, () =>
-				pm.healthcare.services.create.run(
-					{
-						input: {
-							basePrice: input.basePrice,
-							...(input.billingUomCategory
-								? { billingUomCategory: input.billingUomCategory }
-								: {}),
-							...(input.billingUomId
-								? { billingUomId: input.billingUomId }
-								: {}),
-							branchId: input.branchId,
-							code: input.code,
-							...(input.department ? { department: input.department } : {}),
-							...(input.durationMin !== undefined
-								? {
-										durationUomCategory: "time",
-										durationValue: input.durationMin,
-									}
-								: {}),
-							...(input.durationUomCategory
-								? { durationUomCategory: input.durationUomCategory }
-								: {}),
-							...(input.durationUomId
-								? { durationUomId: input.durationUomId }
-								: {}),
-							...(input.durationValue !== undefined
-								? { durationValue: input.durationValue }
-								: {}),
-							...(input.modality ? { modality: input.modality } : {}),
-							name: input.name,
-							...(input.pathy ? { pathy: input.pathy } : {}),
-							teleExempt: input.teleExempt,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.services.create.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -71,10 +38,7 @@ export const get = scopedAuthMiddleware
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.services.get.run(
-					{ input: { id: input.id } },
-					{ actorId },
-				),
+				pm.healthcare.services.get.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -84,23 +48,12 @@ export const get = scopedAuthMiddleware
 	});
 
 export const list = scopedAuthMiddleware
-	.input(ServiceListSchema)
+	.input(ServiceFiltersSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.services.list.run(
-					{
-						input: {
-							branchId: input.branchId,
-							...(input.department ? { department: input.department } : {}),
-							...(input.pathy ? { pathy: input.pathy } : {}),
-							...(input.search ? { search: input.search } : {}),
-							...(input.status ? { status: input.status } : {}),
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.services.list.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -110,57 +63,12 @@ export const list = scopedAuthMiddleware
 	});
 
 export const update = scopedAuthMiddleware
-	.input(ServicePatchSchema)
+	.input(UpdateServiceSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
-			const { patch } = input;
 			return await pm.run(tenantId, () =>
-				pm.healthcare.services.update.run(
-					{
-						input: {
-							id: input.id,
-							patch: {
-								...(patch.basePrice !== undefined
-									? { basePrice: patch.basePrice }
-									: {}),
-								...(patch.billingUomCategory !== undefined
-									? { billingUomCategory: patch.billingUomCategory }
-									: {}),
-								...(patch.billingUomId !== undefined
-									? { billingUomId: patch.billingUomId }
-									: {}),
-								...(patch.department !== undefined
-									? { department: patch.department }
-									: {}),
-								...(patch.durationMin !== undefined
-									? {
-											durationUomCategory: "time",
-											durationValue: patch.durationMin,
-										}
-									: {}),
-								...(patch.durationUomCategory !== undefined
-									? { durationUomCategory: patch.durationUomCategory }
-									: {}),
-								...(patch.durationUomId !== undefined
-									? { durationUomId: patch.durationUomId }
-									: {}),
-								...(patch.durationValue !== undefined
-									? { durationValue: patch.durationValue }
-									: {}),
-								...(patch.modality !== undefined
-									? { modality: patch.modality }
-									: {}),
-								...(patch.name !== undefined ? { name: patch.name } : {}),
-								...(patch.pathy !== undefined ? { pathy: patch.pathy } : {}),
-								...(patch.teleExempt !== undefined
-									? { teleExempt: patch.teleExempt }
-									: {}),
-							},
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.services.update.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -175,10 +83,7 @@ export const publish = scopedAuthMiddleware
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.services.publish.run(
-					{ input: { id: input.id } },
-					{ actorId },
-				),
+				pm.healthcare.services.publish.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -193,10 +98,7 @@ export const retire = scopedAuthMiddleware
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.services.retire.run(
-					{ input: { id: input.id } },
-					{ actorId },
-				),
+				pm.healthcare.services.retire.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -206,21 +108,12 @@ export const retire = scopedAuthMiddleware
 	});
 
 export const mapFacilities = scopedAuthMiddleware
-	.input(FacilityMapSchema)
+	.input(MapFacilitiesSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.services.mapFacilities.run(
-					{
-						input: {
-							branchId: input.branchId,
-							facilityId: input.facilityId,
-							serviceId: input.serviceId,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.services.mapFacilities.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -230,25 +123,12 @@ export const mapFacilities = scopedAuthMiddleware
 	});
 
 export const setPrice = scopedAuthMiddleware
-	.input(PriceSchema)
+	.input(SetPriceSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.services.setPrice.run(
-					{
-						input: {
-							amount: input.amount,
-							branchId: input.branchId,
-							effectiveFrom: input.effectiveFrom,
-							...(input.gstPct !== undefined ? { gstPct: input.gstPct } : {}),
-							pricelist: input.pricelist,
-							...(input.pricelistId ? { pricelistId: input.pricelistId } : {}),
-							serviceId: input.serviceId,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.services.setPrice.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -258,25 +138,12 @@ export const setPrice = scopedAuthMiddleware
 	});
 
 export const addDiscountRule = scopedAuthMiddleware
-	.input(DiscountRuleSchema)
+	.input(CreateDiscountRuleSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
-			// maxPct/approver are validated locally as the discount note
-			// (max-% + approver) until the backend stores them.
 			return await pm.run(tenantId, () =>
-				pm.healthcare.services.addDiscountRule.run(
-					{
-						input: {
-							branchId: input.branchId,
-							code: input.code,
-							minQty: input.minQty,
-							pct: input.pct,
-							serviceId: input.serviceId,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.services.addDiscountRule.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -286,24 +153,12 @@ export const addDiscountRule = scopedAuthMiddleware
 	});
 
 export const definePackage = scopedAuthMiddleware
-	.input(PackageDefSchema)
+	.input(DefinePackageSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
-			// sessions/validityDays/scope are validated locally as the package
-			// note (sessions/validity/scope) until the backend stores them.
 			return await pm.run(tenantId, () =>
-				pm.healthcare.services.definePackage.run(
-					{
-						input: {
-							branchId: input.branchId,
-							name: input.name,
-							price: input.price,
-							serviceIds: input.serviceIds,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.services.definePackage.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -313,21 +168,12 @@ export const definePackage = scopedAuthMiddleware
 	});
 
 export const redeem = scopedAuthMiddleware
-	.input(RedeemSchema)
+	.input(RedeemPackageSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.services.redeem.run(
-					{
-						input: {
-							branchId: input.branchId,
-							packageId: input.packageId,
-							patientId: input.patientId,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.services.redeem.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(

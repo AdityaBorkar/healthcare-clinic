@@ -1,21 +1,22 @@
 import {
-	BranchFilterSchema,
-	DischargeSummaryInputSchema,
-	ExercisePrescriptionInputSchema,
-	OutcomeScoreInputSchema,
-	ProgressChartInputSchema,
-	RehabAssessmentInputSchema,
-	RehabEpisodeInputSchema,
-	RehabGoalPlanInputSchema,
-	RehabPackageInputSchema,
-	RehabSittingBookInputSchema,
-	RehabSittingRecordInputSchema,
-	ShareExerciseSheetInputSchema,
-} from "#/schemas/rehab";
+	BookRehabSittingSchema,
+	CreateDischargeSummarySchema,
+	CreateExercisePrescriptionSchema,
+	CreateOutcomeScoreSchema,
+	CreateRehabAssessmentSchema,
+	CreateRehabEpisodeSchema,
+	CreateRehabGoalPlanSchema,
+	CreateRehabPackageSchema,
+	ProgressChartSchema,
+	RecordRehabSittingSchema,
+	RehabFiltersSchema,
+	ShareExerciseSheetSchema,
+} from "@aspen-os/healthcare";
+
 import { scopedAuthMiddleware } from "../middlewares/scoped_auth";
 
 export const openEpisode = scopedAuthMiddleware
-	.input(RehabEpisodeInputSchema)
+	.input(CreateRehabEpisodeSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -24,7 +25,7 @@ export const openEpisode = scopedAuthMiddleware
 	});
 
 export const assess = scopedAuthMiddleware
-	.input(RehabAssessmentInputSchema)
+	.input(CreateRehabAssessmentSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -33,7 +34,7 @@ export const assess = scopedAuthMiddleware
 	});
 
 export const setGoals = scopedAuthMiddleware
-	.input(RehabGoalPlanInputSchema)
+	.input(CreateRehabGoalPlanSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -42,7 +43,7 @@ export const setGoals = scopedAuthMiddleware
 	});
 
 export const buildPackage = scopedAuthMiddleware
-	.input(RehabPackageInputSchema)
+	.input(CreateRehabPackageSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -51,7 +52,7 @@ export const buildPackage = scopedAuthMiddleware
 	});
 
 export const bookSitting = scopedAuthMiddleware
-	.input(RehabSittingBookInputSchema)
+	.input(BookRehabSittingSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -60,7 +61,7 @@ export const bookSitting = scopedAuthMiddleware
 	});
 
 export const recordSitting = scopedAuthMiddleware
-	.input(RehabSittingRecordInputSchema)
+	.input(RecordRehabSittingSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -69,7 +70,7 @@ export const recordSitting = scopedAuthMiddleware
 	});
 
 export const rescore = scopedAuthMiddleware
-	.input(OutcomeScoreInputSchema)
+	.input(CreateOutcomeScoreSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -78,7 +79,7 @@ export const rescore = scopedAuthMiddleware
 	});
 
 export const exerciseSheet = scopedAuthMiddleware
-	.input(ExercisePrescriptionInputSchema)
+	.input(CreateExercisePrescriptionSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -87,7 +88,7 @@ export const exerciseSheet = scopedAuthMiddleware
 	});
 
 export const discharge = scopedAuthMiddleware
-	.input(DischargeSummaryInputSchema)
+	.input(CreateDischargeSummarySchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -96,7 +97,7 @@ export const discharge = scopedAuthMiddleware
 	});
 
 export const dayBoard = scopedAuthMiddleware
-	.input(BranchFilterSchema)
+	.input(RehabFiltersSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -105,7 +106,7 @@ export const dayBoard = scopedAuthMiddleware
 	});
 
 export const progressChart = scopedAuthMiddleware
-	.input(ProgressChartInputSchema)
+	.input(ProgressChartSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -114,7 +115,7 @@ export const progressChart = scopedAuthMiddleware
 	});
 
 export const shareExerciseSheet = scopedAuthMiddleware
-	.input(ShareExerciseSheetInputSchema)
+	.input(ShareExerciseSheetSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>

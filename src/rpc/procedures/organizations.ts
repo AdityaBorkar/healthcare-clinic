@@ -1,5 +1,6 @@
+import { UpdateTenantProfileSchema } from "@aspen-os/management";
+
 import { env } from "#/env";
-import { UpdateOrganizationInputSchema } from "#/schemas/organizations";
 import { authMiddleware, base } from "../middlewares/auth";
 import { extractSubdomain, requireOrganizationSlug } from "../utils/subdomain";
 import { getWorkspaceOrganization } from "../utils/workspace-organization";
@@ -111,7 +112,7 @@ export const getCurrentOrganization = authMiddleware.handler(
 );
 
 export const updateCurrentOrganization = authMiddleware
-	.input(UpdateOrganizationInputSchema)
+	.input(UpdateTenantProfileSchema)
 	.handler(async ({ context, input }) => {
 		const organizationSlug = requireOrganizationSlug(context.headers);
 		const workspaceOrg = await getWorkspaceOrganization(

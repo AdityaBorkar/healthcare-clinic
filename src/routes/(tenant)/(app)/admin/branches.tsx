@@ -30,7 +30,7 @@ function RouteComponent() {
 
 	const load = useCallback(async () => {
 		try {
-			setBranches((await api.admin.branches.list()) as Array<Branch>);
+			setBranches((await api.admin.branches.list({})) as Array<Branch>);
 		} catch (err) {
 			setError(err instanceof Error ? err.message : "Branch load failed");
 		}

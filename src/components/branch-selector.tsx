@@ -22,7 +22,7 @@ export function BranchSelector({ compact = false }: { compact?: boolean }) {
 	useEffect(() => {
 		let live = true;
 		orpc.admin.branches
-			.list()
+			.list({})
 			.then((rows) => {
 				if (live) setBranches(rows as Array<Branch>);
 			})

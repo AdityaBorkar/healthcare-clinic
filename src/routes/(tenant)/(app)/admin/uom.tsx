@@ -1,3 +1,4 @@
+import { UOM_CATEGORY } from "@aspen-os/masters";
 import { createFileRoute } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 
@@ -30,18 +31,7 @@ type Uom = {
 	symbol: string | null;
 };
 
-const CATEGORIES = [
-	"count",
-	"session",
-	"time",
-	"mass",
-	"volume",
-	"length",
-	"area",
-	"data",
-	"temperature",
-	"other",
-] as const;
+const CATEGORIES = Object.values(UOM_CATEGORY);
 
 type UomCategory = (typeof CATEGORIES)[number];
 
@@ -69,7 +59,7 @@ function RouteComponent() {
 	const load = useCallback(async () => {
 		try {
 			const res = (await api.uom.list({
-				...(query.trim() ? { search: query.trim() } : {}),
+				...(query.trim() ? { filters: { search: query.trim() } } : {}),
 			})) as Array<Uom>;
 			setRows(res);
 		} catch (err) {
@@ -85,7 +75,7 @@ function RouteComponent() {
 		setError(null);
 		setNotice(null);
 		try {
-			const res = (await api.uom.seed({})) as {
+			const res = (await api.uom.seed()) as {
 				created: number;
 				skipped: number;
 			};

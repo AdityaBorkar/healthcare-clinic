@@ -1,21 +1,24 @@
 // NOTE: `pm` is lazily imported inside handlers (not statically) because the
 // clinic track contract forbids top-level pm/router imports in procedures.
 import {
-	ChronicLogInputSchema,
-	EncounterFilterSchema,
-	ExamFindingInputSchema,
-	ImmunizationInputSchema,
-	ProblemListFilterSchema,
-	ProblemUpsertSchema,
-	RegisterEntryInputSchema,
-	SoapNoteInputSchema,
-	TriageEntryInputSchema,
-} from "#/schemas/allopathy";
-import { InteractionCheckSchema } from "#/schemas/encounters";
+	CheckInteractionSchema,
+	CreateChronicLogSchema,
+	CreateExamFindingSchema,
+	CreateImmunizationSchema,
+	CreateProblemSchema,
+	CreateRegisterEntrySchema,
+	CreateSoapNoteSchema,
+	CreateTriageEntrySchema,
+	ProblemListFiltersSchema,
+	SoapNoteFiltersSchema,
+	UpdateProblemSchema,
+} from "@aspen-os/healthcare";
+import { union } from "valibot";
+
 import { scopedAuthMiddleware } from "../middlewares/scoped_auth";
 
 export const saveSoap = scopedAuthMiddleware
-	.input(SoapNoteInputSchema)
+	.input(CreateSoapNoteSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -24,7 +27,7 @@ export const saveSoap = scopedAuthMiddleware
 	});
 
 export const saveExam = scopedAuthMiddleware
-	.input(ExamFindingInputSchema)
+	.input(CreateExamFindingSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -33,7 +36,7 @@ export const saveExam = scopedAuthMiddleware
 	});
 
 export const logChronic = scopedAuthMiddleware
-	.input(ChronicLogInputSchema)
+	.input(CreateChronicLogSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -42,7 +45,7 @@ export const logChronic = scopedAuthMiddleware
 	});
 
 export const recordImmunization = scopedAuthMiddleware
-	.input(ImmunizationInputSchema)
+	.input(CreateImmunizationSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -51,7 +54,7 @@ export const recordImmunization = scopedAuthMiddleware
 	});
 
 export const triageEntry = scopedAuthMiddleware
-	.input(TriageEntryInputSchema)
+	.input(CreateTriageEntrySchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -60,7 +63,7 @@ export const triageEntry = scopedAuthMiddleware
 	});
 
 export const registerEntry = scopedAuthMiddleware
-	.input(RegisterEntryInputSchema)
+	.input(CreateRegisterEntrySchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -69,7 +72,7 @@ export const registerEntry = scopedAuthMiddleware
 	});
 
 export const listSoap = scopedAuthMiddleware
-	.input(EncounterFilterSchema)
+	.input(SoapNoteFiltersSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -78,7 +81,7 @@ export const listSoap = scopedAuthMiddleware
 	});
 
 export const problemUpsert = scopedAuthMiddleware
-	.input(ProblemUpsertSchema)
+	.input(union([CreateProblemSchema, UpdateProblemSchema]))
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -87,7 +90,7 @@ export const problemUpsert = scopedAuthMiddleware
 	});
 
 export const problemList = scopedAuthMiddleware
-	.input(ProblemListFilterSchema)
+	.input(ProblemListFiltersSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -96,7 +99,7 @@ export const problemList = scopedAuthMiddleware
 	});
 
 export const checkInteraction = scopedAuthMiddleware
-	.input(InteractionCheckSchema)
+	.input(CheckInteractionSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>

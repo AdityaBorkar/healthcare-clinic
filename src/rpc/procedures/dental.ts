@@ -1,23 +1,24 @@
 // NOTE: `pm` is lazily imported inside handlers (not statically) because the
 // clinic track contract forbids top-level pm/router imports in procedures.
 import {
-	ChairSlotInputSchema,
-	ConsentFormInputSchema,
-	DentalChartInputSchema,
-	DentalPackageInputSchema,
-	ImplantMilestoneInputSchema,
-	LabJobInputSchema,
-	LabJobTrackInputSchema,
-	PendingJobsFilterSchema,
-	PlanStageCloseInputSchema,
-	QuoteInputSchema,
-	RescheduleStageInputSchema,
-	TreatmentPlanInputSchema,
-} from "#/schemas/dental";
+	ClosePlanStageSchema,
+	CreateChairSlotSchema,
+	CreateDentalChartSchema,
+	CreateDentalConsentSchema,
+	CreateLabJobSchema,
+	CreateQuoteSchema,
+	CreateTreatmentPlanSchema,
+	DentalPackageSchema,
+	ImplantMilestoneSchema,
+	PendingJobsFiltersSchema,
+	RescheduleStageSchema,
+	TrackLabJobSchema,
+} from "@aspen-os/healthcare";
+
 import { scopedAuthMiddleware } from "../middlewares/scoped_auth";
 
 export const chart = scopedAuthMiddleware
-	.input(DentalChartInputSchema)
+	.input(CreateDentalChartSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -26,7 +27,7 @@ export const chart = scopedAuthMiddleware
 	});
 
 export const buildPlan = scopedAuthMiddleware
-	.input(TreatmentPlanInputSchema)
+	.input(CreateTreatmentPlanSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -35,7 +36,7 @@ export const buildPlan = scopedAuthMiddleware
 	});
 
 export const quote = scopedAuthMiddleware
-	.input(QuoteInputSchema)
+	.input(CreateQuoteSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -44,7 +45,7 @@ export const quote = scopedAuthMiddleware
 	});
 
 export const consent = scopedAuthMiddleware
-	.input(ConsentFormInputSchema)
+	.input(CreateDentalConsentSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -53,7 +54,7 @@ export const consent = scopedAuthMiddleware
 	});
 
 export const bookChair = scopedAuthMiddleware
-	.input(ChairSlotInputSchema)
+	.input(CreateChairSlotSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -62,7 +63,7 @@ export const bookChair = scopedAuthMiddleware
 	});
 
 export const raiseLabJob = scopedAuthMiddleware
-	.input(LabJobInputSchema)
+	.input(CreateLabJobSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -71,7 +72,7 @@ export const raiseLabJob = scopedAuthMiddleware
 	});
 
 export const trackLabJob = scopedAuthMiddleware
-	.input(LabJobTrackInputSchema)
+	.input(TrackLabJobSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -80,7 +81,7 @@ export const trackLabJob = scopedAuthMiddleware
 	});
 
 export const closeStage = scopedAuthMiddleware
-	.input(PlanStageCloseInputSchema)
+	.input(ClosePlanStageSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -89,7 +90,7 @@ export const closeStage = scopedAuthMiddleware
 	});
 
 export const pendingJobs = scopedAuthMiddleware
-	.input(PendingJobsFilterSchema)
+	.input(PendingJobsFiltersSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -98,7 +99,7 @@ export const pendingJobs = scopedAuthMiddleware
 	});
 
 export const rescheduleStage = scopedAuthMiddleware
-	.input(RescheduleStageInputSchema)
+	.input(RescheduleStageSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -107,7 +108,7 @@ export const rescheduleStage = scopedAuthMiddleware
 	});
 
 export const implantMilestone = scopedAuthMiddleware
-	.input(ImplantMilestoneInputSchema)
+	.input(ImplantMilestoneSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -116,7 +117,7 @@ export const implantMilestone = scopedAuthMiddleware
 	});
 
 export const sellPackage = scopedAuthMiddleware
-	.input(DentalPackageInputSchema)
+	.input(DentalPackageSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>

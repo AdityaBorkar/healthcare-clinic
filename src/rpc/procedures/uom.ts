@@ -1,34 +1,29 @@
 import {
-	UomConvertSchema,
-	UomCreateSchema,
-	UomIdSchema,
-	UomListSchema,
-	UomPatchSchema,
-	UomRetireSchema,
-} from "#/schemas/uom";
+	ConvertQuantitySchema,
+	CreateUnitOfMeasureSchema,
+	IdSchema,
+	ListUnitsOfMeasureSchema,
+	RetireUnitOfMeasureSchema,
+	SetDefaultUnitOfMeasureSchema,
+	UpdateUnitOfMeasureSchema,
+	WithIdSchema,
+} from "@aspen-os/masters";
+import { object } from "valibot";
+
 import { scopedAuthMiddleware } from "../middlewares/scoped_auth";
 
+const UomUpdateSchema = object({
+	id: IdSchema,
+	patch: UpdateUnitOfMeasureSchema,
+});
+
 export const list = scopedAuthMiddleware
-	.input(UomListSchema)
+	.input(ListUnitsOfMeasureSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.masters.unitsOfMeasure.list.run(
-					{
-						filters: {
-							...(input.category ? { category: input.category } : {}),
-							...(input.isActive !== undefined
-								? { isActive: input.isActive }
-								: {}),
-							...(input.status ? { status: input.status } : {}),
-							...(input.search ? { search: input.search } : {}),
-						},
-						...(input.limit !== undefined ? { limit: input.limit } : {}),
-						...(input.offset !== undefined ? { offset: input.offset } : {}),
-					},
-					{ actorId },
-				),
+				pm.masters.unitsOfMeasure.list.run(input, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -38,7 +33,7 @@ export const list = scopedAuthMiddleware
 	});
 
 export const get = scopedAuthMiddleware
-	.input(UomIdSchema)
+	.input(WithIdSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
@@ -53,40 +48,12 @@ export const get = scopedAuthMiddleware
 	});
 
 export const create = scopedAuthMiddleware
-	.input(UomCreateSchema)
+	.input(CreateUnitOfMeasureSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.masters.unitsOfMeasure.create.run(
-					{
-						input: {
-							...(input.baseUnitId ? { baseUnitId: input.baseUnitId } : {}),
-							category: input.category,
-							code: input.code,
-							...(input.conversionFactor !== undefined
-								? { conversionFactor: input.conversionFactor }
-								: {}),
-							decimalPlaces: input.decimalPlaces ?? 2,
-							isActive: true,
-							isBaseUnit: input.isBaseUnit ?? false,
-							isDefault: input.isDefault ?? false,
-							isIndivisible: input.isIndivisible ?? false,
-							...(input.isBaseUnit !== undefined
-								? { isBaseUnit: input.isBaseUnit }
-								: {}),
-							...(input.isDefault !== undefined
-								? { isDefault: input.isDefault }
-								: {}),
-							...(input.isIndivisible !== undefined
-								? { isIndivisible: input.isIndivisible }
-								: {}),
-							name: input.name,
-							...(input.symbol ? { symbol: input.symbol } : {}),
-						},
-					},
-					{ actorId },
-				),
+				pm.masters.unitsOfMeasure.create.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -96,46 +63,13 @@ export const create = scopedAuthMiddleware
 	});
 
 export const update = scopedAuthMiddleware
-	.input(UomPatchSchema)
+	.input(UomUpdateSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
-			const { patch } = input;
 			return await pm.run(tenantId, () =>
 				pm.masters.unitsOfMeasure.update.run(
-					{
-						id: input.id,
-						patch: {
-							...(patch.baseUnitId !== undefined
-								? { baseUnitId: patch.baseUnitId }
-								: {}),
-							...(patch.category ? { category: patch.category } : {}),
-							...(patch.code ? { code: patch.code } : {}),
-							...(patch.conversionFactor !== undefined
-								? { conversionFactor: patch.conversionFactor }
-								: {}),
-							...(patch.decimalPlaces !== undefined
-								? { decimalPlaces: patch.decimalPlaces }
-								: {}),
-							...(patch.factorChangeReason
-								? { factorChangeReason: patch.factorChangeReason }
-								: {}),
-							...(patch.isActive !== undefined
-								? { isActive: patch.isActive }
-								: {}),
-							...(patch.isBaseUnit !== undefined
-								? { isBaseUnit: patch.isBaseUnit }
-								: {}),
-							...(patch.isDefault !== undefined
-								? { isDefault: patch.isDefault }
-								: {}),
-							...(patch.isIndivisible !== undefined
-								? { isIndivisible: patch.isIndivisible }
-								: {}),
-							...(patch.name ? { name: patch.name } : {}),
-							...(patch.symbol !== undefined ? { symbol: patch.symbol } : {}),
-						},
-					},
+					{ id: input.id, patch: input.patch },
 					{ actorId },
 				),
 			);
@@ -147,7 +81,7 @@ export const update = scopedAuthMiddleware
 	});
 
 export const publish = scopedAuthMiddleware
-	.input(UomIdSchema)
+	.input(WithIdSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
@@ -162,20 +96,12 @@ export const publish = scopedAuthMiddleware
 	});
 
 export const retire = scopedAuthMiddleware
-	.input(UomRetireSchema)
+	.input(RetireUnitOfMeasureSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.masters.unitsOfMeasure.retire.run(
-					{
-						input: {
-							id: input.id,
-							...(input.reason ? { reason: input.reason } : {}),
-						},
-					},
-					{ actorId },
-				),
+				pm.masters.unitsOfMeasure.retire.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -185,15 +111,12 @@ export const retire = scopedAuthMiddleware
 	});
 
 export const setDefault = scopedAuthMiddleware
-	.input(UomIdSchema)
+	.input(SetDefaultUnitOfMeasureSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.masters.unitsOfMeasure.setDefault.run(
-					{ input: { id: input.id } },
-					{ actorId },
-				),
+				pm.masters.unitsOfMeasure.setDefault.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -203,21 +126,12 @@ export const setDefault = scopedAuthMiddleware
 	});
 
 export const convert = scopedAuthMiddleware
-	.input(UomConvertSchema)
+	.input(ConvertQuantitySchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.masters.unitsOfMeasure.convert.run(
-					{
-						input: {
-							fromUomId: input.fromUomId,
-							quantity: input.quantity,
-							...(input.toUomId ? { toUomId: input.toUomId } : {}),
-						},
-					},
-					{ actorId },
-				),
+				pm.masters.unitsOfMeasure.convert.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -226,23 +140,21 @@ export const convert = scopedAuthMiddleware
 		}
 	});
 
-export const seed = scopedAuthMiddleware
-	.input(UomListSchema)
-	.handler(async ({ context }) => {
-		const { actorId, pm, tenantId } = context;
-		try {
-			return await pm.run(tenantId, () =>
-				pm.masters.unitsOfMeasure.seed.run({}, { actorId }),
-			);
-		} catch (error) {
-			throw new Error(
-				`UOM seed failed (${error instanceof Error ? error.message : "unknown error"}); retry`,
-			);
-		}
-	});
+export const seed = scopedAuthMiddleware.handler(async ({ context }) => {
+	const { actorId, pm, tenantId } = context;
+	try {
+		return await pm.run(tenantId, () =>
+			pm.masters.unitsOfMeasure.seed.run({}, { actorId }),
+		);
+	} catch (error) {
+		throw new Error(
+			`UOM seed failed (${error instanceof Error ? error.message : "unknown error"}); retry`,
+		);
+	}
+});
 
 export const versions = scopedAuthMiddleware
-	.input(UomIdSchema)
+	.input(WithIdSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {

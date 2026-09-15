@@ -1,26 +1,27 @@
 // NOTE: `pm` is lazily imported inside handlers (not statically) because the
 // clinic track contract forbids top-level pm/router imports in procedures.
 import {
-	AyushCaseSheetInputSchema,
-	AyushDiagnosisInputSchema,
-	AyushPrescriptionInputSchema,
-	DietPlanInputSchema,
-	FollowUpGridInputSchema,
+	AyushPrescriptionSchema,
+	BookNadiSchema,
+	CreateAyushCaseSheetSchema,
+	CreateAyushDiagnosisSchema,
+	CreateDietPlanSchema,
+	CreateRepertorizationSchema,
+	CreateTherapyPackageSchema,
+	CreateTherapySittingSchema,
+	CreateYogaBatchSchema,
+	CreateYogaEnrollmentSchema,
 	FollowUpGridListSchema,
-	NadiBookingInputSchema,
-	PackageOutcomeInputSchema,
-	PackagePauseExtendInputSchema,
-	RepertorizationInputSchema,
-	TherapyPackageInputSchema,
-	TherapySittingInputSchema,
-	YogaAttendanceInputSchema,
-	YogaBatchInputSchema,
-	YogaEnrollmentInputSchema,
-} from "#/schemas/ayush";
+	FollowUpGridSaveSchema,
+	PackageOutcomeSchema,
+	PauseExtendPackageSchema,
+	YogaAttendanceSchema,
+} from "@aspen-os/healthcare";
+
 import { scopedAuthMiddleware } from "../middlewares/scoped_auth";
 
 export const saveCaseSheet = scopedAuthMiddleware
-	.input(AyushCaseSheetInputSchema)
+	.input(CreateAyushCaseSheetSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -29,7 +30,7 @@ export const saveCaseSheet = scopedAuthMiddleware
 	});
 
 export const repertorize = scopedAuthMiddleware
-	.input(RepertorizationInputSchema)
+	.input(CreateRepertorizationSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -38,7 +39,7 @@ export const repertorize = scopedAuthMiddleware
 	});
 
 export const dualCode = scopedAuthMiddleware
-	.input(AyushDiagnosisInputSchema)
+	.input(CreateAyushDiagnosisSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -47,7 +48,7 @@ export const dualCode = scopedAuthMiddleware
 	});
 
 export const bookNadi = scopedAuthMiddleware
-	.input(NadiBookingInputSchema)
+	.input(BookNadiSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -56,7 +57,7 @@ export const bookNadi = scopedAuthMiddleware
 	});
 
 export const scheduleTherapy = scopedAuthMiddleware
-	.input(TherapySittingInputSchema)
+	.input(CreateTherapySittingSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -65,7 +66,7 @@ export const scheduleTherapy = scopedAuthMiddleware
 	});
 
 export const recordSitting = scopedAuthMiddleware
-	.input(TherapySittingInputSchema)
+	.input(CreateTherapySittingSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -74,7 +75,7 @@ export const recordSitting = scopedAuthMiddleware
 	});
 
 export const sellPackage = scopedAuthMiddleware
-	.input(TherapyPackageInputSchema)
+	.input(CreateTherapyPackageSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -83,7 +84,7 @@ export const sellPackage = scopedAuthMiddleware
 	});
 
 export const pauseExtendPackage = scopedAuthMiddleware
-	.input(PackagePauseExtendInputSchema)
+	.input(PauseExtendPackageSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -92,7 +93,7 @@ export const pauseExtendPackage = scopedAuthMiddleware
 	});
 
 export const issueDiet = scopedAuthMiddleware
-	.input(DietPlanInputSchema)
+	.input(CreateDietPlanSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -101,7 +102,7 @@ export const issueDiet = scopedAuthMiddleware
 	});
 
 export const enrollYoga = scopedAuthMiddleware
-	.input(YogaEnrollmentInputSchema)
+	.input(CreateYogaEnrollmentSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -110,7 +111,7 @@ export const enrollYoga = scopedAuthMiddleware
 	});
 
 export const createYogaBatch = scopedAuthMiddleware
-	.input(YogaBatchInputSchema)
+	.input(CreateYogaBatchSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -119,7 +120,7 @@ export const createYogaBatch = scopedAuthMiddleware
 	});
 
 export const saveFollowUpGrid = scopedAuthMiddleware
-	.input(FollowUpGridInputSchema)
+	.input(FollowUpGridSaveSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -137,7 +138,7 @@ export const listFollowUpGrid = scopedAuthMiddleware
 	});
 
 export const markYogaAttendance = scopedAuthMiddleware
-	.input(YogaAttendanceInputSchema)
+	.input(YogaAttendanceSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -146,7 +147,7 @@ export const markYogaAttendance = scopedAuthMiddleware
 	});
 
 export const prescribeAyush = scopedAuthMiddleware
-	.input(AyushPrescriptionInputSchema)
+	.input(AyushPrescriptionSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>
@@ -155,7 +156,7 @@ export const prescribeAyush = scopedAuthMiddleware
 	});
 
 export const recordPackageOutcome = scopedAuthMiddleware
-	.input(PackageOutcomeInputSchema)
+	.input(PackageOutcomeSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		return pm.run(tenantId, () =>

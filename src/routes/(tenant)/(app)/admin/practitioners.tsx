@@ -72,12 +72,15 @@ function RouteComponent() {
 		e.preventDefault();
 		setError(null);
 		try {
+			// Client-only fields (board reg. no., fee heads, extra
+			// specializations) stay local until the backend grows them; the
+			// first specialization doubles as the legacy specialty.
+			const extraSpecializations = specializations
+				.split(",")
+				.map((s) => s.trim())
+				.filter(Boolean);
 			await api.practitioners.create({
-				boardRegNo: boardRegNo || undefined,
 				branchId,
-				...(feeNew ? { feeNew: Number(feeNew) } : {}),
-				...(feeRevisit ? { feeRevisit: Number(feeRevisit) } : {}),
-				...(feeTele ? { feeTele: Number(feeTele) } : {}),
 				...(languages
 					? {
 							languages: languages
@@ -87,15 +90,7 @@ function RouteComponent() {
 						}
 					: {}),
 				name,
-				...(specializations
-					? {
-							specializations: specializations
-								.split(",")
-								.map((s) => s.trim())
-								.filter(Boolean),
-						}
-					: {}),
-				specialty: specialty || undefined,
+				specialty: specialty || extraSpecializations[0] || undefined,
 			});
 			setName("");
 			setSpecialty("");

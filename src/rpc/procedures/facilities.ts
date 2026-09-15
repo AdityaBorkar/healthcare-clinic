@@ -1,76 +1,26 @@
 import {
-	FacilityBlockSchema,
-	FacilityCreateSchema,
+	CreateFacilityBlockSchema,
+	CreateFacilitySchema,
+	FacilityFiltersSchema,
 	FacilityIdSchema,
-	FacilityListSchema,
-	FacilityPatchSchema,
-	FacilityScheduleSchema,
+	FacilityOverlapQuerySchema,
 	FacilityStatusQuerySchema,
-	OccupySchema,
-	ReleaseSchema,
-	SterilizationLogSchema,
-} from "#/schemas/facilities";
+	LogSterilizationSchema,
+	OccupyFacilitySchema,
+	ReleaseFacilitySchema,
+	SetFacilityScheduleSchema,
+	UpdateFacilitySchema,
+} from "@aspen-os/healthcare";
+
 import { scopedAuthMiddleware } from "../middlewares/scoped_auth";
 
-// P0-9: map extended OPD/clinic categories to the closest backend-supported
-// bucket until the Aspen FacilityCategory picklist grows them.
-type BackendCategory =
-	| "consultation"
-	| "diagnostics"
-	| "pharmacy"
-	| "procedure"
-	| "support"
-	| "tele"
-	| "ward";
-
-function toBackendCategory(category: string): BackendCategory {
-	switch (category) {
-		case "ot":
-		case "chair":
-		case "therapy":
-			return "procedure";
-		case "bed":
-			return "ward";
-		case "mri":
-		case "ct":
-		case "xray":
-		case "usg":
-			return "diagnostics";
-		case "nadi":
-		case "counselling":
-			return "consultation";
-		case "consultation":
-		case "diagnostics":
-		case "pharmacy":
-		case "procedure":
-		case "support":
-		case "tele":
-		case "ward":
-			return category;
-		default:
-			return "support";
-	}
-}
-
 export const create = scopedAuthMiddleware
-	.input(FacilityCreateSchema)
+	.input(CreateFacilitySchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
-			// status (incl. maintenance-hold) is validated locally; the backend
-			// create stores branch/category/code/name only.
 			return await pm.run(tenantId, () =>
-				pm.healthcare.facilities.create.run(
-					{
-						input: {
-							branchId: input.branchId,
-							category: toBackendCategory(input.category),
-							code: input.code,
-							name: input.name,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.facilities.create.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -85,10 +35,7 @@ export const get = scopedAuthMiddleware
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.facilities.get.run(
-					{ input: { id: input.id } },
-					{ actorId },
-				),
+				pm.healthcare.facilities.get.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -98,15 +45,12 @@ export const get = scopedAuthMiddleware
 	});
 
 export const list = scopedAuthMiddleware
-	.input(FacilityListSchema)
+	.input(FacilityFiltersSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.facilities.list.run(
-					{ input: { branchId: input.branchId } },
-					{ actorId },
-				),
+				pm.healthcare.facilities.list.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -116,28 +60,12 @@ export const list = scopedAuthMiddleware
 	});
 
 export const update = scopedAuthMiddleware
-	.input(FacilityPatchSchema)
+	.input(UpdateFacilitySchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
-			// Strip client-only status; map extended categories for the backend.
-			const { patch } = input;
 			return await pm.run(tenantId, () =>
-				pm.healthcare.facilities.update.run(
-					{
-						input: {
-							id: input.id,
-							patch: {
-								...(patch.category !== undefined
-									? { category: toBackendCategory(patch.category) }
-									: {}),
-								...(patch.code !== undefined ? { code: patch.code } : {}),
-								...(patch.name !== undefined ? { name: patch.name } : {}),
-							},
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.facilities.update.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -147,23 +75,12 @@ export const update = scopedAuthMiddleware
 	});
 
 export const setSchedule = scopedAuthMiddleware
-	.input(FacilityScheduleSchema)
+	.input(SetFacilityScheduleSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.facilities.setSchedule.run(
-					{
-						input: {
-							branchId: input.branchId,
-							close: input.close,
-							facilityId: input.facilityId,
-							open: input.open,
-							weekday: input.weekday,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.facilities.setSchedule.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -173,23 +90,12 @@ export const setSchedule = scopedAuthMiddleware
 	});
 
 export const addBlock = scopedAuthMiddleware
-	.input(FacilityBlockSchema)
+	.input(CreateFacilityBlockSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.facilities.addBlock.run(
-					{
-						input: {
-							branchId: input.branchId,
-							facilityId: input.facilityId,
-							from: input.from,
-							reason: input.reason,
-							to: input.to,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.facilities.addBlock.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -199,22 +105,12 @@ export const addBlock = scopedAuthMiddleware
 	});
 
 export const overlap = scopedAuthMiddleware
-	.input(FacilityBlockSchema)
+	.input(FacilityOverlapQuerySchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.facilities.overlap.run(
-					{
-						input: {
-							branchId: input.branchId,
-							facilityId: input.facilityId,
-							from: input.from,
-							to: input.to,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.facilities.overlap.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -224,21 +120,12 @@ export const overlap = scopedAuthMiddleware
 	});
 
 export const occupy = scopedAuthMiddleware
-	.input(OccupySchema)
+	.input(OccupyFacilitySchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.facilities.occupy.run(
-					{
-						input: {
-							branchId: input.branchId,
-							facilityId: input.facilityId,
-							note: input.note,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.facilities.occupy.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -248,21 +135,12 @@ export const occupy = scopedAuthMiddleware
 	});
 
 export const release = scopedAuthMiddleware
-	.input(ReleaseSchema)
+	.input(ReleaseFacilitySchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.facilities.release.run(
-					{
-						input: {
-							branchId: input.branchId,
-							facilityId: input.facilityId,
-							note: input.note,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.facilities.release.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -272,24 +150,12 @@ export const release = scopedAuthMiddleware
 	});
 
 export const logSterilization = scopedAuthMiddleware
-	.input(SterilizationLogSchema)
+	.input(LogSterilizationSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.facilities.logSterilization.run(
-					{
-						input: {
-							at: input.at,
-							branchId: input.branchId,
-							by: input.by,
-							facilityId: input.facilityId,
-							item: input.item,
-							method: input.method,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.facilities.logSterilization.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -304,10 +170,7 @@ export const statusBoard = scopedAuthMiddleware
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.facilities.statusBoard.run(
-					{ input: { branchId: input.branchId } },
-					{ actorId },
-				),
+				pm.healthcare.facilities.statusBoard.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(

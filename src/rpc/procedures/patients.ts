@@ -1,41 +1,27 @@
 import {
-	AllergySchema,
 	ApproveMergeSchema,
-	CommunicationLogSchema,
-	ConsentSchema,
+	ArchiveConsentSchema,
+	CreateAllergySchema,
+	CreateFamilyLinkSchema,
+	CreateFlagSchema,
+	CreatePatientSchema,
 	DedupeCheckSchema,
-	FamilyLinkSchema,
-	FlagSchema,
-	MergeRequestSchema,
+	EnrolRecallSchema,
+	LogCommunicationSchema,
+	PatientFiltersSchema,
 	PatientIdSchema,
-	PatientListSchema,
-	PatientRegisterSchema,
-	RecallEnrolSchema,
-} from "#/schemas/patients";
+	RequestMergeSchema,
+} from "@aspen-os/healthcare";
+
 import { scopedAuthMiddleware } from "../middlewares/scoped_auth";
 
 export const register = scopedAuthMiddleware
-	.input(PatientRegisterSchema)
+	.input(CreatePatientSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.patients.register.run(
-					{
-						input: {
-							abha: input.abha,
-							allergies: input.allergies,
-							branchId: input.branchId,
-							dob: input.dob,
-							fullName: input.fullName,
-							gender: input.gender,
-							guardian: input.guardian,
-							language: input.language,
-							phone: input.phone,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.patients.register.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -50,16 +36,7 @@ export const dedupeCheck = scopedAuthMiddleware
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.patients.dedupeCheck.run(
-					{
-						input: {
-							abha: input.abha,
-							branchId: input.branchId,
-							phone: input.phone,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.patients.dedupeCheck.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -74,10 +51,7 @@ export const get = scopedAuthMiddleware
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.patients.get.run(
-					{ input: { id: input.id } },
-					{ actorId },
-				),
+				pm.healthcare.patients.get.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -87,20 +61,12 @@ export const get = scopedAuthMiddleware
 	});
 
 export const list = scopedAuthMiddleware
-	.input(PatientListSchema)
+	.input(PatientFiltersSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.patients.list.run(
-					{
-						input: {
-							branchId: input.branchId,
-							limit: Number.parseInt(input.limit, 10) || 100,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.patients.list.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -115,10 +81,7 @@ export const timeline = scopedAuthMiddleware
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.patients.timeline.run(
-					{ input: { id: input.id } },
-					{ actorId },
-				),
+				pm.healthcare.patients.timeline.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -128,23 +91,12 @@ export const timeline = scopedAuthMiddleware
 	});
 
 export const linkFamily = scopedAuthMiddleware
-	.input(FamilyLinkSchema)
+	.input(CreateFamilyLinkSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.patients.linkFamily.run(
-					{
-						input: {
-							branchId: input.branchId,
-							linkedName: input.linkedName,
-							linkedPhone: input.linkedPhone,
-							patientId: input.patientId,
-							relation: input.relation,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.patients.linkFamily.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -154,22 +106,12 @@ export const linkFamily = scopedAuthMiddleware
 	});
 
 export const setFlag = scopedAuthMiddleware
-	.input(FlagSchema)
+	.input(CreateFlagSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.patients.setFlag.run(
-					{
-						input: {
-							branchId: input.branchId,
-							label: input.label,
-							level: input.level,
-							patientId: input.patientId,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.patients.setFlag.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -179,24 +121,12 @@ export const setFlag = scopedAuthMiddleware
 	});
 
 export const addAllergy = scopedAuthMiddleware
-	.input(AllergySchema)
+	.input(CreateAllergySchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.patients.addAllergy.run(
-					{
-						input: {
-							branchId: input.branchId,
-							name: input.name,
-							note: input.note,
-							patientId: input.patientId,
-							reaction: input.reaction,
-							severity: input.severity,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.patients.addAllergy.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -206,23 +136,12 @@ export const addAllergy = scopedAuthMiddleware
 	});
 
 export const archiveConsent = scopedAuthMiddleware
-	.input(ConsentSchema)
+	.input(ArchiveConsentSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.patients.archiveConsent.run(
-					{
-						input: {
-							branchId: input.branchId,
-							granted: input.granted,
-							note: input.note,
-							patientId: input.patientId,
-							type: input.type,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.patients.archiveConsent.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -232,22 +151,12 @@ export const archiveConsent = scopedAuthMiddleware
 	});
 
 export const logCommunication = scopedAuthMiddleware
-	.input(CommunicationLogSchema)
+	.input(LogCommunicationSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.patients.logCommunication.run(
-					{
-						input: {
-							branchId: input.branchId,
-							channel: input.channel,
-							message: input.message,
-							patientId: input.patientId,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.patients.logCommunication.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -262,10 +171,7 @@ export const shareSlip = scopedAuthMiddleware
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.patients.shareSlip.run(
-					{ input: { id: input.id } },
-					{ actorId },
-				),
+				pm.healthcare.patients.shareSlip.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -275,22 +181,12 @@ export const shareSlip = scopedAuthMiddleware
 	});
 
 export const enrolRecall = scopedAuthMiddleware
-	.input(RecallEnrolSchema)
+	.input(EnrolRecallSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.patients.enrolRecall.run(
-					{
-						input: {
-							at: input.at,
-							branchId: input.branchId,
-							patientId: input.patientId,
-							reason: input.reason,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.patients.enrolRecall.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -300,22 +196,12 @@ export const enrolRecall = scopedAuthMiddleware
 	});
 
 export const requestMerge = scopedAuthMiddleware
-	.input(MergeRequestSchema)
+	.input(RequestMergeSchema)
 	.handler(async ({ context, input }) => {
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.patients.requestMerge.run(
-					{
-						input: {
-							branchId: input.branchId,
-							duplicateId: input.duplicateId,
-							primaryId: input.primaryId,
-							reason: input.reason,
-						},
-					},
-					{ actorId },
-				),
+				pm.healthcare.patients.requestMerge.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
@@ -330,10 +216,7 @@ export const approveMerge = scopedAuthMiddleware
 		const { actorId, pm, tenantId } = context;
 		try {
 			return await pm.run(tenantId, () =>
-				pm.healthcare.patients.approveMerge.run(
-					{ input: { id: input.id } },
-					{ actorId },
-				),
+				pm.healthcare.patients.approveMerge.run({ input }, { actorId }),
 			);
 		} catch (error) {
 			throw new Error(
