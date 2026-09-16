@@ -2,8 +2,10 @@ import { UpdateTenantProfileSchema } from "@aspen-os/management";
 
 import { env } from "#/env";
 import { authMiddleware, base } from "../middlewares/auth";
-import { extractSubdomain, requireOrganizationSlug } from "../utils/subdomain";
-import { getWorkspaceOrganization } from "../utils/workspace-organization";
+import {
+	extractSubdomain,
+	requireOrganizationSlug,
+} from "../middlewares/scoped_auth";
 
 export const getOrganizationBySubdomain = base.handler(async ({ context }) => {
 	const host = context.headers.get("host");
@@ -41,17 +43,12 @@ export const listOrganizations = base.handler(async () => {
 
 export const listMyOrganizations = authMiddleware.handler(
 	async ({ context }) => {
-		const headers = context.headers;
 		const { pm } = await import("#/aspen/server");
-		const orgs = await pm.run("$global", () =>
-			pm.auth.service.api.listOrganizations({ headers }),
+		const organizations = await pm.run("$global", () =>
+			pm.management.tenants.listByUser.run({
+				userId: context.session.user.id,
+			}),
 		);
-		const organizations = orgs.map((org) => ({
-			id: org.id,
-			logo: org.logo ?? null,
-			name: org.name,
-			slug: org.slug,
-		}));
 
 		return { organizations };
 	},
@@ -86,15 +83,11 @@ function toOrganizationDto(org: TenantOrganizationRow) {
 export const getCurrentOrganization = authMiddleware.handler(
 	async ({ context }) => {
 		const organizationSlug = requireOrganizationSlug(context.headers);
-		const workspaceOrg = await getWorkspaceOrganization(
-			context.headers,
-			organizationSlug,
-		);
 
 		const { pm } = await import("#/aspen/server");
 
 		const tenant = await pm.run("$global", () =>
-			pm.management.tenants.get.run({ id: workspaceOrg.id }),
+			pm.management.tenants.getFullBySlug.run({ slug: organizationSlug }),
 		);
 
 		return toOrganizationDto({
@@ -115,25 +108,18 @@ export const updateCurrentOrganization = authMiddleware
 	.input(UpdateTenantProfileSchema)
 	.handler(async ({ context, input }) => {
 		const organizationSlug = requireOrganizationSlug(context.headers);
-		const workspaceOrg = await getWorkspaceOrganization(
-			context.headers,
-			organizationSlug,
-		);
 
 		const { pm } = await import("#/aspen/server");
 
-		const profile: Record<string, unknown> = {};
-		if (input.name !== undefined) profile.name = input.name;
-		if (input.slug !== undefined) profile.slug = input.slug;
-		if (input.logo !== undefined) profile.logo = input.logo;
-
-		const tenant = await pm.run("$global", () =>
-			pm.management.tenants.update.run({
-				id: workspaceOrg.id,
-				profile:
-					Object.keys(profile).length > 0 ? (profile as never) : undefined,
-			}),
-		);
+		const tenant = await pm.run("$global", async () => {
+			const current = await pm.management.tenants.getFullBySlug.run({
+				slug: organizationSlug,
+			});
+			return pm.management.tenants.update.run({
+				id: current.id,
+				profile: input,
+			});
+		});
 
 		return toOrganizationDto({
 			createdAt: tenant.createdAt,

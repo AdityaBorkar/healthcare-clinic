@@ -9,11 +9,11 @@ export const Route = createFileRoute("/support")({
 });
 
 const AGENCY = {
-	address: "123 Clinic Street, Medical District, City — 400001",
-	email: "support@clinic.local",
-	hours: "Monday – Saturday, 9:00 AM – 6:00 PM",
-	name: "Healthcare Clinic Agency",
-	phone: "+1 (555) 010-2030",
+	address: "Belapur, Navi Mumbai — 400101",
+	email: "support@maitri.global",
+	hours: "Monday – Saturday, 9:00 AM – 9:00 PM",
+	name: "Maitri Global",
+	phone: "+91 98765 43210",
 } as const;
 
 function SupportPage() {

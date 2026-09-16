@@ -1,12 +1,5 @@
 # TODO
 
-remove the "break-glass" provisions from all modules
-
-Ensure the @schemas are defined in the modules itself and exported from there for use. Unless it is used in forms, where custom schema/validation is required, use the module's schema.
-
-@/rpc/utils/*
-resolveTenantDatabaseName -> add { subdomain, pm, actorId } to the context
-
 Clearly define module boundaries
 - separate billing as a different module
 
@@ -18,24 +11,23 @@ Printing and Sending through WhatsApp is very important
 
 ------------------------------------------------------------------
 
+## Architecture
+
 - Modules
   - Accounting
   - Data Explorer
   - Forms
   - Reports
-- Recently Used Medicines
 - Auth
   - Verify OTP Flow
   - Add Password Reset Flow in the Settings
+- Sidebar Views: ERP, Nursing, Doctor, Reception
 
-## Architecture
-
-- using drizzle-zod to derive enums
+- using drizzle-valibot to derive enums
 - Services Architecture with proper unit testing
 - Files Management
   - /files for all files
   - Rename /lib/storage -> /lib/files
-- /auth for authentication (replace server-actions with orpc)
 - Proper Management of Company Subdomain and Branch
   - Company & Branch Selector
   - /login route for hospitals with subdomains.
@@ -44,10 +36,6 @@ Printing and Sending through WhatsApp is very important
   - Create a separate navigation NavLink for going forward to="/$/route"
 
 ## Phase 2
-
-- Sidebar Views: ERP, Nursing, Doctor, Reception
-
-## Phase 3
 
 - Event Driven Architecture
 - HA Deployent
